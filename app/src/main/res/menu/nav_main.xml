@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--NavigationView的內部選項設定-->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_create"
+            android:title="@string/create" />
+
+    </group>
+
+    <item android:title="分隔線">
+        <menu>
+            <item
+                android:id="@+id/nav_one"
+                android:title="@string/one" />
+            <item
+                android:id="@+id/nav_two"
+                android:title="@string/two" />
+        </menu>
+    </item>
+
+</menu>

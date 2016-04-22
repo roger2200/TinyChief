@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">TinyChief</string>
+    <string name="create">創作食譜</string>
+    <string name="one">一</string>
+    <string name="two">二</string>
+</resources>

@@ -1,11 +1,14 @@
-package com.roger.tinychief;
+package com.roger.tinychief.activity;
 
+import android.os.Build;
+import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.*;
 import android.view.*;
-import android.widget.*;
+
+import com.roger.tinychief.R;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -14,6 +17,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);         //把最上面變半透明
         initToolbar();
         initTableLayout();
     }

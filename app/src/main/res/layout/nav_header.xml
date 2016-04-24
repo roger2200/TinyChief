@@ -2,29 +2,21 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:gravity="center"
-    android:background="#FFF000">
+    android:background="#00BBFF">
 
     <ImageView
-        android:layout_width="110dp"
-        android:layout_height="110dp"
-        android:scaleType="fitXY"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:scaleType="centerCrop"
         android:src="@mipmap/ic_launcher"/>
     <TextView
         android:id="@+id/id_header_authorname"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="放帳號用的 上面是圖片"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="使用者A"
+        android:gravity="center"
         android:textColor="@android:color/black"
         android:textSize="16sp" />
-
-    <TextView
-        android:id="@+id/id_header_url"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="第二個字串(可以放好幾個)"
-        android:textColor="@android:color/black"
-        android:textSize="18sp" />
-
 </LinearLayout>

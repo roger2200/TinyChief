@@ -1,0 +1,18 @@
+<!--包裹ToolBar等頂部介面元件必須要用AppBarLayout且要放在CoordinatorLayout的第一個-->
+<android.support.design.widget.AppBarLayout
+    android:id="@+id/main_appbar_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:layout_scrollFlags="scroll|enterAlways"/>
+
+</android.support.design.widget.AppBarLayout>

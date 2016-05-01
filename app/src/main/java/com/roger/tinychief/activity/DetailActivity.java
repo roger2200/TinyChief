@@ -1,80 +1,36 @@
 package com.roger.tinychief.activity;
 
-import android.content.Intent;
-import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.*;
-import android.view.*;
+import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.roger.tinychief.R;
-import com.roger.tinychief.adapter.RecyclerViewAdapter;
-import com.roger.tinychief.adapter.RecyclerViewAdapter.OnRecyclerViewItemClickListener;
 
-import java.util.ArrayList;
-
-import butterknife.OnClick;
-
-
-public class MainActivity extends AppCompatActivity {
-
+public class DetailActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
-    private RecyclerView recyclerView;
-    private RecyclerViewAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_detail);
 
-        setTitle("熱門食譜");
+        Bundle bundle=this.getIntent().getExtras();
+        setTitle("食譜詳情"+bundle.getString("DATA"));
         setToolbar();
-        setRecycleView();
         setNavigationView();
-    }
-
-    @Override
-    protected void onResume()
-    {
-        super.onResume();
-        navigationView.getMenu().getItem(0).setChecked(true);
-    }
-
-    private void setRecycleView()
-    {
-        ArrayList<String> myDataset = new ArrayList<>();
-        for(int i = 0; i < 100; i++){
-            myDataset.add(i + "");
-        }
-        recyclerView = (RecyclerView) findViewById(R.id.mian_recy_view);
-        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(layoutManager);
-        mAdapter = new RecyclerViewAdapter(myDataset);
-        mAdapter.setOnItemClickListener(new OnRecyclerViewItemClickListener(){
-            @Override
-            public void onItemClick(View view , String data){
-                Toast.makeText(MainActivity.this, data,Toast.LENGTH_SHORT).show();
-                Intent intent=new Intent(view.getContext(),DetailActivity.class);
-                Bundle bundle=new Bundle();
-                bundle.putString("DATA",data);
-                intent.putExtras(bundle);
-                startActivity(intent);
-            }
-        });
-        recyclerView.setAdapter(mAdapter);
     }
 
     private void setToolbar() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
     }
-
     private void setNavigationView(){
         navigationView = (NavigationView) findViewById(R.id.main_nav_view);
         // Initializing Drawer Layout and ActionBarToggle

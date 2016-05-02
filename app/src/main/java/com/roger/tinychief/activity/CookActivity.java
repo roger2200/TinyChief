@@ -1,71 +1,29 @@
 package com.roger.tinychief.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.*;
-import android.view.*;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.roger.tinychief.R;
-import com.roger.tinychief.adapter.RecyclerViewAdapter;
-import com.roger.tinychief.adapter.RecyclerViewAdapter.OnRecyclerViewItemClickListener;
 
-import java.util.ArrayList;
-
-
-public class MainActivity extends AppCompatActivity {
-
+public class CookActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
-    private RecyclerView recyclerView;
-    private RecyclerViewAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_cook);
 
-        setTitle("熱門食譜");
+        setTitle("開始料理");
         setToolbar();
-        setRecycleView();
         setNavigationView();
-    }
-
-    @Override
-    protected void onResume()
-    {
-        super.onResume();
-        navigationView.getMenu().getItem(0).setChecked(true);
-    }
-
-    private void setRecycleView()
-    {
-        ArrayList<String> myDataset = new ArrayList<>();
-        for(int i = 0; i < 100; i++){
-            myDataset.add(i + "");
-        }
-        recyclerView = (RecyclerView) findViewById(R.id.mian_recy_view);
-        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(layoutManager);
-        mAdapter = new RecyclerViewAdapter(myDataset);
-        mAdapter.setOnItemClickListener(new OnRecyclerViewItemClickListener(){
-            @Override
-            public void onItemClick(View view , String data){
-                Toast.makeText(MainActivity.this, data,Toast.LENGTH_SHORT).show();
-                Intent intent=new Intent(view.getContext(),DetailActivity.class);
-                Bundle bundle=new Bundle();
-                bundle.putString("DATA",data);
-                intent.putExtras(bundle);
-                startActivity(intent);
-            }
-        });
-        recyclerView.setAdapter(mAdapter);
     }
 
     private void setToolbar() {
@@ -76,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private void setNavigationView(){
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         // Initializing Drawer Layout and ActionBarToggle
-        drawerLayout = (DrawerLayout) findViewById(R.id.main_drawer_layout);
+        drawerLayout = (DrawerLayout) findViewById(R.id.cook_drawer_layout);
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.openDrawer, R.string.closeDrawer);
         //calling sync state is necessay or else your hamburger icon wont show up
         actionBarDrawerToggle.syncState();

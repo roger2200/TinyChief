@@ -2,4 +2,5 @@
     <string name="app_name">TinyChief</string>
     <string name="closeDrawer">Navigation View</string>
     <string name="openDrawer">Navigation View Closed</string>
+    <string name="title_activity_cook">CookActivity</string>
 </resources>

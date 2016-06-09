@@ -20,6 +20,9 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
+    archivesBaseName = rootProject.projectDir.getName()
+
     buildTypes {
         release {
             minifyEnabled false

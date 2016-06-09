@@ -1,58 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.roger.tinychief">
-
-    <!--
-         The application requires a camera.
-
-         NOTE: Any application that requests the CAMERA permission but does not
-         declare any camera features with the <uses-feature> element will be
-         assumed to use all camera features (auto-focus and flash). Thus, the
-         application will not be compatible with devices that do not support
-         all camera features. Please use <uses-feature> to declare only the
-         camera features that your application does need. For instance, if you
-         request the CAMERA permission, but you do not need auto-focus or
-         flash, then declare only the android.hardware.camera feature. The
-         other camera features that you do not request will no longer be
-         assumed as required.
-    -->
+    <!--宣告使用OpenGL ES-->
+    <uses-feature android:glEsVersion="0x00020000" />
+    <!--宣告使用相機-->
     <uses-feature android:name="android.hardware.camera" />
-
-    <!--
-        Add this permission to get access to the camera.
-    -->
+    <!--允許使用相機-->
     <uses-permission android:name="android.permission.CAMERA" />
-
-    <!--
-        Add this permission to allow opening network sockets.
-    -->
+    <!--允許使用網路-->
     <uses-permission android:name="android.permission.INTERNET"/>
-
-    <!--
-        Add this permission to check which network access properties (e.g.
-        active type: 3G/WiFi).
-     -->
+    <!--允許確認網路連接類型-->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-
-    <!--
-      NOTE: The setting 'android:launchMode="singleTask"' makes sure
-      that the activity can begin only one task and the device can hold only
-      one instance of the activity at a time. However, it allows other
-      activities to be part of its task (unlike the 'singleInstance' mode).
-      It's at the root of the activity stack, but other activities (necessarily
-      "standard" and "singleTop" activities) can be launched into the same task.
-      If this attribute is not set, the default value 'standard' is used, which
-      would allow the activity to be launched multiple times.
-    -->
+    <!--允許讀寫外部儲存空間-->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/BaseAppTheme">
         <activity android:name=".activity.MainActivity" />
         <activity android:name=".activity.DetailActivity" />
         <activity android:name=".activity.CookActivity" />
@@ -62,6 +29,13 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".ar.ImageTargets"
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize"
+            android:theme="@style/ArAppTheme"
+            android:launchMode="singleTask"
+            >
         </activity>
     </application>
 

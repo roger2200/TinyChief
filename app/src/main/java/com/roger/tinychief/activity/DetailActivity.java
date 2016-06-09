@@ -12,6 +12,8 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.roger.tinychief.R;
+import com.roger.tinychief.ar.ImageTargets;
+import com.vuforia.ImageTarget;
 
 public class DetailActivity extends AppCompatActivity {
     private Toolbar toolbar;
@@ -81,7 +83,7 @@ public class DetailActivity extends AppCompatActivity {
 
     public void openAR(View view)
     {
-        //Intent intent=new Intent(view.getContext(),TestActivity.class);
-        //startActivity(intent);
+        Intent i=new Intent(view.getContext(), ImageTargets.class);
+        startActivity(i);
     }
 }

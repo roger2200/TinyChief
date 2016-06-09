@@ -78,4 +78,10 @@ public class DetailActivity extends AppCompatActivity {
         Intent intent=new Intent(view.getContext(),CookActivity.class);
         startActivity(intent);
     }
+
+    public void openAR(View view)
+    {
+        //Intent intent=new Intent(view.getContext(),TestActivity.class);
+        //startActivity(intent);
+    }
 }

@@ -110,6 +110,12 @@
                     android:text="料理開始"
                     android:layout_gravity="center_horizontal"
                     android:onClick="letCook"/>
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="AR Test"
+                    android:layout_gravity="center_horizontal"
+                    android:onClick="openAR"/>
 
                 </LinearLayout>
         </android.support.v4.widget.NestedScrollView>

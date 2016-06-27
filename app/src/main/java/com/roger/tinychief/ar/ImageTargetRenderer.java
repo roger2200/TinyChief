@@ -15,6 +15,7 @@ import android.opengl.Matrix;
 import android.util.Log;
 
 import com.roger.tinychief.ar.utils.CubeShaders;
+import com.roger.tinychief.ar.utils.CubeTest2;
 import com.roger.tinychief.ar.utils.LoadingDialogHandler;
 import com.roger.tinychief.ar.utils.SampleApplication3DModel;
 import com.roger.tinychief.ar.utils.SampleUtils;
@@ -57,8 +58,10 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer
     private int mvpMatrixHandle;
     
     private int texSampler2DHandle;
-    
-    private Teapot mTeapot;
+
+    private CubeTest2 mTeapot;
+
+    //private Teapot mTeapot;
     
     private float kBuildingScale = 12.0f;
     private SampleApplication3DModel mBuildingsModel;
@@ -67,9 +70,10 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer
     
     boolean mIsActive = false;
     
-    private static final float OBJECT_SCALE_FLOAT = 3.0f;
-    
-    
+    //private static final float OBJECT_SCALE_FLOAT = 3.0f;
+
+    private static final float OBJECT_SCALE_FLOAT = 120.0f;
+
     public ImageTargetRenderer(ImageTargets activity,
         SampleApplicationSession session)
     {
@@ -118,7 +122,8 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer
     // Function for initializing the renderer.
     private void initRendering()
     {
-        mTeapot = new Teapot();
+        mTeapot = new CubeTest2();
+        //mTeapot = new Teapot();
         
         mRenderer = Renderer.getInstance();
         
@@ -142,17 +147,12 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer
             CubeShaders.CUBE_MESH_VERTEX_SHADER,
             CubeShaders.CUBE_MESH_FRAGMENT_SHADER);
         
-        vertexHandle = GLES20.glGetAttribLocation(shaderProgramID,
-            "vertexPosition");
-        normalHandle = GLES20.glGetAttribLocation(shaderProgramID,
-            "vertexNormal");
-        textureCoordHandle = GLES20.glGetAttribLocation(shaderProgramID,
-            "vertexTexCoord");
-        mvpMatrixHandle = GLES20.glGetUniformLocation(shaderProgramID,
-            "modelViewProjectionMatrix");
-        texSampler2DHandle = GLES20.glGetUniformLocation(shaderProgramID,
-            "texSampler2D");
-        
+        vertexHandle = GLES20.glGetAttribLocation(shaderProgramID, "vertexPosition");
+        normalHandle = GLES20.glGetAttribLocation(shaderProgramID, "vertexNormal");
+        textureCoordHandle = GLES20.glGetAttribLocation(shaderProgramID, "vertexTexCoord");
+        mvpMatrixHandle = GLES20.glGetUniformLocation(shaderProgramID, "modelViewProjectionMatrix");
+        texSampler2DHandle = GLES20.glGetUniformLocation(shaderProgramID, "texSampler2D");
+
         try
         {
             mBuildingsModel = new SampleApplication3DModel();
@@ -170,7 +170,7 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer
     }
     
     
-    // The render function.
+    // 繪圖,只要相機開著就會執行,不管有沒有要畫任何東西
     private void renderFrame()
     {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
@@ -193,7 +193,7 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer
         else
             GLES20.glFrontFace(GLES20.GL_CCW); // Back camera
             
-        // did we find any trackables this frame?
+        // 這裡的state.getNumTrackableResults()能取出目前相機畫面中有幾個可以偵測到的目標的數量
         for (int tIdx = 0; tIdx < state.getNumTrackableResults(); tIdx++)
         {
             TrackableResult result = state.getTrackableResult(tIdx);
@@ -202,26 +202,25 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer
             Matrix44F modelViewMatrix_Vuforia = Tool
                 .convertPose2GLMatrix(result.getPose());
             float[] modelViewMatrix = modelViewMatrix_Vuforia.getData();
-            
-            int textureIndex = trackable.getName().equalsIgnoreCase("stones") ? 0
-                : 1;
-            textureIndex = trackable.getName().equalsIgnoreCase("tarmac") ? 2
-                : textureIndex;
+            //stringA.equalsIgnoreCase(stringB)是用來判斷stringA和stringB是否一樣,回傳布林值,不考慮大小寫
+            //trackable.getName()則是能取得當前使用的dataset的Target的名稱
+            String trackableName=trackable.getName();
+            Log.d(LOGTAG, "renderFrame:CurrentTracker "+trackableName);
+            int textureIndex = trackable.getName().equalsIgnoreCase("stones") ? 0 : 1;
+            textureIndex = trackable.getName().equalsIgnoreCase("tarmac") ? 2 : textureIndex;
+            textureIndex = trackable.getName().equalsIgnoreCase("test") ? 3 : textureIndex;
             
             // deal with the modelview and projection matrices
             float[] modelViewProjection = new float[16];
             
             if (!mActivity.isExtendedTrackingActive())
             {
-                Matrix.translateM(modelViewMatrix, 0, 0.0f, 0.0f,
-                    OBJECT_SCALE_FLOAT);
-                Matrix.scaleM(modelViewMatrix, 0, OBJECT_SCALE_FLOAT,
-                    OBJECT_SCALE_FLOAT, OBJECT_SCALE_FLOAT);
+                Matrix.translateM(modelViewMatrix, 0, 0.0f, 0.0f, OBJECT_SCALE_FLOAT);
+                Matrix.scaleM(modelViewMatrix, 0, OBJECT_SCALE_FLOAT, OBJECT_SCALE_FLOAT, OBJECT_SCALE_FLOAT);
             } else
             {
                 Matrix.rotateM(modelViewMatrix, 0, 90.0f, 1.0f, 0, 0);
-                Matrix.scaleM(modelViewMatrix, 0, kBuildingScale,
-                    kBuildingScale, kBuildingScale);
+                Matrix.scaleM(modelViewMatrix, 0, kBuildingScale, kBuildingScale, kBuildingScale);
             }
             
             Matrix.multiplyMM(modelViewProjection, 0, vuforiaAppSession
@@ -232,12 +231,9 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer
             
             if (!mActivity.isExtendedTrackingActive())
             {
-                GLES20.glVertexAttribPointer(vertexHandle, 3, GLES20.GL_FLOAT,
-                    false, 0, mTeapot.getVertices());
-                GLES20.glVertexAttribPointer(normalHandle, 3, GLES20.GL_FLOAT,
-                    false, 0, mTeapot.getNormals());
-                GLES20.glVertexAttribPointer(textureCoordHandle, 2,
-                    GLES20.GL_FLOAT, false, 0, mTeapot.getTexCoords());
+                GLES20.glVertexAttribPointer(vertexHandle, 3, GLES20.GL_FLOAT, false, 0, mTeapot.getVertices());
+                GLES20.glVertexAttribPointer(normalHandle, 3, GLES20.GL_FLOAT, false, 0, mTeapot.getNormals());
+                GLES20.glVertexAttribPointer(textureCoordHandle, 2, GLES20.GL_FLOAT, false, 0, mTeapot.getTexCoords());
                 
                 GLES20.glEnableVertexAttribArray(vertexHandle);
                 GLES20.glEnableVertexAttribArray(normalHandle);
@@ -245,8 +241,7 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer
                 
                 // activate texture 0, bind it, and pass to shader
                 GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D,
-                    mTextures.get(textureIndex).mTextureID[0]);
+                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextures.get(textureIndex).mTextureID[0]);
                 GLES20.glUniform1i(texSampler2DHandle, 0);
                 
                 // pass the model view matrix to the shader
@@ -254,10 +249,8 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer
                     modelViewProjection, 0);
                 
                 // finally draw the teapot
-                GLES20.glDrawElements(GLES20.GL_TRIANGLES,
-                    mTeapot.getNumObjectIndex(), GLES20.GL_UNSIGNED_SHORT,
-                    mTeapot.getIndices());
-                
+                //GLES20.glDrawElements(GLES20.GL_TRIANGLES, mTeapot.getNumObjectIndex(), GLES20.GL_UNSIGNED_SHORT, mTeapot.getIndices());
+                GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, mTeapot.getNumObjectVertex());
                 // disable the enabled arrays
                 GLES20.glDisableVertexAttribArray(vertexHandle);
                 GLES20.glDisableVertexAttribArray(normalHandle);
@@ -308,7 +301,6 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer
     public void setTextures(Vector<Texture> textures)
     {
         mTextures = textures;
-        
     }
     
 }

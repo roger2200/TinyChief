@@ -108,7 +108,7 @@ public class ImageTargets extends Activity implements SampleApplicationControl,
         
         startLoadingAnimation();
         mDatasetStrings.add("StonesAndChips.xml");
-        //mDatasetStrings.add("Tarmac.xml");
+        mDatasetStrings.add("Tarmac.xml");
         mDatasetStrings.add("Demo.xml");
         
         vuforiaAppSession
@@ -167,14 +167,11 @@ public class ImageTargets extends Activity implements SampleApplicationControl,
     
     private void loadTextures()
     {
-        mTextures.add(Texture.loadTextureFromApk("TextureTeapotBrass.png",
-            getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("TextureTeapotBlue.png",
-            getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("TextureTeapotRed.png",
-            getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("ImageTargets/Buildings.jpeg",
-            getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("TextureTeapotBrass.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("TextureTeapotBlue.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("TextureTeapotRed.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("texturepizza.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("ImageTargets/Buildings.jpeg", getAssets()));
     }
     
     
@@ -643,6 +640,7 @@ public class ImageTargets extends Activity implements SampleApplicationControl,
         
         group.addRadioItem("Stones & Chips", mStartDatasetsIndex, true);
         group.addRadioItem("Tarmac", mStartDatasetsIndex + 1, false);
+        group.addRadioItem("Roger", mStartDatasetsIndex + 2, false);
         
         mSampleAppMenu.attachMenu();
     }

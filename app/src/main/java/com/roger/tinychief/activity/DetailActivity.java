@@ -13,7 +13,6 @@ import android.widget.Toast;
 
 import com.roger.tinychief.R;
 import com.roger.tinychief.ar.ImageTargets;
-import com.vuforia.ImageTarget;
 
 public class DetailActivity extends AppCompatActivity {
     private Toolbar toolbar;

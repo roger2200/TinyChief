@@ -6,6 +6,8 @@
 
     <string name="button_OK">OK</string>
 
+
+    <!--下面這些是Vuforia的提示信息字串!-->
     <string name="UPDATE_ERROR_AUTHORIZATION_FAILED_TITLE">Authorization Error</string>
     <string name="UPDATE_ERROR_PROJECT_SUSPENDED_TITLE">Authorization Error</string>
     <string name="UPDATE_ERROR_NO_NETWORK_CONNECTION_TITLE">Network Unavailable</string>
@@ -35,7 +37,7 @@
     <string name="INIT_LICENSE_ERROR_NO_NETWORK_PERMANENT">No network available. Please make sure you are connected to the Internet.</string>
     <string name="INIT_LICENSE_ERROR_CANCELED_KEY">This app license key has been canceled and may no longer be used. Please get a new license key.</string>
     <string name="INIT_LICENSE_ERROR_PRODUCT_TYPE_MISMATCH">Vuforia App key is not valid for this product. Please get a valid key, by logging into your account at developer.vuforia.com and choosing the right product type during project creation.</string>
-    <string name="INIT_LICENSE_ERROR_UNKNOWN_ERROR">Failed to initialize Vuforia.</string>
+    <string name="INIT_LICENSE_ERROR_UNKNOWN_ERROR">相機初始化失敗</string>
     <string name="INIT_OBJECT_DATASET_NOT_FOUND_TITLE">Database not found</string>
     <string name="INIT_OBJECT_DATASET_NOT_FOUND">Please scan an object and load a database</string>
 

@@ -14,10 +14,10 @@ import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.util.Log;
 
+import com.roger.tinychief.ar.utils.ArUtils;
 import com.roger.tinychief.ar.utils.CubeShaders;
 import com.roger.tinychief.ar.utils.Food;
 import com.roger.tinychief.ar.utils.LoadingDialogHandler;
-import com.roger.tinychief.ar.utils.SampleUtils;
 import com.roger.tinychief.ar.utils.Texture;
 import com.vuforia.Matrix44F;
 import com.vuforia.Renderer;
@@ -37,7 +37,7 @@ import javax.microedition.khronos.opengles.GL10;
 // The renderer class for the ImageTargets sample. 
 public class ImageTargetRenderer implements GLSurfaceView.Renderer {
     private static final String LOGTAG = "ImageTargetRenderer";
-    private SampleApplicationSession vuforiaAppSession;
+    private ArSession vuforiaAppSession;
     private ImageTargets mActivity;
     private Vector<Texture> mTextures;
     private int shaderProgramID;
@@ -50,7 +50,7 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer {
     boolean mIsActive = false;
     private static final float OBJECT_SCALE_FLOAT = 1;
 
-    public ImageTargetRenderer(ImageTargets activity, SampleApplicationSession session) {
+    public ImageTargetRenderer(ImageTargets activity, ArSession session) {
         mActivity = activity;
         vuforiaAppSession = session;
     }
@@ -102,7 +102,7 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer {
             GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, t.mWidth, t.mHeight, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, t.mData);
         }
 
-        shaderProgramID = SampleUtils.createProgramFromShaderSrc(CubeShaders.CUBE_MESH_VERTEX_SHADER, CubeShaders.CUBE_MESH_FRAGMENT_SHADER);
+        shaderProgramID = ArUtils.createProgramFromShaderSrc(CubeShaders.CUBE_MESH_VERTEX_SHADER, CubeShaders.CUBE_MESH_FRAGMENT_SHADER);
 
         vertexHandle = GLES20.glGetAttribLocation(shaderProgramID, "vertexPosition");
         textureCoordHandle = GLES20.glGetAttribLocation(shaderProgramID, "vertexTexCoord");
@@ -182,7 +182,7 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer {
             GLES20.glDisableVertexAttribArray(vertexHandle);
             GLES20.glDisableVertexAttribArray(textureCoordHandle);
 
-            SampleUtils.checkGLError("Render Frame");
+            ArUtils.checkGLError("Render Frame");
         }
         GLES20.glDisable(GLES20.GL_DEPTH_TEST);
         mRenderer.end();

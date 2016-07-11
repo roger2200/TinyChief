@@ -10,10 +10,12 @@ countries.
 
 package com.roger.tinychief.ar;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.hardware.Camera;
@@ -21,6 +23,7 @@ import android.hardware.Camera.CameraInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -31,11 +34,11 @@ import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.Toast;
 
-import com.roger.tinychief.ar.SampleAppMenu.SampleAppMenu;
-import com.roger.tinychief.ar.SampleAppMenu.SampleAppMenuGroup;
-import com.roger.tinychief.ar.SampleAppMenu.SampleAppMenuInterface;
+import com.roger.tinychief.ar.ArMenu.ArMenu;
+import com.roger.tinychief.ar.ArMenu.ArMenuGroup;
+import com.roger.tinychief.ar.ArMenu.ArMenuInterface;
 import com.roger.tinychief.ar.utils.LoadingDialogHandler;
-import com.roger.tinychief.ar.utils.SampleApplicationGLView;
+import com.roger.tinychief.ar.utils.ArGLView;
 import com.roger.tinychief.ar.utils.Texture;
 import com.vuforia.CameraDevice;
 import com.vuforia.DataSet;
@@ -53,10 +56,11 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 
-public class ImageTargets extends Activity implements SampleApplicationControl, SampleAppMenuInterface {
+public class ImageTargets extends Activity implements ArControl, ArMenuInterface {
     private static final String LOGTAG = "ImageTargets";
+    private static final int CAMERA_REQUEST_CODE = 1;
 
-    SampleApplicationSession vuforiaAppSession;
+    ArSession vuforiaAppSession;
     private DataSet mCurrentDataset;
     private int mCurrentDatasetSelectionIndex = 0;
     private int mStartDatasetsIndex = 0;
@@ -64,7 +68,7 @@ public class ImageTargets extends Activity implements SampleApplicationControl, 
     private ArrayList<String> mDatasetStrings = new ArrayList<String>();
 
     // Our OpenGL view:
-    private SampleApplicationGLView mGlView;
+    private ArGLView mGlView;
     // Our renderer:
     private ImageTargetRenderer mRenderer;
     private GestureDetector mGestureDetector;
@@ -76,7 +80,7 @@ public class ImageTargets extends Activity implements SampleApplicationControl, 
     private boolean mExtendedTracking = false;
     private View mFlashOptionView;
     private RelativeLayout mUILayout;
-    private SampleAppMenu mSampleAppMenu;
+    private ArMenu mArMenu;
     LoadingDialogHandler loadingDialogHandler = new LoadingDialogHandler(this);
     // Alert Dialog used to display SDK errors
     private AlertDialog mErrorDialog;
@@ -89,19 +93,22 @@ public class ImageTargets extends Activity implements SampleApplicationControl, 
         Log.d(LOGTAG, "onCreate");
         super.onCreate(savedInstanceState);
 
-        vuforiaAppSession = new SampleApplicationSession(this);
+        vuforiaAppSession = new ArSession(this);
 
         startLoadingAnimation();
+
         mDatasetStrings.add("StonesAndChips.xml");
         mDatasetStrings.add("Tarmac.xml");
         mDatasetStrings.add("Demo.xml");
 
-        vuforiaAppSession.initAR(this, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        //檢查相機使用權限
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST_CODE);
 
         mGestureDetector = new GestureDetector(this, new GestureListener());
 
         // Load any sample specific textures:
-        mTextures = new Vector<Texture>();
+        mTextures = new Vector<>();
         loadTextures();
 
         mIsDroidDevice = android.os.Build.MODEL.toLowerCase().startsWith("droid");
@@ -157,7 +164,7 @@ public class ImageTargets extends Activity implements SampleApplicationControl, 
 
         try {
             vuforiaAppSession.resumeAR();
-        } catch (SampleApplicationException e) {
+        } catch (ArException e) {
             Log.e(LOGTAG, e.getString());
         }
 
@@ -200,7 +207,7 @@ public class ImageTargets extends Activity implements SampleApplicationControl, 
 
         try {
             vuforiaAppSession.pauseAR();
-        } catch (SampleApplicationException e) {
+        } catch (ArException e) {
             Log.e(LOGTAG, e.getString());
         }
     }
@@ -213,7 +220,7 @@ public class ImageTargets extends Activity implements SampleApplicationControl, 
 
         try {
             vuforiaAppSession.stopAR();
-        } catch (SampleApplicationException e) {
+        } catch (ArException e) {
             Log.e(LOGTAG, e.getString());
         }
 
@@ -224,6 +231,17 @@ public class ImageTargets extends Activity implements SampleApplicationControl, 
         System.gc();
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case CAMERA_REQUEST_CODE:
+                vuforiaAppSession.initAR(this, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
     // Initializes AR application components.
     private void initApplicationAR() {
         // Create OpenGL ES view:
@@ -231,7 +249,7 @@ public class ImageTargets extends Activity implements SampleApplicationControl, 
         int stencilSize = 0;
         boolean translucent = Vuforia.requiresAlpha();
 
-        mGlView = new SampleApplicationGLView(this);
+        mGlView = new ArGLView(this);
         mGlView.init(translucent, depthSize, stencilSize);
 
         mRenderer = new ImageTargetRenderer(this, vuforiaAppSession);
@@ -309,7 +327,7 @@ public class ImageTargets extends Activity implements SampleApplicationControl, 
     }
 
     @Override
-    public void onInitARDone(SampleApplicationException exception) {
+    public void onInitARDone(ArException exception) {
 
         if (exception == null) {
             initApplicationAR();
@@ -330,7 +348,7 @@ public class ImageTargets extends Activity implements SampleApplicationControl, 
 
             try {
                 vuforiaAppSession.startAR(CameraDevice.CAMERA_DIRECTION.CAMERA_DIRECTION_DEFAULT);
-            } catch (SampleApplicationException e) {
+            } catch (ArException e) {
                 Log.e(LOGTAG, e.getString());
             }
 
@@ -341,7 +359,7 @@ public class ImageTargets extends Activity implements SampleApplicationControl, 
             else
                 Log.e(LOGTAG, "Unable to enable continuous autofocus");
 
-            mSampleAppMenu = new SampleAppMenu(this, this, "Image Targets", mGlView, mUILayout, null);
+            mArMenu = new ArMenu(this, this, "Image Targets", mGlView, mUILayout, null);
             setSampleAppMenuSettings();
 
         } else {
@@ -448,7 +466,7 @@ public class ImageTargets extends Activity implements SampleApplicationControl, 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         // Process the Gestures
-        if (mSampleAppMenu != null && mSampleAppMenu.processEvent(event))
+        if (mArMenu != null && mArMenu.processEvent(event))
             return true;
 
         return mGestureDetector.onTouchEvent(event);
@@ -469,12 +487,12 @@ public class ImageTargets extends Activity implements SampleApplicationControl, 
 
     // This method sets the menu's settings
     private void setSampleAppMenuSettings() {
-        SampleAppMenuGroup group;
+        ArMenuGroup group;
 
-        group = mSampleAppMenu.addGroup("", false);
+        group = mArMenu.addGroup("", false);
         group.addTextItem(getString(R.string.menu_back), -1);
 
-        group = mSampleAppMenu.addGroup("", true);
+        group = mArMenu.addGroup("", true);
         group.addSelectionItem(getString(R.string.menu_extended_tracking), CMD_EXTENDED_TRACKING, false);
         group.addSelectionItem(getString(R.string.menu_contAutofocus), CMD_AUTOFOCUS, mContAutofocus);
         mFlashOptionView = group.addSelectionItem(getString(R.string.menu_flash), CMD_FLASH, false);
@@ -491,12 +509,12 @@ public class ImageTargets extends Activity implements SampleApplicationControl, 
         }
 
         if (deviceHasBackCamera && deviceHasFrontCamera) {
-            group = mSampleAppMenu.addGroup(getString(R.string.menu_camera), true);
+            group = mArMenu.addGroup(getString(R.string.menu_camera), true);
             group.addRadioItem(getString(R.string.menu_camera_front), CMD_CAMERA_FRONT, false);
             group.addRadioItem(getString(R.string.menu_camera_back), CMD_CAMERA_REAR, true);
         }
 
-        group = mSampleAppMenu.addGroup(getString(R.string.menu_datasets), true);
+        group = mArMenu.addGroup(getString(R.string.menu_datasets), true);
         mStartDatasetsIndex = CMD_DATASET_START_INDEX;
         mDatasetsNumber = mDatasetStrings.size();
 
@@ -504,7 +522,7 @@ public class ImageTargets extends Activity implements SampleApplicationControl, 
         group.addRadioItem("Tarmac", mStartDatasetsIndex + 1, false);
         group.addRadioItem("Roger", mStartDatasetsIndex + 2, false);
 
-        mSampleAppMenu.attachMenu();
+        mArMenu.attachMenu();
     }
 
 
@@ -571,7 +589,7 @@ public class ImageTargets extends Activity implements SampleApplicationControl, 
 
                 try {
                     vuforiaAppSession.startAR(command == CMD_CAMERA_FRONT ? CameraDevice.CAMERA_DIRECTION.CAMERA_DIRECTION_FRONT : CameraDevice.CAMERA_DIRECTION.CAMERA_DIRECTION_BACK);
-                } catch (SampleApplicationException e) {
+                } catch (ArException e) {
                     showToast(e.getString());
                     Log.e(LOGTAG, e.getString());
                     result = false;

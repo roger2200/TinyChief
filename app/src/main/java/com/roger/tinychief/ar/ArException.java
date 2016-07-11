@@ -10,7 +10,7 @@ countries.
 package com.roger.tinychief.ar;
 
 // Used to send back to the activity any error during vuforia processes
-public class SampleApplicationException extends Exception
+public class ArException extends Exception
 {
     
     private static final long serialVersionUID = 2L;
@@ -29,7 +29,7 @@ public class SampleApplicationException extends Exception
     private String mString = "";
     
     
-    public SampleApplicationException(int code, String description)
+    public ArException(int code, String description)
     {
         super(description);
         mCode = code;

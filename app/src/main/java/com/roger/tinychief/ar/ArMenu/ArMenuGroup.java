@@ -8,7 +8,7 @@ countries.
 ===============================================================================*/
 
 
-package com.roger.tinychief.ar.SampleAppMenu;
+package com.roger.tinychief.ar.ArMenu;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -31,11 +31,11 @@ import android.widget.TextView;
 import com.roger.tinychief.R;
 
 
-public class SampleAppMenuGroup
+public class ArMenuGroup
 {
     
     Activity mActivity;
-    SampleAppMenuInterface mMenuInterface;
+    ArMenuInterface mMenuInterface;
     LinearLayout mLayout;
     LayoutParams mLayoutParams;
     LayoutInflater inflater;
@@ -49,7 +49,7 @@ public class SampleAppMenuGroup
     
     int selectorResource;
     
-    SampleAppMenu mSampleAppMenu;
+    ArMenu mArMenu;
     RadioGroup mRadioGroup;
     
     OnClickListener mClickListener;
@@ -58,13 +58,13 @@ public class SampleAppMenuGroup
     
     
     @SuppressLint("InflateParams")
-    public SampleAppMenuGroup(SampleAppMenuInterface menuInterface,
-                              Activity context, SampleAppMenu parent, boolean hasTitle, String title,
-                              int width)
+    public ArMenuGroup(ArMenuInterface menuInterface,
+                       Activity context, ArMenu parent, boolean hasTitle, String title,
+                       int width)
     {
         mActivity = context;
         mMenuInterface = menuInterface;
-        mSampleAppMenu = parent;
+        mArMenu = parent;
         mLayoutParams = new LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -113,7 +113,7 @@ public class SampleAppMenuGroup
             {
                 int command = Integer.parseInt(v.getTag().toString());
                 mMenuInterface.menuProcess(command);
-                mSampleAppMenu.hideMenu();
+                mArMenu.hideMenu();
             }
             
         };
@@ -132,7 +132,7 @@ public class SampleAppMenuGroup
                 {
                     switchView.setChecked(!isChecked);
                 } else
-                    mSampleAppMenu.hideMenu();
+                    mArMenu.hideMenu();
                 
             }
             
@@ -152,7 +152,7 @@ public class SampleAppMenuGroup
                     result = mMenuInterface.menuProcess(command);
                     if (result)
                     {
-                        mSampleAppMenu.hideMenu();
+                        mArMenu.hideMenu();
                     }
                 }
             }

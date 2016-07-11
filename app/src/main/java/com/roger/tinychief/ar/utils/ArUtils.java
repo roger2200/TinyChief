@@ -13,8 +13,8 @@ import android.opengl.GLES20;
 import android.util.Log;
 
 
-public class SampleUtils {
-    private static final String LOGTAG = "SampleUtils";
+public class ArUtils {
+    private static final String LOGTAG = "ArUtils";
 
     static int initShader(int shaderType, String source) {
         int shader = GLES20.glCreateShader(shaderType);

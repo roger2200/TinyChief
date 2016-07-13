@@ -10,6 +10,12 @@ public class Food extends MeshObject {
 
     private int indicesNumber = 0;
     private int verticesNumber = 0;
+    public double[] verts = new double[]{
+            -20, -20, 0.0,
+            20, -20, 0.0,
+            20, 20, 0.0,
+            -20, 20, 0.0,
+    };
 
     public Food() {
         setVerts();
@@ -23,14 +29,7 @@ public class Food extends MeshObject {
         indicesNumber = indice.length;
     }
 
-    private void setVerts() {
-
-        double[] verts = new double[]{
-                -20, -20, 0.0,
-                20, -20, 0.0,
-                20, 20, 0.0,
-                -20, 20, 0.0,
-        };
+    public void setVerts() {
         mVertBuff = fillBuffer(verts);
         verticesNumber = verts.length / 3;
     }

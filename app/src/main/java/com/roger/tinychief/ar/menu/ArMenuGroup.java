@@ -8,7 +8,7 @@ countries.
 ===============================================================================*/
 
 
-package com.roger.tinychief.ar.ArMenu;
+package com.roger.tinychief.ar.menu;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;

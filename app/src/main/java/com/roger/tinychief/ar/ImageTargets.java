@@ -34,9 +34,9 @@ import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.Toast;
 
-import com.roger.tinychief.ar.ArMenu.ArMenu;
-import com.roger.tinychief.ar.ArMenu.ArMenuGroup;
-import com.roger.tinychief.ar.ArMenu.ArMenuInterface;
+import com.roger.tinychief.ar.menu.ArMenu;
+import com.roger.tinychief.ar.menu.ArMenuGroup;
+import com.roger.tinychief.ar.menu.ArMenuInterface;
 import com.roger.tinychief.ar.utils.LoadingDialogHandler;
 import com.roger.tinychief.ar.utils.ArGLView;
 import com.roger.tinychief.ar.utils.Texture;
@@ -104,6 +104,8 @@ public class ImageTargets extends Activity implements ArControl, ArMenuInterface
         //檢查相機使用權限
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST_CODE);
+        else
+            vuforiaAppSession.initAR(this, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         mGestureDetector = new GestureDetector(this, new GestureListener());
 
@@ -112,7 +114,6 @@ public class ImageTargets extends Activity implements ArControl, ArMenuInterface
         loadTextures();
 
         mIsDroidDevice = android.os.Build.MODEL.toLowerCase().startsWith("droid");
-
     }
 
     // Process Single Tap event to trigger autofocus
@@ -131,8 +132,7 @@ public class ImageTargets extends Activity implements ArControl, ArMenuInterface
             // after 1 second
             autofocusHandler.postDelayed(new Runnable() {
                 public void run() {
-                    boolean result = CameraDevice.getInstance().setFocusMode(
-                            CameraDevice.FOCUS_MODE.FOCUS_MODE_TRIGGERAUTO);
+                    boolean result = CameraDevice.getInstance().setFocusMode(CameraDevice.FOCUS_MODE.FOCUS_MODE_TRIGGERAUTO);
                     if (!result)
                         Log.e("SingleTapUp", "Unable to trigger focus");
                 }
@@ -273,9 +273,7 @@ public class ImageTargets extends Activity implements ArControl, ArMenuInterface
 
         // Adds the inflated layout to the view
         addContentView(mUILayout, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-
     }
-
 
     // Methods to load and destroy tracking data.
     @Override
@@ -359,7 +357,7 @@ public class ImageTargets extends Activity implements ArControl, ArMenuInterface
             else
                 Log.e(LOGTAG, "Unable to enable continuous autofocus");
 
-            mArMenu = new ArMenu(this, this, "Image Targets", mGlView, mUILayout, null);
+            mArMenu = new ArMenu(this, this, "Image Targets", mGlView, mUILayout, null,mRenderer);
             setSampleAppMenuSettings();
 
         } else {
@@ -373,13 +371,11 @@ public class ImageTargets extends Activity implements ArControl, ArMenuInterface
         final String errorMessage = message;
         runOnUiThread(new Runnable() {
             public void run() {
-                if (mErrorDialog != null) {
+                if (mErrorDialog != null)
                     mErrorDialog.dismiss();
-                }
 
                 // Generates an Alert Dialog to show the error message
-                AlertDialog.Builder builder = new AlertDialog.Builder(
-                        ImageTargets.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(ImageTargets.this);
                 builder.setMessage(errorMessage).setTitle(getString(R.string.INIT_ERROR)).setCancelable(false).setIcon(0).setPositiveButton(getString(R.string.button_OK), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         finish();
@@ -462,16 +458,13 @@ public class ImageTargets extends Activity implements ArControl, ArMenuInterface
         return result;
     }
 
-
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         // Process the Gestures
         if (mArMenu != null && mArMenu.processEvent(event))
             return true;
-
         return mGestureDetector.onTouchEvent(event);
     }
-
 
     boolean isExtendedTrackingActive() {
         return mExtendedTracking;
@@ -633,7 +626,6 @@ public class ImageTargets extends Activity implements ArControl, ArMenuInterface
 
         return result;
     }
-
 
     private void showToast(String text) {
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();

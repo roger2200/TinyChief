@@ -145,7 +145,6 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer {
             //stringA.equalsIgnoreCase(stringB)是用來判斷stringA和stringB是否一樣,回傳布林值,不考慮大小寫
             //trackable.getName()則是能取得當前使用的dataset的Target的名稱
             String trackableName = trackable.getName();
-            Log.d(LOGTAG, "renderFrame:CurrentTracker " + trackableName);
             int textureIndex = trackable.getName().equalsIgnoreCase("stones") ? 0 : 1;
             textureIndex = trackable.getName().equalsIgnoreCase("tarmac") ? 2 : textureIndex;
             textureIndex = trackable.getName().equalsIgnoreCase("test") ? 3 : textureIndex;
@@ -195,5 +194,11 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer {
 
     public void setTextures(Vector<Texture> textures) {
         mTextures = textures;
+    }
+
+    public void resizeFood(double scale) {
+        for (int i = 0; i < mFood.verts.length; i++)
+            mFood.verts[i] *= scale;
+        mFood.setVerts();
     }
 }

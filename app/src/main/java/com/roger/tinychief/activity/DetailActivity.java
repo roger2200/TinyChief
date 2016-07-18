@@ -1,6 +1,9 @@
 package com.roger.tinychief.activity;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -9,6 +12,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.roger.tinychief.R;
@@ -18,6 +22,7 @@ public class DetailActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
+    private String path;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +88,38 @@ public class DetailActivity extends AppCompatActivity {
     public void openAR(View view) {
 
         Intent i = new Intent(view.getContext(), ImageTargets.class);
+        i.putExtra("IMAGE_PATH", path);
         startActivity(i);
+    }
+
+    public void loadImage(View view) {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        Intent destIntent = Intent.createChooser(intent, "選擇檔案");
+        startActivityForResult(destIntent, 0);
+    }
+
+    public String getRealPathFromURI(Uri contentUri) {
+        String[] proj = {MediaStore.Images.Media.DATA};
+        Cursor actualimagecursor = managedQuery(contentUri, proj, null, null, null);
+        int actual_image_column_index = actualimagecursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        actualimagecursor.moveToFirst();
+        String img_path = actualimagecursor.getString(actual_image_column_index);
+        return img_path;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // 有選擇檔案
+        if (resultCode == RESULT_OK) {
+            // 取得檔案的 Uri
+            Uri uri = data.getData();
+            if (uri != null) {
+                path = getRealPathFromURI(uri);
+            }
+        }
     }
 }

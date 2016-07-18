@@ -13,5 +13,5 @@ package com.roger.tinychief.ar.menu;
 // previously set for a ArMenu instance
 public interface ArMenuInterface
 {
-    public boolean menuProcess(int command);
+    boolean menuProcess(int command);
 }

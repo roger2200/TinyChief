@@ -17,6 +17,8 @@ import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
@@ -55,7 +57,6 @@ import com.roger.tinychief.R;
 import java.util.ArrayList;
 import java.util.Vector;
 
-
 public class ImageTargets extends Activity implements ArControl, ArMenuInterface {
     private static final String LOGTAG = "ImageTargets";
     private static final int CAMERA_REQUEST_CODE = 1;
@@ -86,13 +87,16 @@ public class ImageTargets extends Activity implements ArControl, ArMenuInterface
     private AlertDialog mErrorDialog;
     boolean mIsDroidDevice = false;
 
+    private String path;
+
     // Called when the activity first starts or the user navigates back to an
     // activity.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(LOGTAG, "onCreate");
         super.onCreate(savedInstanceState);
-
+        Bundle bundle = this.getIntent().getExtras();
+        path=bundle.getString("IMAGE_PATH");
         vuforiaAppSession = new ArSession(this);
 
         startLoadingAnimation();
@@ -143,11 +147,31 @@ public class ImageTargets extends Activity implements ArControl, ArMenuInterface
 
     // We want to load specific textures from the APK, which we will later use for rendering.
     private void loadTextures() {
+        loadImage();
         mTextures.add(Texture.loadTextureFromApk("TextureTeapotBrass.png", getAssets()));
         mTextures.add(Texture.loadTextureFromApk("TextureTeapotBlue.png", getAssets()));
         mTextures.add(Texture.loadTextureFromApk("TextureTeapotRed.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromIntBuffer(imgData, width, height));
         mTextures.add(Texture.loadTextureFromApk("texturepizza.png", getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("ImageTargets/Buildings.jpeg", getAssets()));
+    }
+
+    int[] imgData;
+    int width;
+    int height;
+
+    private void loadImage() {
+        try {
+            BitmapFactory.Options options=new BitmapFactory.Options();
+            options.inSampleSize = 6;
+            Bitmap bitmap = BitmapFactory.decodeFile(path,options);
+            width=bitmap.getWidth();
+            height=bitmap.getHeight();
+            imgData=new int[width*height * 4];
+            bitmap.getPixels(imgData,0,width,0,0,width,height);
+            bitmap.recycle();
+            System.gc();
+        } catch (Exception e) {
+        }
     }
 
     // Called when the activity will start interacting with the user.
@@ -357,7 +381,7 @@ public class ImageTargets extends Activity implements ArControl, ArMenuInterface
             else
                 Log.e(LOGTAG, "Unable to enable continuous autofocus");
 
-            mArMenu = new ArMenu(this, this, "Image Targets", mGlView, mUILayout, null,mRenderer);
+            mArMenu = new ArMenu(this, this, "Image Targets", mGlView, mUILayout, null, mRenderer);
             setSampleAppMenuSettings();
 
         } else {
@@ -510,10 +534,10 @@ public class ImageTargets extends Activity implements ArControl, ArMenuInterface
         group = mArMenu.addGroup(getString(R.string.menu_datasets), true);
         mStartDatasetsIndex = CMD_DATASET_START_INDEX;
         mDatasetsNumber = mDatasetStrings.size();
-
-        group.addRadioItem("Stones & Chips", mStartDatasetsIndex, true);
+        //加按鈕
+        group.addRadioItem("Roger", mStartDatasetsIndex + 2, true);
+        group.addRadioItem("Stones & Chips", mStartDatasetsIndex, false);
         group.addRadioItem("Tarmac", mStartDatasetsIndex + 1, false);
-        group.addRadioItem("Roger", mStartDatasetsIndex + 2, false);
 
         mArMenu.attachMenu();
     }

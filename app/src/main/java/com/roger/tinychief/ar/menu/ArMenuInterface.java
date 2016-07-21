@@ -7,11 +7,11 @@ Vuforia is a trademark of PTC Inc., registered in the United States and other
 countries.
 ===============================================================================*/
 
-package com.roger.tinychief.ar.SampleAppMenu;
+package com.roger.tinychief.ar.menu;
 
 // To be implemented in the activities to handle any desired function 
-// previously set for a SampleAppMenu instance
-public interface SampleAppMenuInterface
+// previously set for a ArMenu instance
+public interface ArMenuInterface
 {
-    public boolean menuProcess(int command);
+    boolean menuProcess(int command);
 }

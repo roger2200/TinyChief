@@ -7,25 +7,25 @@ Vuforia is a trademark of PTC Inc., registered in the United States and other
 countries.
 ===============================================================================*/
 
-package com.roger.tinychief.ar.SampleAppMenu;
+package com.roger.tinychief.ar.menu;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 
 
-public class SampleAppMenuAnimator extends ValueAnimator implements
+public class ArMenuAnimator extends ValueAnimator implements
     ValueAnimator.AnimatorUpdateListener, ValueAnimator.AnimatorListener
 {
     
     private static long MENU_ANIMATION_DURATION = 300;
-    private SampleAppMenu mSampleAppMenu;
+    private ArMenu mArMenu;
     private float mMaxX;
     private float mEndX;
     
     
-    public SampleAppMenuAnimator(SampleAppMenu menu)
+    public ArMenuAnimator(ArMenu menu)
     {
-        mSampleAppMenu = menu;
+        mArMenu = menu;
         setDuration(MENU_ANIMATION_DURATION);
         addUpdateListener(this);
         addListener(this);
@@ -36,7 +36,7 @@ public class SampleAppMenuAnimator extends ValueAnimator implements
     public void onAnimationUpdate(ValueAnimator animation)
     {
         Float f = (Float) animation.getAnimatedValue();
-        mSampleAppMenu.setAnimationX(f.floatValue());
+        mArMenu.setAnimationX(f.floatValue());
     }
     
     
@@ -49,9 +49,9 @@ public class SampleAppMenuAnimator extends ValueAnimator implements
     @Override
     public void onAnimationEnd(Animator animation)
     {
-        mSampleAppMenu.setDockMenu(mEndX == mMaxX);
+        mArMenu.setDockMenu(mEndX == mMaxX);
         if (mEndX == 0)
-            mSampleAppMenu.hide();
+            mArMenu.hide();
     }
     
     

@@ -7,7 +7,7 @@ Vuforia is a trademark of PTC Inc., registered in the United States and other
 countries.
 ===============================================================================*/
 
-package com.roger.tinychief.ar.SampleAppMenu;
+package com.roger.tinychief.ar.menu;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -15,19 +15,19 @@ import android.util.AttributeSet;
 import android.widget.LinearLayout;
 
 
-public class SampleAppMenuView extends LinearLayout
+public class ArMenuView extends LinearLayout
 {
     
     int horizontalClipping = 0;
     
     
-    public SampleAppMenuView(Context context)
+    public ArMenuView(Context context)
     {
         super(context);
     }
     
     
-    public SampleAppMenuView(Context context, AttributeSet attribute)
+    public ArMenuView(Context context, AttributeSet attribute)
     {
         super(context, attribute);
     }

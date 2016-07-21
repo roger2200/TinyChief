@@ -7,19 +7,80 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.roger.tinychief.R;
 import com.roger.tinychief.ar.ImageTargets;
-import com.vuforia.ImageTarget;
+import com.roger.tinychief.volleymgr.NetworkManager;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+import android.graphics.Color;
+//import com.vuforia.ImageTarget;
 
 public class DetailActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
+    private Response.Listener<String> mResponseListener = new Response.Listener<String>() {
+        public void onResponse(String string) {
+            int j = 1;
+            int k = 1;
+            TextView text1 = (TextView) findViewById(R.id.material);
+            StringBuilder materials = new StringBuilder();
+            TextView text2 = (TextView) findViewById(R.id.step);
+            StringBuilder steps = new StringBuilder();
+            try {
+                JSONArray ary = new JSONArray(string);
+                for (int i = 0; i < ary.length(); i++) {
+                    JSONObject json = ary.getJSONObject(i);
+                    try {
+                        while (json.getString("material_" + j) != null) {
+                            String material = json.getString("material_" + j);
+                            materials.append(j+"."+material + "\r\n");
+                            j++;
+                        }
+                    }
+                    catch(Exception e){
+                        Log.d("error:",e.getMessage());
+                    }
+                    finally {
+                        k =1;
+                        text1.setText(materials.toString());
+                    }
+                    while(json.getString("step_"+j)!=null) {
+                        String step = json.getString("step_"+k);
+                        steps.append(k+"."+"\r\n"+step + "\r\n");
+                        k++;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Log.d("error:",e.getMessage());
+            }
+            finally {
+                j = 1;
+                text2.setText(steps.toString());
+            }
+        }
+    };
 
+    private Response.ErrorListener mErrorListener = new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            Log.e("Error", error.toString());
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,6 +88,14 @@ public class DetailActivity extends AppCompatActivity {
 
         Bundle bundle=this.getIntent().getExtras();
         setTitle("食譜詳情"+bundle.getString("DATA"));
+        TextView cookBookName = (TextView)findViewById(R.id.cookbookName);
+        cookBookName.setText("食譜的名稱："+bundle.getString("DATA"));
+        StringRequest request = new StringRequest(Request.Method.GET, "https://intense-oasis-69003.herokuapp.com/", mResponseListener, mErrorListener);
+        NetworkManager.getInstance(this).request(null, request);
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                10000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         setToolbar();
         setNavigationView();
     }

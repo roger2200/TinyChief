@@ -7,4 +7,6 @@
     android:layout_gravity="start"
     app:headerLayout="@layout/nav_header"
     app:menu="@menu/nav_main"
-    xmlns:android="http://schemas.android.com/apk/res/android" />
+    xmlns:android="http://schemas.android.com/apk/res/android">
+</android.support.design.widget.NavigationView>
+

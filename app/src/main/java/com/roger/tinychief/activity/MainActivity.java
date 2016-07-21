@@ -1,13 +1,18 @@
 package com.roger.tinychief.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.*;
 import android.view.*;
+import android.widget.Button;
+import android.widget.HeaderViewListAdapter;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.roger.tinychief.R;
@@ -29,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         setTitle("熱門食譜");
         setToolbar();
         setRecycleView();
@@ -60,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, data,Toast.LENGTH_SHORT).show();
                 Intent intent=new Intent(view.getContext(),DetailActivity.class);
                 Bundle bundle=new Bundle();
-                bundle.putString("DATA",data);
+                bundle.putString("DATA","涼拌洋葱鮪魚沙拉");
                 intent.putExtras(bundle);
                 startActivity(intent);
             }
@@ -87,6 +91,10 @@ public class MainActivity extends AppCompatActivity {
                 if(!menuItem.isChecked()) menuItem.setChecked(true);
                 drawerLayout.closeDrawers();
                 switch (menuItem.getItemId()){
+                    case R.id.nav_item_login:
+                        Toast.makeText(getApplicationContext(),"login",Toast.LENGTH_SHORT).show();
+                        jumpToActivity(MainActivity.this,LoginActivity.class);
+                        return true;
                     case R.id.nav_item_hot:
                         Toast.makeText(getApplicationContext(),"nav_item_hot",Toast.LENGTH_SHORT).show();
                         return true;
@@ -112,4 +120,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void onClick(){
+        jumpToActivity(MainActivity.this,LoginActivity.class);
+    }
+
+    private void jumpToActivity(Context ct, Class<?> lt){
+
+        Intent intent = new Intent();
+        intent.setClass(ct, lt);
+        //startActivityForResult(intent,0);
+        startActivity(intent);
+    }
+
+
 }

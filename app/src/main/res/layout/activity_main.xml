@@ -26,6 +26,5 @@
 
     <include
         layout="@layout/nav"/>
-
 </android.support.v4.widget.DrawerLayout>
 

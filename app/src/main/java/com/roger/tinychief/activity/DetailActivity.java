@@ -14,7 +14,6 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -23,12 +22,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.roger.tinychief.R;
-import com.roger.tinychief.ar.ImageTargets;
 import com.roger.tinychief.volleymgr.NetworkManager;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import android.graphics.Color;
 //import com.vuforia.ImageTarget;
 
 public class DetailActivity extends AppCompatActivity {
@@ -155,8 +152,7 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     public void openAR(View view) {
-
-        Intent i = new Intent(view.getContext(), ImageTargets.class);
+        Intent i = new Intent(view.getContext(), ArActivity.class);
         i.putExtra("IMAGE_PATH", path);
         startActivity(i);
     }

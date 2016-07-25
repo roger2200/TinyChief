@@ -103,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
                         return true;
                     case R.id.nav_item_create:
                         Toast.makeText(getApplicationContext(),"nav_item_create",Toast.LENGTH_SHORT).show();
+                        jumpToActivity(MainActivity.this,CreateActivity.class);
                         return true;
                     case R.id.nav_item_calendar:
                         Toast.makeText(getApplicationContext(),"nav_item_calendar",Toast.LENGTH_SHORT).show();
@@ -121,11 +122,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void onClick(){
-        jumpToActivity(MainActivity.this,LoginActivity.class);
-    }
-
-    private void jumpToActivity(Context ct, Class<?> lt){
+    private void jumpToActivity(Context ct, Class lt){
 
         Intent intent = new Intent();
         intent.setClass(ct, lt);

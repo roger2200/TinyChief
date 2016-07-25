@@ -15,7 +15,6 @@ import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.os.Handler;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -28,7 +27,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.roger.tinychief.R;
-import com.roger.tinychief.ar.ImageTargetRenderer;
+import com.roger.tinychief.ar.ArRenderer;
 
 import java.util.ArrayList;
 
@@ -47,7 +46,7 @@ public class ArMenu {
     private ArMenuView mParentMenuView;
     private LinearLayout mMovableListView;
     private ArrayList<ArMenuGroup> mSettingsItems = new ArrayList<ArMenuGroup>();
-    private ImageTargetRenderer mRenderer;
+    private ArRenderer mRenderer;
 
     private ArrayList<View> mAdditionalViews;
     private float mInitialAdditionalViewsX[];
@@ -77,7 +76,7 @@ public class ArMenu {
     // movableView - SurfaceView where the OpenGL rendering is done
     // listView - Parent view where the settings layout will be attached
     // additionalViewToHide - Additional view to move with openGl view
-    public ArMenu(ArMenuInterface menuInterface, Activity activity, String menuTitle, GLSurfaceView movableView, RelativeLayout parentView, ArrayList<View> additionalViewsToHide, ImageTargetRenderer renderer) {
+    public ArMenu(ArMenuInterface menuInterface, Activity activity, String menuTitle, GLSurfaceView movableView, RelativeLayout parentView, ArrayList<View> additionalViewsToHide, ArRenderer renderer) {
         mMenuInterface = menuInterface;
         mActivity = activity;
         mMovableView = movableView;

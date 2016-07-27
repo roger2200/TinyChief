@@ -25,11 +25,13 @@
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
 
-        <activity android:name=".activity.MainActivity" />
+        <activity android:name=".activity.MainActivity"
+            android:launchMode="singleTask"/>
         <activity android:name=".activity.LoginActivity" />
         <activity android:name=".activity.RegisterActivity" />
         <activity android:name=".activity.DetailActivity" />
         <activity android:name=".activity.CookActivity" />
+        <activity android:name=".activity.CreateActivity" />
         <activity android:name=".activity.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -41,8 +43,7 @@
             android:name=".activity.ArActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize"
             android:launchMode="singleTask"
-            android:theme="@style/ArAppTheme"></activity>
-        <activity android:name=".activity.CreateActivity"></activity>
+            android:theme="@style/ArAppTheme" />
     </application>
 
 </manifest>

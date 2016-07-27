@@ -1,4 +1,4 @@
-package com.roger.tinychief.volleymgr;
+package com.roger.tinychief.util;
 
 import android.content.Context;
 

@@ -5,6 +5,7 @@
     android:layout_width="220dp"
     android:layout_height="match_parent"
     android:layout_gravity="start"
+    app:itemTextColor="@color/black"
     app:headerLayout="@layout/nav_header"
     app:menu="@menu/nav_main"
     xmlns:android="http://schemas.android.com/apk/res/android">

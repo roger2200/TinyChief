@@ -29,7 +29,7 @@ public class CreateActivity extends AppCompatActivity {
     private ArrayList<EditText> mStepEditTextList = new ArrayList<>();
     private ArrayList<EditText> mIiEditTextList = new ArrayList<>();
     private ImageView mImageView;
-    private LinearLayout mStepLinearLayout,mIiLinearLayout;
+    private LinearLayout mStepLinearLayout, mIiLinearLayout;
     private String picPath;                                         //圖片路徑
 
 
@@ -40,7 +40,9 @@ public class CreateActivity extends AppCompatActivity {
         setTitle("創建食譜");
         mStepLinearLayout = (LinearLayout) findViewById(R.id.linearlayout_step);
         mIiLinearLayout = (LinearLayout) findViewById(R.id.linearlayout_ii);
-        mImageView=(ImageView)findViewById(R.id.img_create);
+        mImageView = (ImageView) findViewById(R.id.img_create);
+        //加材料和加步驟各執行一次,這樣才有「材料1」和「步驟1」
+        addIi(null);
         addStep(null);
     }
 
@@ -76,7 +78,7 @@ public class CreateActivity extends AppCompatActivity {
     //將圖片的Uri轉Path
     private String getRealPathFromURI(Uri contentUri) {
         String[] proj = {MediaStore.Images.Media.DATA};
-        String res=null;
+        String res = null;
         Cursor actualimagecursor = getContentResolver().query(contentUri, proj, null, null, null);
         if (actualimagecursor != null) {
             int index = actualimagecursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
@@ -100,17 +102,18 @@ public class CreateActivity extends AppCompatActivity {
         }
     }
 
-    public static Bitmap loadBitmap(String path) {
+    //旋轉圖片
+    private Bitmap loadBitmap(String path) {
         return BitmapFactory.decodeFile(path);
     }
 
-    public static Bitmap loadBitmap(String path, boolean adjustOritation) {
+    private Bitmap loadBitmap(String path, boolean adjustOritation) {
         if (!adjustOritation) {
             return loadBitmap(path);
         } else {
             Bitmap bm = loadBitmap(path);
             int digree = 0;
-            ExifInterface exif = null;
+            ExifInterface exif;                 //enif可以讀取照片中的方向,看是正向還是旋轉90度等
             try {
                 exif = new ExifInterface(path);
             } catch (IOException e) {
@@ -119,8 +122,7 @@ public class CreateActivity extends AppCompatActivity {
             }
             if (exif != null) {
                 //讀取圖片中相機方向資訊
-                int ori = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,
-                        ExifInterface.ORIENTATION_UNDEFINED);
+                int ori = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
                 //計算旋轉角度
                 switch (ori) {
                     case ExifInterface.ORIENTATION_ROTATE_90:
@@ -141,8 +143,7 @@ public class CreateActivity extends AppCompatActivity {
                 //旋轉圖片
                 Matrix m = new Matrix();
                 m.postRotate(digree);
-                bm = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(),
-                        bm.getHeight(), m, true);
+                bm = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), m, true);
             }
             return bm;
         }

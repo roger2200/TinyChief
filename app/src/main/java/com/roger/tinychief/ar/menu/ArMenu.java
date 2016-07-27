@@ -84,7 +84,7 @@ public class ArMenu {
         mRenderer = renderer;
 
         LayoutInflater inflater = LayoutInflater.from(mActivity);
-        mParentMenuView = (ArMenuView) inflater.inflate(R.layout.sample_app_menu_layer, null, false);
+        mParentMenuView = (ArMenuView) inflater.inflate(R.layout.menu_layer, null, false);
         parentView.addView(mParentMenuView);
 
         mMovableListView = (LinearLayout) mParentMenuView.findViewById(R.id.settings_menu);

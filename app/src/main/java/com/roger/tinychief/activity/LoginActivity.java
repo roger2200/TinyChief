@@ -1,16 +1,20 @@
 package com.roger.tinychief.activity;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -92,7 +96,16 @@ public class LoginActivity extends AppCompatActivity {
                 if(text2.getText().equals("OK,"))
                 {
                     showMessage("登入成功!");
-                    finish();
+                    navigationView = (NavigationView) findViewById(R.id.nav_view);
+                    View mHeader=navigationView.getHeaderView(0);
+                    TextView name = (TextView) mHeader.findViewById(R.id.mUserName);
+                    name.setText(text1.getText());
+                    SharedPreferences remdname=getPreferences(Activity.MODE_PRIVATE);
+                    SharedPreferences.Editor edit=remdname.edit();
+                    edit.putString("name", users.toString());
+                    edit.putString("pass",passwords.toString());
+                    edit.commit();
+                    Log.d("error",name.toString());
                 }
                 if(text1.getText().length()>2&&text2.getText().equals("NO,")){
                     showMessage("要認證信箱唷");
@@ -121,7 +134,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         setTitle("登入");
         setToolbar();
-
+        setNavigationView();
         callbackManager = CallbackManager.Factory.create();
         LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
@@ -236,5 +249,43 @@ public class LoginActivity extends AppCompatActivity {
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
     }
 
-
+    private void setNavigationView(){
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        // Initializing Drawer Layout and ActionBarToggle
+        drawerLayout = (DrawerLayout) findViewById(R.id.login);
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.openDrawer, R.string.closeDrawer);
+        //calling sync state is necessay or else your hamburger icon wont show up
+        actionBarDrawerToggle.syncState();
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            // This method will trigger on item Click of navigation menu
+            @Override
+            public boolean onNavigationItemSelected(MenuItem menuItem) {
+                if(!menuItem.isChecked()) menuItem.setChecked(true);
+                drawerLayout.closeDrawers();
+                switch (menuItem.getItemId()){
+                    case R.id.nav_item_hot:
+                        Toast.makeText(getApplicationContext(),"nav_item_hot",Toast.LENGTH_SHORT).show();
+                        return true;
+                    case R.id.nav_item_love:
+                        Toast.makeText(getApplicationContext(),"nav_item_love",Toast.LENGTH_SHORT).show();
+                        return true;
+                    case R.id.nav_item_create:
+                        Toast.makeText(getApplicationContext(),"nav_item_create",Toast.LENGTH_SHORT).show();
+                        return true;
+                    case R.id.nav_item_calendar:
+                        Toast.makeText(getApplicationContext(),"nav_item_calendar",Toast.LENGTH_SHORT).show();
+                        return true;
+                    case R.id.nav_item_history:
+                        Toast.makeText(getApplicationContext(),"nav_item_history",Toast.LENGTH_SHORT).show();
+                        return true;
+                    case R.id.nav_item_setting:
+                        Toast.makeText(getApplicationContext(),"nav_item_setting",Toast.LENGTH_SHORT).show();
+                        return true;
+                    default:
+                        Toast.makeText(getApplicationContext(),"Somethings Wrong",Toast.LENGTH_SHORT).show();
+                        return true;
+                }
+            }
+        });
+    }
 }

@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private RecyclerView recyclerView;
     private RecyclerViewAdapter mAdapter;
-
+    private Button mHeaderButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,6 +84,15 @@ public class MainActivity extends AppCompatActivity {
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.openDrawer, R.string.closeDrawer);
         //calling sync state is necessay or else your hamburger icon wont show up
         actionBarDrawerToggle.syncState();
+        View header=navigationView.getHeaderView(0);
+        mHeaderButton = (Button)header.findViewById(R.id.headerLoginButton);
+        mHeaderButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                showMessage("login!");
+                Intent intent = new Intent(MainActivity.this,LoginActivity.class);
+                startActivity(intent);
+            }
+        });
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             // This method will trigger on item Click of navigation menu
             @Override
@@ -91,10 +100,6 @@ public class MainActivity extends AppCompatActivity {
                 if(!menuItem.isChecked()) menuItem.setChecked(true);
                 drawerLayout.closeDrawers();
                 switch (menuItem.getItemId()){
-                    case R.id.nav_item_login:
-                        Toast.makeText(getApplicationContext(),"login",Toast.LENGTH_SHORT).show();
-                        jumpToActivity(MainActivity.this,LoginActivity.class);
-                        return true;
                     case R.id.nav_item_hot:
                         Toast.makeText(getApplicationContext(),"nav_item_hot",Toast.LENGTH_SHORT).show();
                         return true;
@@ -121,9 +126,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void onClick(){
-        jumpToActivity(MainActivity.this,LoginActivity.class);
-    }
 
     private void jumpToActivity(Context ct, Class<?> lt){
 
@@ -133,5 +135,8 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    private void showMessage(String msg){
+        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+    }
 
 }

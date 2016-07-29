@@ -1,13 +1,11 @@
-package com.roger.tinychief.adapter;
+package com.roger.tinychief.widget.recycler;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View.OnClickListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.roger.tinychief.R;
 
@@ -34,7 +32,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         public TextView mTextView;
         public ViewHolder(View v) {
             super(v);
-            mTextView = (TextView) v.findViewById(R.id.recy_txt);
+            mTextView = (TextView) v.findViewById(R.id.recy_author_txt);
         }
     }
 

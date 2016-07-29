@@ -1,19 +1,14 @@
 package com.roger.tinychief.activity;
 
-import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response.ErrorListener;
@@ -22,7 +17,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.roger.tinychief.R;
 import com.roger.tinychief.util.MD5;
-import com.roger.tinychief.volleymgr.NetworkManager;
+import com.roger.tinychief.util.NetworkManager;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

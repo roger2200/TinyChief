@@ -8,7 +8,7 @@ Vuforia is a trademark of PTC Inc., registered in the United States and other
 countries.
 ===============================================================================*/
 
-package com.roger.tinychief.ar;
+package com.roger.tinychief.activity;
 
 import android.Manifest;
 import android.app.Activity;
@@ -36,6 +36,10 @@ import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import com.roger.tinychief.ar.ArControl;
+import com.roger.tinychief.ar.ArException;
+import com.roger.tinychief.ar.ArRenderer;
+import com.roger.tinychief.ar.ArSession;
 import com.roger.tinychief.ar.menu.ArMenu;
 import com.roger.tinychief.ar.menu.ArMenuGroup;
 import com.roger.tinychief.ar.menu.ArMenuInterface;
@@ -57,7 +61,7 @@ import com.roger.tinychief.R;
 import java.util.ArrayList;
 import java.util.Vector;
 
-public class ImageTargets extends Activity implements ArControl, ArMenuInterface {
+public class ArActivity extends Activity implements ArControl, ArMenuInterface {
     private static final String LOGTAG = "ImageTargets";
     private static final int CAMERA_REQUEST_CODE = 1;
 
@@ -71,7 +75,7 @@ public class ImageTargets extends Activity implements ArControl, ArMenuInterface
     // Our OpenGL view:
     private ArGLView mGlView;
     // Our renderer:
-    private ImageTargetRenderer mRenderer;
+    private ArRenderer mRenderer;
     private GestureDetector mGestureDetector;
     // The textures we will use for rendering:
     private Vector<Texture> mTextures;
@@ -82,7 +86,7 @@ public class ImageTargets extends Activity implements ArControl, ArMenuInterface
     private View mFlashOptionView;
     private RelativeLayout mUILayout;
     private ArMenu mArMenu;
-    LoadingDialogHandler loadingDialogHandler = new LoadingDialogHandler(this);
+    public LoadingDialogHandler loadingDialogHandler = new LoadingDialogHandler(this);
     // Alert Dialog used to display SDK errors
     private AlertDialog mErrorDialog;
     boolean mIsDroidDevice = false;
@@ -276,7 +280,7 @@ public class ImageTargets extends Activity implements ArControl, ArMenuInterface
         mGlView = new ArGLView(this);
         mGlView.init(translucent, depthSize, stencilSize);
 
-        mRenderer = new ImageTargetRenderer(this, vuforiaAppSession);
+        mRenderer = new ArRenderer(this, vuforiaAppSession);
         mRenderer.setTextures(mTextures);
         mGlView.setRenderer(mRenderer);
 
@@ -399,7 +403,7 @@ public class ImageTargets extends Activity implements ArControl, ArMenuInterface
                     mErrorDialog.dismiss();
 
                 // Generates an Alert Dialog to show the error message
-                AlertDialog.Builder builder = new AlertDialog.Builder(ImageTargets.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(ArActivity.this);
                 builder.setMessage(errorMessage).setTitle(getString(R.string.INIT_ERROR)).setCancelable(false).setIcon(0).setPositiveButton(getString(R.string.button_OK), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         finish();

@@ -9,7 +9,7 @@
     android:background="?android:attr/selectableItemBackground"
     card_view:cardCornerRadius="4dp">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -18,14 +18,22 @@
             android:id="@+id/recy_img"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:src="@drawable/curry"
-            android:scaleType="centerCrop"/>
+            android:scaleType="centerCrop"
+            android:src="@drawable/curry"/>
 
         <TextView
-            android:id="@+id/recy_txt"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:textSize="20sp"
-            android:gravity="center"/>
-    </LinearLayout>
+            android:id="@+id/recy_title_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="50sp"
+            android:layout_below="@+id/recy_img"/>
+
+        <TextView
+            android:id="@+id/recy_author_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:layout_toEndOf="@+id/recy_title_txt"
+            android:layout_toRightOf="@+id/recy_title_txt" />
+    </RelativeLayout>
 </android.support.v7.widget.CardView>

@@ -14,6 +14,7 @@ import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.util.Log;
 
+import com.roger.tinychief.activity.ArActivity;
 import com.roger.tinychief.ar.utils.ArUtils;
 import com.roger.tinychief.ar.utils.CubeShaders;
 import com.roger.tinychief.ar.utils.Food;
@@ -34,11 +35,11 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 
-// The renderer class for the ImageTargets sample. 
-public class ImageTargetRenderer implements GLSurfaceView.Renderer {
-    private static final String LOGTAG = "ImageTargetRenderer";
+// The renderer class for the ArActivity sample.
+public class ArRenderer implements GLSurfaceView.Renderer {
+    private static final String LOGTAG = "ArRenderer";
     private ArSession vuforiaAppSession;
-    private ImageTargets mActivity;
+    private ArActivity mActivity;
     private Vector<Texture> mTextures;
     private int shaderProgramID;
     private int vertexHandle;
@@ -47,10 +48,10 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer {
     private int texSampler2DHandle;
     private Food mFood;
     private Renderer mRenderer;
-    boolean mIsActive = false;
+    public boolean mIsActive = false;
     private static final float OBJECT_SCALE_FLOAT = 1;
 
-    public ImageTargetRenderer(ImageTargets activity, ArSession session) {
+    public ArRenderer(ArActivity activity, ArSession session) {
         mActivity = activity;
         vuforiaAppSession = session;
     }

@@ -64,7 +64,7 @@ public class ArMenuGroup {
         mLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
         inflater = LayoutInflater.from(mActivity);
-        mLayout = (LinearLayout) inflater.inflate(R.layout.sample_app_menu_group, null, false);
+        mLayout = (LinearLayout) inflater.inflate(R.layout.menu_group, null, false);
         mLayout.setLayoutParams(new LinearLayout.LayoutParams(width, LinearLayout.LayoutParams.WRAP_CONTENT));
 
         mEntriesTextSize = mActivity.getResources().getDimension(R.dimen.menu_entries_text);
@@ -72,7 +72,7 @@ public class ArMenuGroup {
         mEntriesSidesPadding = (int) mActivity.getResources().getDimension(R.dimen.menu_entries_sides_padding);
         mEntriesUpDownPadding = (int) mActivity.getResources().getDimension(R.dimen.menu_entries_top_down_padding);
         mEntriesUpDownRadioPadding = (int) mActivity.getResources().getDimension(R.dimen.menu_entries_top_down_radio_padding);
-        dividerResource = R.layout.sample_app_menu_group_divider;
+        dividerResource = R.layout.menu_group_divider;
 
         selectorResource = android.R.drawable.list_selector_background;
 
@@ -219,7 +219,7 @@ public class ArMenuGroup {
 
         Drawable selectorDrawable = mActivity.getResources().getDrawable(selectorResource);
 
-        RadioButton newRadioButton = (RadioButton) inflater.inflate(R.layout.sample_app_menu_group_radio_button, null, false);
+        RadioButton newRadioButton = (RadioButton) inflater.inflate(R.layout.menu_group_radio_button, null, false);
         newRadioButton.setText(text);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)

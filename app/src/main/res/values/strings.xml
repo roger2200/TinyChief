@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TinyChief</string>
+    <string name="app_name">智慧料理小當家</string>
     <string name="closeDrawer">Navigation View</string>
     <string name="openDrawer">Navigation View Closed</string>
     <string name="title_activity_cook">CookActivity</string>
@@ -9,7 +9,6 @@
     <string name="facebook_app_id">142160349547528</string>
 
     <!--下面這些是Vuforia的提示信息字串!-->
-    >>>>>>> c4138d3107142e8e26b292895eaae84eab0c60bd
     <string name="UPDATE_ERROR_AUTHORIZATION_FAILED_TITLE">Authorization Error</string>
     <string name="UPDATE_ERROR_PROJECT_SUSPENDED_TITLE">Authorization Error</string>
     <string name="UPDATE_ERROR_NO_NETWORK_CONNECTION_TITLE">Network Unavailable</string>

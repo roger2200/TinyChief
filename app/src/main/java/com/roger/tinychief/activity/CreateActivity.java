@@ -17,19 +17,34 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.JsonRequest;
 import com.roger.tinychief.R;
+import com.roger.tinychief.util.NetworkManager;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CreateActivity extends AppCompatActivity {
     private final String LOGTAG = "CreateActivity";
     //用list儲存材料和步驟的EditText,方便計算有幾筆材料和步驟
     private ArrayList<EditText> mStepEditTextList = new ArrayList<>();
     private ArrayList<EditText> mIiEditTextList = new ArrayList<>();
+    private EditText mEditText;
     private ImageView mImageView;
     private LinearLayout mStepLinearLayout, mIiLinearLayout;
+    private Bitmap mImageBitmap;
     private String picPath;                                         //圖片路徑
 
 
@@ -41,9 +56,25 @@ public class CreateActivity extends AppCompatActivity {
         mStepLinearLayout = (LinearLayout) findViewById(R.id.linearlayout_step);
         mIiLinearLayout = (LinearLayout) findViewById(R.id.linearlayout_ii);
         mImageView = (ImageView) findViewById(R.id.img_create);
+        mEditText = (EditText) findViewById(R.id.edittext_title);
         //加材料和加步驟各執行一次,這樣才有「材料1」和「步驟1」
         addIi(null);
         addStep(null);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            // 取得檔案的 Uri
+            Uri uri = data.getData();
+            if (uri != null) {
+                picPath = getRealPathFromURI(uri);
+                mImageBitmap = loadBitmap(picPath);
+                mImageBitmap = scaleBitmap(mImageBitmap);
+                mImageView.setImageBitmap(mImageBitmap);
+            }
+        }
     }
 
     public void selectPic(View v) {
@@ -51,6 +82,11 @@ public class CreateActivity extends AppCompatActivity {
         intent.setType("image/*");
         Intent destIntent = Intent.createChooser(intent, "選擇圖片");
         startActivityForResult(destIntent, 0);
+    }
+
+    public void selectPicAR(View v){
+        Intent intent = new Intent(v.getContext(), ImgprocessActivity.class);
+        startActivity(intent);
     }
 
     public void addIi(View v) {
@@ -75,6 +111,50 @@ public class CreateActivity extends AppCompatActivity {
         mStepLinearLayout.addView(edittxt);
     }
 
+    public void uploadCookBook(View v) {
+
+        JSONObject jsonObject = new JSONObject();
+        JSONArray jsonArrIi = new JSONArray();
+        JSONArray jsonArrStep = new JSONArray();
+        for (EditText editText : mIiEditTextList)
+            jsonArrIi.put(editText.getText());
+        for (EditText editText : mStepEditTextList)
+            jsonArrStep.put(editText.getText());
+
+        try {
+            jsonObject.put("name", mEditText.getText());
+            jsonObject.put("materials", jsonArrIi);
+            jsonObject.put("materials", jsonArrStep);
+        } catch (JSONException e) {
+            Log.e(LOGTAG, e.getMessage());
+        }
+
+        JsonRequest<JSONObject> jsonRequest = new JsonObjectRequest(Request.Method.POST, "http://10.0.2.2:5000/createCookBook", jsonObject,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d(LOGTAG, "response -> " + response.toString());
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e(LOGTAG, error.getMessage(), error);
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Accept", "application/json");
+                headers.put("Content-Type", "application/json; charset=UTF-8");
+                return headers;
+            }
+        };
+        //這行是把剛才StringRequest裡的工作放入佇列當中,這是volley的語法被包在NetworkManager中
+        NetworkManager.getInstance(this).request(null, jsonRequest);
+        Toast.makeText(this, "哈哈哈哈", Toast.LENGTH_LONG).show();
+    }
+
     //將圖片的Uri轉Path
     private String getRealPathFromURI(Uri contentUri) {
         String[] proj = {MediaStore.Images.Media.DATA};
@@ -89,63 +169,56 @@ public class CreateActivity extends AppCompatActivity {
         return res;
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            // 取得檔案的 Uri
-            Uri uri = data.getData();
-            if (uri != null) {
-                picPath = getRealPathFromURI(uri);
-                mImageView.setImageBitmap(loadBitmap(picPath,true));
-            }
-        }
-    }
-
     //旋轉圖片
     private Bitmap loadBitmap(String path) {
-        return BitmapFactory.decodeFile(path);
+        Bitmap bm = BitmapFactory.decodeFile(path);
+        int digree = 0;
+        ExifInterface exif;                 //enif可以讀取照片中的方向,看是正向還是旋轉90度等
+        try {
+            exif = new ExifInterface(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+            exif = null;
+        }
+        if (exif != null) {
+            //讀取圖片中相機方向資訊
+            int ori = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+            //計算旋轉角度
+            switch (ori) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    digree = 90;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    digree = 180;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    digree = 270;
+                    break;
+                default:
+                    digree = 0;
+                    break;
+            }
+        }
+        if (digree != 0) {
+            //旋轉圖片
+            Matrix m = new Matrix();
+            m.postRotate(digree);
+            bm = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), m, true);
+        }
+        return bm;
     }
 
-    private Bitmap loadBitmap(String path, boolean adjustOritation) {
-        if (!adjustOritation) {
-            return loadBitmap(path);
-        } else {
-            Bitmap bm = loadBitmap(path);
-            int digree = 0;
-            ExifInterface exif;                 //enif可以讀取照片中的方向,看是正向還是旋轉90度等
-            try {
-                exif = new ExifInterface(path);
-            } catch (IOException e) {
-                e.printStackTrace();
-                exif = null;
-            }
-            if (exif != null) {
-                //讀取圖片中相機方向資訊
-                int ori = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
-                //計算旋轉角度
-                switch (ori) {
-                    case ExifInterface.ORIENTATION_ROTATE_90:
-                        digree = 90;
-                        break;
-                    case ExifInterface.ORIENTATION_ROTATE_180:
-                        digree = 180;
-                        break;
-                    case ExifInterface.ORIENTATION_ROTATE_270:
-                        digree = 270;
-                        break;
-                    default:
-                        digree = 0;
-                        break;
-                }
-            }
-            if (digree != 0) {
-                //旋轉圖片
-                Matrix m = new Matrix();
-                m.postRotate(digree);
-                bm = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), m, true);
-            }
-            return bm;
-        }
+    //縮小圖片,圖片太大沒用
+    private Bitmap scaleBitmap(Bitmap bitmap) {
+        Bitmap image = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+        int oldwidth = image.getWidth();
+        int oldheight = image.getHeight();
+        android.graphics.Point size = new android.graphics.Point();
+        getWindowManager().getDefaultDisplay().getSize(size);
+        float scale = size.x / (float) oldwidth;
+        Matrix matrix = new Matrix();
+        matrix.postScale(scale, scale);
+        image = Bitmap.createBitmap(image, 0, 0, oldwidth, oldheight, matrix, true);
+        return image;
     }
 }

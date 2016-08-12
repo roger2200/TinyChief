@@ -3,6 +3,7 @@ package com.roger.tinychief.activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -31,6 +32,7 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -173,6 +175,18 @@ public class ImgprocessActivity extends AppCompatActivity {
     public void proccessImg(View v) {
         ProcessImageTask task = new ProcessImageTask();
         task.execute();
+    }
+
+    public void endActivity(View v){
+        byte[] bitmapdata;
+        Intent intent=new Intent();
+        ByteArrayOutputStream blob = new ByteArrayOutputStream();
+
+        mBitmapImage.compress(Bitmap.CompressFormat.PNG, 0, blob);
+        bitmapdata = blob.toByteArray();
+        intent.putExtra("AR_PIC",bitmapdata);
+        setResult(RESULT_OK,intent);
+        finish();
     }
 
     private Bitmap removeBackground(Bitmap bitmap){

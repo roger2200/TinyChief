@@ -54,21 +54,16 @@ public class RegisterActivity extends AppCompatActivity {
                 TextView text2 = (TextView) findViewById(R.id.textView7);
                 text2.setText(passwords.toString());
 
-                if(text1.getText().length()>3)
-                {
+                if (text1.getText().length() > 3) {
                     showMessage("帳號已被使用!");
-                }
-                else
-                {
+                } else {
                     showMessage("請去認證信箱！");
                     sendemail();
                     checkVerified();
                     finish();
                 }
-            }
-            catch (Exception e)
-            {
-                Log.d("error:",e.getMessage());
+            } catch (Exception e) {
+                Log.d("error:", e.getMessage());
             }
         }
     };
@@ -95,17 +90,16 @@ public class RegisterActivity extends AppCompatActivity {
         input_password = (EditText) findViewById(R.id.input_wd2);
     }
 
-    public void onClickToCheckAccount(View v){
+    public void onClickToCheckAccount(View v) {
         if (input_account.getText().toString().isEmpty() || input_password.getText().toString().isEmpty()) {
             showMessage("please fill all");
-        }
-        else if (input_account.getText().toString().length()<5){
+        } else if (input_account.getText().toString().length() < 5) {
             showMessage("at least input 5 words");
         }
     }
-        //registerButton.setOnClickListener(new OnClickListener(){
+    //registerButton.setOnClickListener(new OnClickListener(){
 
-    public void onClickToRegister(View v){
+    public void onClickToRegister(View v) {
         final String p;
         p = MD5.getMD5(input_password.getText().toString());
         //下面這行是volley的語法,根據第一個參數,決定要執行甚麼工作,這裡是執行POST
@@ -131,25 +125,22 @@ public class RegisterActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
     }
 
-    private void showMessage(String msg){
+    private void showMessage(String msg) {
         Toast.makeText(RegisterActivity.this, msg, Toast.LENGTH_LONG).show();
     }
 
-    private void sendemail(){
+    private void sendemail() {
         StringRequest request3 = new StringRequest(Request.Method.GET, "https://intense-oasis-69003.herokuapp.com/send", mResponseListener, mErrorListener);
         NetworkManager.getInstance(this).request(null, request3);
     }
 
-    private void getAccount(){
+    private void getAccount() {
         StringRequest request2 = new StringRequest(Request.Method.GET, "https://intense-oasis-69003.herokuapp.com/register", mResponseListener, mErrorListener);
         NetworkManager.getInstance(this).request(null, request2);
-        request2.setRetryPolicy(new DefaultRetryPolicy(
-                10000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        request2.setRetryPolicy(new DefaultRetryPolicy(10000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
     }
 
-    private void checkVerified(){
+    private void checkVerified() {
         StringRequest request = new StringRequest(Request.Method.GET, "https://intense-oasis-69003.herokuapp.com/checkedEmail", mResponseListener, mErrorListener);
         NetworkManager.getInstance(this).request(null, request);
     }

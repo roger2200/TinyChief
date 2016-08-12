@@ -40,11 +40,13 @@ import com.facebook.login.widget.LoginButton;
 import com.roger.tinychief.R;
 import com.roger.tinychief.util.MD5;
 import com.roger.tinychief.util.NetworkManager;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import com.facebook.FacebookSdk;
 //import com.google.android.gms.gcm.GoogleCloudMessaging;
 
@@ -53,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
     private Button button01;
-    private Button  registerButton;
+    private Button registerButton;
     private EditText input_ac, input_wd;
     private ProgressDialog mProgress;
     private ImageView img_login;
@@ -61,7 +63,7 @@ public class LoginActivity extends AppCompatActivity {
     private AccessToken accessToken;
     //private UserApplication uapp;
 
-    private final String TAG="Login";
+    private final String TAG = "Login";
 
     private Listener<String> mResponseListener = new Listener<String>() {
         public void onResponse(String string) {
@@ -87,31 +89,27 @@ public class LoginActivity extends AppCompatActivity {
                 TextView text2 = (TextView) findViewById(R.id.textView2);
                 text2.setText(checkEmails.toString());
 
-                if(text1.getText().equals(""))
-                {
+                if (text1.getText().equals("")) {
                     showMessage("wrong account or password");
                 }
-                if(text2.getText().equals("OK,"))
-                {
+                if (text2.getText().equals("OK,")) {
                     showMessage("登入成功!");
                     navigationView = (NavigationView) findViewById(R.id.nav_view);
-                    View mHeader=navigationView.getHeaderView(0);
+                    View mHeader = navigationView.getHeaderView(0);
                     TextView name = (TextView) mHeader.findViewById(R.id.mUserName);
                     name.setText(text1.getText());
-                    SharedPreferences remdname=getPreferences(Activity.MODE_PRIVATE);
-                    SharedPreferences.Editor edit=remdname.edit();
+                    SharedPreferences remdname = getPreferences(Activity.MODE_PRIVATE);
+                    SharedPreferences.Editor edit = remdname.edit();
                     edit.putString("name", users.toString());
-                    edit.putString("pass",passwords.toString());
+                    edit.putString("pass", passwords.toString());
                     edit.commit();
-                    Log.d("error",name.toString());
+                    Log.d("error", name.toString());
                 }
-                if(text1.getText().length()>2&&text2.getText().equals("NO,")){
+                if (text1.getText().length() > 2 && text2.getText().equals("NO,")) {
                     showMessage("要認證信箱唷");
                 }
-            }
-            catch (Exception e)
-            {
-                Log.d("error:",e.getMessage());
+            } catch (Exception e) {
+                Log.d("error:", e.getMessage());
             }
         }
     };
@@ -122,7 +120,6 @@ public class LoginActivity extends AppCompatActivity {
             Log.e("Error", error.toString());
         }
     };
-
 
 
     @Override
@@ -141,19 +138,19 @@ public class LoginActivity extends AppCompatActivity {
             public void onSuccess(LoginResult loginResult) {
                 //accessToken之後或許還會用到 先存起來
                 accessToken = loginResult.getAccessToken();
-                Log.d("FB","access token got.");
+                Log.d("FB", "access token got.");
                 //send request and call graph api
-                GraphRequest request = GraphRequest.newMeRequest(accessToken,new GraphRequest.GraphJSONObjectCallback() {
-                            //當RESPONSE回來的時候
-                            @Override
-                            public void onCompleted(JSONObject object, GraphResponse response) {
-                                //讀出姓名 ID FB個人頁面連結
-                                Log.d("FB","complete");
-                                Log.d("FB",object.optString("name"));
-                                Log.d("FB",object.optString("link"));
-                                Log.d("FB",object.optString("id"));
-                            }
-                        });
+                GraphRequest request = GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
+                    //當RESPONSE回來的時候
+                    @Override
+                    public void onCompleted(JSONObject object, GraphResponse response) {
+                        //讀出姓名 ID FB個人頁面連結
+                        Log.d("FB", "complete");
+                        Log.d("FB", object.optString("name"));
+                        Log.d("FB", object.optString("link"));
+                        Log.d("FB", object.optString("id"));
+                    }
+                });
                 //包入你想要得到的資料 送出request
                 Bundle parameters = new Bundle();
                 parameters.putString("fields", "id,name,link");
@@ -165,7 +162,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onCancel() {
                 // App code
-                Log.d("FB","CANCEL");
+                Log.d("FB", "CANCEL");
                 showMessage("Login Cancel");
             }
 
@@ -174,17 +171,17 @@ public class LoginActivity extends AppCompatActivity {
             public void onError(FacebookException exception) {
                 // App code
 
-                Log.d("FB",exception.toString());
+                Log.d("FB", exception.toString());
             }
 
         });
-        input_ac = (EditText)findViewById(R.id.editText);
-        input_wd = (EditText)findViewById(R.id.editText2);
+        input_ac = (EditText) findViewById(R.id.editText);
+        input_wd = (EditText) findViewById(R.id.editText2);
 
-        registerButton = (Button)findViewById(R.id.registerButton2);
-        registerButton.setOnClickListener(new OnClickListener(){
-            public void onClick(View v){
-                Intent intent = new Intent(LoginActivity.this,RegisterActivity.class);
+        registerButton = (Button) findViewById(R.id.registerButton2);
+        registerButton.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
                 startActivity(intent);
                 finish();
             }
@@ -226,11 +223,11 @@ public class LoginActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
     }
 
-    private void showMessage(String msg){
+    private void showMessage(String msg) {
         Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_LONG).show();
     }
 
-    private void jumpToActivity(Context ct,Class<?> lt){
+    private void jumpToActivity(Context ct, Class<?> lt) {
 
         Intent intent = new Intent();
         intent.setClass(ct, lt);
@@ -241,46 +238,43 @@ public class LoginActivity extends AppCompatActivity {
     private void getAccount() {
         StringRequest request2 = new StringRequest(Request.Method.GET, "https://intense-oasis-69003.herokuapp.com/api/test", mResponseListener, mErrorListener);
         NetworkManager.getInstance(this).request(null, request2);
-        request2.setRetryPolicy(new DefaultRetryPolicy(
-                10000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        request2.setRetryPolicy(new DefaultRetryPolicy(10000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
     }
 
-    private void setNavigationView(){
+    private void setNavigationView() {
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         // Initializing Drawer Layout and ActionBarToggle
         drawerLayout = (DrawerLayout) findViewById(R.id.login);
-        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.openDrawer, R.string.closeDrawer);
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.openDrawer, R.string.closeDrawer);
         //calling sync state is necessay or else your hamburger icon wont show up
         actionBarDrawerToggle.syncState();
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             // This method will trigger on item Click of navigation menu
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
-                if(!menuItem.isChecked()) menuItem.setChecked(true);
+                if (!menuItem.isChecked()) menuItem.setChecked(true);
                 drawerLayout.closeDrawers();
-                switch (menuItem.getItemId()){
+                switch (menuItem.getItemId()) {
                     case R.id.nav_item_hot:
-                        Toast.makeText(getApplicationContext(),"nav_item_hot",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "nav_item_hot", Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.nav_item_love:
-                        Toast.makeText(getApplicationContext(),"nav_item_love",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "nav_item_love", Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.nav_item_create:
-                        Toast.makeText(getApplicationContext(),"nav_item_create",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "nav_item_create", Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.nav_item_calendar:
-                        Toast.makeText(getApplicationContext(),"nav_item_calendar",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "nav_item_calendar", Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.nav_item_history:
-                        Toast.makeText(getApplicationContext(),"nav_item_history",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "nav_item_history", Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.nav_item_setting:
-                        Toast.makeText(getApplicationContext(),"nav_item_setting",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "nav_item_setting", Toast.LENGTH_SHORT).show();
                         return true;
                     default:
-                        Toast.makeText(getApplicationContext(),"Somethings Wrong",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Somethings Wrong", Toast.LENGTH_SHORT).show();
                         return true;
                 }
             }

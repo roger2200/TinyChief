@@ -17,6 +17,11 @@
         android:layout_height="wrap_content"
         android:onClick="proccessImg"
         android:text="處理圖片" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="endActivity"
+        android:text="完成" />
 
     <ImageView
         android:id="@+id/imgview"

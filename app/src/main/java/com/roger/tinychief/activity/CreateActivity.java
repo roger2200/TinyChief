@@ -12,7 +12,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -38,13 +37,14 @@ import java.util.Map;
 
 public class CreateActivity extends AppCompatActivity {
     private final String LOGTAG = "CreateActivity";
+    private final int REQUEST_PIC = 0, REQUEST_AR_PIC = 1;
     //用list儲存材料和步驟的EditText,方便計算有幾筆材料和步驟
-    private ArrayList<EditText> mStepEditTextList = new ArrayList<>();
-    private ArrayList<EditText> mIiEditTextList = new ArrayList<>();
-    private EditText mEditText;
+    private ArrayList<EditText> mStepEditTextList = new ArrayList<>();              //要傳給資料庫
+    private ArrayList<EditText> mIiEditTextList = new ArrayList<>();                //要傳給資料庫
+    private EditText mEditText;                                                    //要傳給資料庫
     private ImageView mImageView;
     private LinearLayout mStepLinearLayout, mIiLinearLayout;
-    private Bitmap mImageBitmap;
+    private Bitmap mImgBitmap, mArImgBitmap;                                    //要傳給資料庫
     private String picPath;                                         //圖片路徑
 
 
@@ -66,13 +66,17 @@ public class CreateActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
-            // 取得檔案的 Uri
-            Uri uri = data.getData();
-            if (uri != null) {
+            if (requestCode == REQUEST_PIC) {
+                // 取得檔案的 Uri
+                Uri uri = data.getData();
                 picPath = getRealPathFromURI(uri);
-                mImageBitmap = loadBitmap(picPath);
-                mImageBitmap = scaleBitmap(mImageBitmap);
-                mImageView.setImageBitmap(mImageBitmap);
+                mImgBitmap = loadBitmap(picPath);
+                mImgBitmap = scaleBitmap(mImgBitmap);
+                mImageView.setImageBitmap(mImgBitmap);
+
+            } else if (requestCode == REQUEST_AR_PIC) {
+                byte[] bitmapData = data.getByteArrayExtra("AR_PIC");
+                mArImgBitmap = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.length);
             }
         }
     }
@@ -81,12 +85,12 @@ public class CreateActivity extends AppCompatActivity {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
         Intent destIntent = Intent.createChooser(intent, "選擇圖片");
-        startActivityForResult(destIntent, 0);
+        startActivityForResult(destIntent, REQUEST_PIC);
     }
 
-    public void selectPicAR(View v){
+    public void selectPicAR(View v) {
         Intent intent = new Intent(v.getContext(), ImgprocessActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_AR_PIC);
     }
 
     public void addIi(View v) {

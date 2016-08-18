@@ -5,10 +5,12 @@ import android.view.LayoutInflater;
 import android.view.View.OnClickListener;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.roger.tinychief.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,23 +18,28 @@ import java.util.List;
  */
 //要讓RecycleView顯示出資料,必須先使用Adapter將個別資料的內容處理好
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> implements OnClickListener {
-    private List<String> mData;
+    private ArrayList<RecyclerViewItem> mData;
     private OnRecyclerViewItemClickListener mOnItemClickListener = null;
 
-    public RecyclerViewAdapter(List<String> data) {
+    public RecyclerViewAdapter(ArrayList<RecyclerViewItem> data) {
         mData = data;
     }
 
     public interface OnRecyclerViewItemClickListener {
-        void onItemClick(View view , String data);
+        void onItemClick(String v);
     }
 
     //自訂的holder,負責處理每個item裡的元素
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView mTextView;
+        public TextView mTitleTextView;
+        public TextView mAuthotTextView;
+        public ImageView mImageView;
+
         public ViewHolder(View v) {
             super(v);
-            mTextView = (TextView) v.findViewById(R.id.recy_author_txt);
+            mTitleTextView = (TextView) v.findViewById(R.id.recy_title_txt);
+            mAuthotTextView = (TextView) v.findViewById(R.id.recy_author_txt);
+            mImageView = (ImageView) v.findViewById(R.id.recy_img);
         }
     }
 
@@ -46,14 +53,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.mTextView.setText(mData.get(position));
-        holder.itemView.setTag(mData.get(position));
+        holder.mTitleTextView.setText(mData.get(position).getTitle());
+        holder.mImageView.setImageBitmap(mData.get(position).getBitmap());
+        holder.itemView.setTag(mData.get(position).getTitle());
     }
 
     @Override
     public void onClick(View v){
         if (mOnItemClickListener != null) {
-            mOnItemClickListener.onItemClick(v,(String)v.getTag());
+            mOnItemClickListener.onItemClick(v.getTag().toString());
         }
     }
 

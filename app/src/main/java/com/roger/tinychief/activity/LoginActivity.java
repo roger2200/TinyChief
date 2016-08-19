@@ -54,11 +54,8 @@ public class LoginActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
-    private Button button01;
     private Button registerButton;
     private EditText input_ac, input_wd;
-    private ProgressDialog mProgress;
-    private ImageView img_login;
     CallbackManager callbackManager;
     private AccessToken accessToken;
     //private UserApplication uapp;
@@ -170,7 +167,6 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onError(FacebookException exception) {
                 // App code
-
                 Log.d("FB", exception.toString());
             }
 
@@ -205,7 +201,7 @@ public class LoginActivity extends AppCompatActivity {
                 //執行POST時,後面要加上要傳的資料,格式可以是json,ajax或是像下面的Map
                 @Override
                 public Map<String, String> getParams() {
-                    Map<String, String> MyData = new HashMap<String, String>();
+                    Map<String, String> MyData = new HashMap<>();
                     MyData.put("User", String.valueOf(input_ac.getText()));//用Map放資料,第一個參數是名稱,第二個是值,到時候在server端用名稱去取出值即可
                     MyData.put("Password", p);
                     return MyData;

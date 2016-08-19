@@ -1,23 +1,15 @@
 package com.roger.tinychief.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -58,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setTitle("熱門食譜");
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.main_drawer_layout);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.main_drawerlayout);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
 
         mNavigationViewSetup = new NavigationViewSetup(this, mDrawerLayout, mToolbar);
@@ -75,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getData() {
-        StringRequest request = new StringRequest(Request.Method.POST, "https://tinny-chief.herokuapp.com/getSimpleCookBook",
+        StringRequest request = new StringRequest(Request.Method.POST, "https://tiny-chief.herokuapp.com/getSimpleCookBook",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String string) {
@@ -114,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setRecycleView() {
-        mRecyclerView = (PullLoadMoreRecyclerView) findViewById(R.id.mian_recy_view);
+        mRecyclerView = (PullLoadMoreRecyclerView) findViewById(R.id.main_recyview);
         mRecyclerView.setLinearLayout();
         mRecyclerView.setPullRefreshEnable(false);
         mRecyclerView.setFooterViewText("讀取中...");
@@ -133,7 +125,9 @@ public class MainActivity extends AppCompatActivity {
         mAdapter.setOnItemClickListener(new OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(String v) {
-                Toast.makeText(MainActivity.this, v, Toast.LENGTH_SHORT).show();
+                Intent intent=new Intent(MainActivity.this,DetailActivity.class);
+                intent.putExtra("TITLE",v);
+                startActivity(intent);
             }
         });
         mRecyclerView.setAdapter(mAdapter);

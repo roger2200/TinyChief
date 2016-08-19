@@ -1,20 +1,19 @@
 package com.roger.tinychief.activity;
 
 import android.content.Intent;
-import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.provider.MediaStore;
-import android.support.design.widget.NavigationView;
+import android.provider.ContactsContract;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -26,32 +25,40 @@ import com.roger.tinychief.util.NetworkManager;
 import com.roger.tinychief.widget.navigation.NavigationViewSetup;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 //import com.vuforia.ImageTarget;
 
 public class DetailActivity extends AppCompatActivity {
     private Toolbar mToolbar;
     private DrawerLayout mDrawerLayout;
     private NavigationViewSetup mNavigationViewSetup;
+    private TextView mTitleTextView,mIiTextView,mStepTextView;
+    private ImageView mImageView;
+    private String mStrIi,mStrStep;
+    private Bitmap mBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.detail_drawer_layout);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.detail_drawerlayout);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
-
         mNavigationViewSetup = new NavigationViewSetup(this, mDrawerLayout, mToolbar);
         mNavigationViewSetup.setNavigationView();
 
-        TextView cookBookName = (TextView) findViewById(R.id.cookbookName);
-        StringRequest request = new StringRequest(Request.Method.GET, "https://intense-oasis-69003.herokuapp.com/", mResponseListener, mErrorListener);
-        NetworkManager.getInstance(this).request(null, request);
-        request.setRetryPolicy(new DefaultRetryPolicy(10000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        mTitleTextView=(TextView)findViewById(R.id.title_txtview);
+        mIiTextView=(TextView)findViewById(R.id.ii_txtview);
+        mStepTextView=(TextView)findViewById(R.id.step_txtview);
+        mImageView=(ImageView)findViewById(R.id.detail_imageview);
+
         Bundle bundle = this.getIntent().getExtras();
-        setTitle(bundle.getString("DATA"));
-        cookBookName.setText(bundle.getString("DATA"));
+        setTitle(bundle.getString("TITLE"));
+        getCookbook();
     }
 
     public void letCook(View view) {
@@ -61,85 +68,55 @@ public class DetailActivity extends AppCompatActivity {
 
     public void openAR(View view) {
         Intent i = new Intent(view.getContext(), ArActivity.class);
-        i.putExtra("IMAGE_PATH", path);
+        //i.putExtra("IMAGE_PATH", path);
         startActivity(i);
     }
 
-    public void loadImage(View view) {
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("image/*");
-        Intent destIntent = Intent.createChooser(intent, "選擇檔案");
-        startActivityForResult(destIntent, 0);
-    }
-
-    public String getRealPathFromURI(Uri contentUri) {
-        String[] proj = {MediaStore.Images.Media.DATA};
-        Cursor actualimagecursor = managedQuery(contentUri, proj, null, null, null);
-        int actual_image_column_index = actualimagecursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        actualimagecursor.moveToFirst();
-        String img_path = actualimagecursor.getString(actual_image_column_index);
-        return img_path;
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        super.onActivityResult(requestCode, resultCode, data);
-
-        // 有選擇檔案
-        if (resultCode == RESULT_OK) {
-            // 取得檔案的 Uri
-            Uri uri = data.getData();
-            if (uri != null) {
-                path = getRealPathFromURI(uri);
-            }
-        }
-    }
-
-    private Response.Listener<String> mResponseListener = new Response.Listener<String>() {
-        public void onResponse(String string) {
-            int j = 1;
-            int k = 1;
-            TextView text1 = (TextView) findViewById(R.id.material);
-            StringBuilder materials = new StringBuilder();
-            TextView text2 = (TextView) findViewById(R.id.step);
-            StringBuilder steps = new StringBuilder();
-            try {
-                JSONArray ary = new JSONArray(string);
-                for (int i = 0; i < ary.length(); i++) {
-                    JSONObject json = ary.getJSONObject(i);
-                    try {
-                        while (json.getString("material_" + j) != null) {
-                            String material = json.getString("material_" + j);
-                            materials.append(j + "." + material + "\r\n");
-                            j++;
+    public void getCookbook() {
+        StringRequest request = new StringRequest(Request.Method.POST, "https://tiny-chief.herokuapp.com/getDetailCookBook",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String string) {
+                        try {
+                            String str="";
+                            JSONObject json = new JSONArray(string).getJSONObject(0);
+                            JSONArray arrayIi= new JSONArray(json.getString("ingredients"));
+                            JSONArray arrayStep= new JSONArray(json.getString("steps"));
+                            mBitmap=getImageString(json.getString("image"));
+                            mImageView.setImageBitmap(mBitmap);
+                            mTitleTextView.setText(json.getString("title")+"\n");
+                            for(int i=0;i<arrayIi.length();i++)
+                                str+=arrayIi.getString(i)+"\n";
+                            mIiTextView.setText(str);
+                            str="";
+                            for(int i=0;i<arrayStep.length();i++)
+                                str+=arrayStep.getString(i)+"\n\n";
+                            mStepTextView.setText(str);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                    } catch (Exception e) {
-                        Log.d("error:", e.getMessage());
-                    } finally {
-                        k = 1;
-                        text1.setText(materials.toString());
                     }
-                    while (json.getString("step_" + j) != null) {
-                        String step = json.getString("step_" + k);
-                        steps.append(k + "." + "\r\n" + step + "\r\n");
-                        k++;
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        Log.e("Error", String.valueOf(volleyError));
                     }
-                }
-            } catch (Exception e) {
-                Log.d("error:", e.getMessage());
-            } finally {
-                j = 1;
-                text2.setText(steps.toString());
+                }) {
+            @Override
+            public Map<String, String> getParams() {
+                Map<String, String> MyData = new HashMap<String, String>();
+                MyData.put("title", (String) getTitle());
+                return MyData;
             }
-        }
-    };
-    private String path;
+        };
+        request.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        NetworkManager.getInstance(this).request(null, request);
+    }
 
-    private Response.ErrorListener mErrorListener = new Response.ErrorListener() {
-        @Override
-        public void onErrorResponse(VolleyError error) {
-            Log.e("Error", error.toString());
-        }
-    };
+    //將Base64字串轉圖片
+    public Bitmap getImageString(String str) {
+        byte[] decodedBytes = Base64.decode(str, Base64.DEFAULT);
+        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+    }
 }

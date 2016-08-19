@@ -10,7 +10,6 @@ public class RecyclerViewItem {
     private String mAuthor, mTitle;
     private Bitmap mBitmap;
 
-
     public RecyclerViewItem(String author, String title,Bitmap bitmap) {
         this.mAuthor=author;
         this.mTitle=title;

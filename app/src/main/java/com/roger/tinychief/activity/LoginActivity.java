@@ -201,7 +201,7 @@ public class LoginActivity extends AppCompatActivity {
             final String p;
             p = MD5.getMD5(input_wd.getText().toString());
             //下面這行是volley的語法,根據第一個參數,決定要執行甚麼工作,這裡是執行POST
-            StringRequest request = new StringRequest(Request.Method.POST, "https://intense-oasis-69003.herokuapp.com/api/test", mResponseListener, mErrorListener) {
+            StringRequest request = new StringRequest(Request.Method.POST, "https://tiny-chief.herokuapp.com/api/test", mResponseListener, mErrorListener) {
                 //執行POST時,後面要加上要傳的資料,格式可以是json,ajax或是像下面的Map
                 @Override
                 public Map<String, String> getParams() {

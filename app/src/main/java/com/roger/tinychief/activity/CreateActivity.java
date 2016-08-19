@@ -133,7 +133,7 @@ public class CreateActivity extends AppCompatActivity {
             Log.e(LOGTAG, e.getMessage());
         }
 
-        JsonRequest<JSONObject> jsonRequest = new JsonObjectRequest(Request.Method.POST, "http://10.0.2.2:5000/createCookBook", jsonObject,
+        JsonRequest<JSONObject> jsonRequest = new JsonObjectRequest(Request.Method.POST, "https://tiny-chief.herokuapp.com/createCookBook", jsonObject,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {

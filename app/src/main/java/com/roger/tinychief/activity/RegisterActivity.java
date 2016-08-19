@@ -103,7 +103,7 @@ public class RegisterActivity extends AppCompatActivity {
         final String p;
         p = MD5.getMD5(input_password.getText().toString());
         //下面這行是volley的語法,根據第一個參數,決定要執行甚麼工作,這裡是執行POST
-        StringRequest request = new StringRequest(Request.Method.POST, "https://intense-oasis-69003.herokuapp.com/register", mResponseListener, mErrorListener) {
+        StringRequest request = new StringRequest(Request.Method.POST, "https://tiny-chief.herokuapp.com/register", mResponseListener, mErrorListener) {
             //執行POST時,後面要加上要傳的資料,格式可以是json,ajax或是像下面的Map
             @Override
             public Map<String, String> getParams() {
@@ -130,18 +130,18 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void sendemail() {
-        StringRequest request3 = new StringRequest(Request.Method.GET, "https://intense-oasis-69003.herokuapp.com/send", mResponseListener, mErrorListener);
+        StringRequest request3 = new StringRequest(Request.Method.GET, "https://tiny-chief.herokuapp.com/send", mResponseListener, mErrorListener);
         NetworkManager.getInstance(this).request(null, request3);
     }
 
     private void getAccount() {
-        StringRequest request2 = new StringRequest(Request.Method.GET, "https://intense-oasis-69003.herokuapp.com/register", mResponseListener, mErrorListener);
+        StringRequest request2 = new StringRequest(Request.Method.GET, "https://tiny-chief.herokuapp.com/register", mResponseListener, mErrorListener);
         NetworkManager.getInstance(this).request(null, request2);
         request2.setRetryPolicy(new DefaultRetryPolicy(10000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
     }
 
     private void checkVerified() {
-        StringRequest request = new StringRequest(Request.Method.GET, "https://intense-oasis-69003.herokuapp.com/checkedEmail", mResponseListener, mErrorListener);
+        StringRequest request = new StringRequest(Request.Method.GET, "https://tiny-chief.herokuapp.com/checkedEmail", mResponseListener, mErrorListener);
         NetworkManager.getInstance(this).request(null, request);
     }
 }

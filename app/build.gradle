@@ -36,9 +36,9 @@ repositories {
 //在Dependencies裡加入會使用到的Library這樣才能在app裡面用
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    //加入vuforia的jar檔
-    compile files("$VUFORIA_SDK_DIR/$JAR_DIR/Vuforia.jar")
     testCompile 'junit:junit:4.12'
+    //加入vuforia的jar檔
+    compile files('libs/vuforia-sdk-android-5-5-9/build/java/vuforia/Vuforia.jar')
     compile project(':openCVLibrary310')
     compile 'com.android.support:appcompat-v7:24.1.1'
     compile 'com.android.support:design:24.1.1'
@@ -47,4 +47,5 @@ dependencies {
     compile 'com.wuxiaolong.pullloadmorerecyclerview:library:1.0.4'
     compile 'com.mcxiaoke.volley:library:1.0.19'
     compile 'com.facebook.android:facebook-android-sdk:[4,5)'
+    compile 'com.github.bumptech.glide:volley-integration:1.4.0'
 }

@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
+import android.widget.ImageView;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -25,7 +26,6 @@ import com.roger.tinychief.widget.recycler.RecyclerViewItem;
 import com.wuxiaolong.pullloadmorerecyclerview.PullLoadMoreRecyclerView;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -33,14 +33,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "MainActivity";
+
     private Toolbar mToolbar;
     private NavigationView mNavigationView;
     private DrawerLayout mDrawerLayout;
     private PullLoadMoreRecyclerView mRecyclerView;
     private RecyclerViewAdapter mAdapter;
     private NavigationViewSetup mNavigationViewSetup;
-    private int skipCount=0;
-    private boolean init=true;
+    private int skipCount = 0;
+    private boolean init = true;
 
     ArrayList<RecyclerViewItem> mDataset = new ArrayList<>();
 
@@ -67,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getData() {
-        StringRequest request = new StringRequest(Request.Method.POST, "https://tiny-chief.herokuapp.com/getSimpleCookBook",
+        StringRequest request = new StringRequest(Request.Method.POST, "https://tinny-chief.herokuapp.com/getSimpleCookBook",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String string) {
@@ -75,15 +77,15 @@ public class MainActivity extends AppCompatActivity {
                             JSONArray array = new JSONArray(string);
                             for (int i = 0; i < array.length(); i++) {
                                 JSONObject json = array.getJSONObject(i);
-                                mDataset.add(new RecyclerViewItem("Roger", json.getString("title"), getImageString(json.getString("image"))));
+                                mDataset.add(new RecyclerViewItem("Roger", json.getString("title"), json.getString("image")));
                                 Log.e("Response title", json.getString("title"));
                             }
-                            if(init) {
+                            if (init) {
                                 setRecycleView();
-                                init=false;
+                                init = false;
                             }
                             mRecyclerView.setPullLoadMoreCompleted();
-                        } catch (JSONException e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -113,7 +115,8 @@ public class MainActivity extends AppCompatActivity {
 
         mRecyclerView.setOnPullLoadMoreListener(new PullLoadMoreRecyclerView.PullLoadMoreListener() {
             @Override
-            public void onRefresh() {}
+            public void onRefresh() {
+            }
 
             @Override
             public void onLoadMore() {
@@ -125,8 +128,8 @@ public class MainActivity extends AppCompatActivity {
         mAdapter.setOnItemClickListener(new OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(String v) {
-                Intent intent=new Intent(MainActivity.this,DetailActivity.class);
-                intent.putExtra("TITLE",v);
+                Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+                intent.putExtra("TITLE", v);
                 startActivity(intent);
             }
         });

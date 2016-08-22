@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.roger.tinychief.R;
 
 import java.util.ArrayList;
@@ -54,12 +55,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.mTitleTextView.setText(mData.get(position).getTitle());
-        holder.mImageView.setImageBitmap(mData.get(position).getBitmap());
+        Glide.with(holder.mImageView.getContext()).load(mData.get(position).getUrl()).centerCrop().fitCenter().into(holder.mImageView);
         holder.itemView.setTag(mData.get(position).getTitle());
     }
 
     @Override
-    public void onClick(View v){
+    public void onClick(View v) {
         if (mOnItemClickListener != null) {
             mOnItemClickListener.onItemClick(v.getTag().toString());
         }

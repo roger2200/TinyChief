@@ -10,7 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
-import android.widget.ImageView;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -33,7 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String TAG = "MainActivity";
+    private static final int LOAD_MOUNT = 10;//每次讀取的資料筆數,要和server相同
 
     private Toolbar mToolbar;
     private NavigationView mNavigationView;
@@ -41,8 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private PullLoadMoreRecyclerView mRecyclerView;
     private RecyclerViewAdapter mAdapter;
     private NavigationViewSetup mNavigationViewSetup;
-    private int skipCount = 0;
-    private boolean init = true;
+    private int skipCount = 1;
 
     ArrayList<RecyclerViewItem> mDataset = new ArrayList<>();
 
@@ -51,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setTitle("熱門食譜");
+        setInitData();
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.main_drawerlayout);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -58,8 +57,6 @@ public class MainActivity extends AppCompatActivity {
         mNavigationViewSetup = new NavigationViewSetup(this, mDrawerLayout, mToolbar);
         mNavigationView = mNavigationViewSetup.setNavigationView();
         mNavigationView.getMenu().getItem(0).setChecked(true);
-
-        getData();
     }
 
     @Override
@@ -68,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         mNavigationView.getMenu().getItem(0).setChecked(true);
     }
 
-    public void getData() {
+    public void getDataFromSever() {
         StringRequest request = new StringRequest(Request.Method.POST, "https://tinny-chief.herokuapp.com/getSimpleCookBook",
                 new Response.Listener<String>() {
                     @Override
@@ -77,12 +74,7 @@ public class MainActivity extends AppCompatActivity {
                             JSONArray array = new JSONArray(string);
                             for (int i = 0; i < array.length(); i++) {
                                 JSONObject json = array.getJSONObject(i);
-                                mDataset.add(new RecyclerViewItem("Roger", json.getString("title"), json.getString("image")));
-                                Log.e("Response title", json.getString("title"));
-                            }
-                            if (init) {
-                                setRecycleView();
-                                init = false;
+                                mDataset.add(new RecyclerViewItem(json.getString("_id"),json.getJSONObject("author").getString("name"), json.getString("title"), json.getString("image")));
                             }
                             mRecyclerView.setPullLoadMoreCompleted();
                         } catch (Exception e) {
@@ -103,7 +95,6 @@ public class MainActivity extends AppCompatActivity {
                 return MyData;
             }
         };
-        request.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         NetworkManager.getInstance(this).request(null, request);
     }
 
@@ -120,25 +111,30 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onLoadMore() {
-                getData();
+                getDataFromSever();
             }
         });
 
         mAdapter = new RecyclerViewAdapter(mDataset);
         mAdapter.setOnItemClickListener(new OnRecyclerViewItemClickListener() {
             @Override
-            public void onItemClick(String v) {
+            public void onItemClick(String string) {
                 Intent intent = new Intent(MainActivity.this, DetailActivity.class);
-                intent.putExtra("TITLE", v);
+                intent.putExtra("ID", string);
                 startActivity(intent);
             }
         });
         mRecyclerView.setAdapter(mAdapter);
     }
 
-    //將Base64字串轉圖片
-    public Bitmap getImageString(String str) {
-        byte[] decodedBytes = Base64.decode(str, Base64.DEFAULT);
-        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+    //取得並設定SplashActivity傳來的資料
+    private void setInitData() {
+        Bundle bundle = this.getIntent().getExtras();
+        String[][] data = new String[LOAD_MOUNT][];
+        for (int i = 0; i < data.length; i++) {
+            data[i] = bundle.getStringArray("DATA" + i);
+            mDataset.add(new RecyclerViewItem(data[i][0], data[i][1], data[i][2],data[i][3]));
+        }
+        setRecycleView();
     }
 }

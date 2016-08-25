@@ -12,7 +12,6 @@ import com.bumptech.glide.Glide;
 import com.roger.tinychief.R;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Roger on 4/24/2016.
@@ -33,13 +32,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     //自訂的holder,負責處理每個item裡的元素
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView mTitleTextView;
-        public TextView mAuthotTextView;
+        public TextView mAuthorTextView;
         public ImageView mImageView;
 
         public ViewHolder(View v) {
             super(v);
             mTitleTextView = (TextView) v.findViewById(R.id.recy_title_txt);
-            mAuthotTextView = (TextView) v.findViewById(R.id.recy_author_txt);
+            mAuthorTextView = (TextView) v.findViewById(R.id.recy_author_txt);
             mImageView = (ImageView) v.findViewById(R.id.recy_img);
         }
     }
@@ -54,9 +53,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        holder.mAuthorTextView.setText(mData.get(position).getAuthor());
         holder.mTitleTextView.setText(mData.get(position).getTitle());
         Glide.with(holder.mImageView.getContext()).load(mData.get(position).getUrl()).centerCrop().fitCenter().into(holder.mImageView);
-        holder.itemView.setTag(mData.get(position).getTitle());
+        holder.itemView.setTag(mData.get(position).getId());
     }
 
     @Override

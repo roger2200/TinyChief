@@ -2,17 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.roger.tinychief">
 
-    <!-- 宣告使用OpenGL ES -->
     <uses-feature android:glEsVersion="0x00020000" />
-    <!-- 宣告使用相機 -->
     <uses-feature android:name="android.hardware.camera" />
-    <!-- 允許使用相機 -->
+
     <uses-permission android:name="android.permission.CAMERA" />
-    <!-- 允許使用網路 -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <!-- 允許確認網路連接類型 -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <!-- 允許讀寫外部儲存空間 -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
@@ -21,33 +16,42 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/BaseAppTheme">
+
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
 
+        <activity android:name=".activity.CookActivity" />
+
+        <activity android:name=".activity.LoginActivity" />
+
+        <activity android:name=".activity.RegisterActivity" />
+
+        <activity android:name=".activity.DetailActivity" />
+
+        <activity android:name=".activity.CreateActivity" />
+
         <activity
             android:name=".activity.MainActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".activity.ImgprocessActivity"
             android:launchMode="singleTask" />
-        <activity android:name=".activity.LoginActivity" />
-        <activity android:name=".activity.RegisterActivity" />
-        <activity android:name=".activity.DetailActivity" />
-        <activity android:name=".activity.CookActivity" />
-        <activity android:name=".activity.CreateActivity" />
+
         <activity android:name=".activity.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".activity.ArActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize"
             android:launchMode="singleTask"
             android:theme="@style/ArAppTheme" />
-        <activity
-            android:name=".activity.ImgprocessActivity"
-            android:launchMode="singleTask" />
     </application>
 
 </manifest>

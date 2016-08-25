@@ -7,12 +7,17 @@ import android.widget.ImageView;
  * Created by Roger on 7/25/2016.
  */
 public class RecyclerViewItem {
-    private String mAuthor, mTitle,mUrl;
+    private String mId,mAuthor, mTitle,mUrl;
 
-    public RecyclerViewItem(String author, String title,String url) {
+    public RecyclerViewItem(String id,String author, String title,String url) {
+        this.mId=id;
         this.mAuthor=author;
         this.mTitle=title;
         this.mUrl=url;
+    }
+
+    public String getId() {
+        return mId;
     }
 
     public String getAuthor() {

@@ -2,6 +2,10 @@ package com.roger.tinychief.activity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,6 +20,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
 import com.roger.tinychief.R;
 import com.roger.tinychief.util.NetworkManager;
 import com.roger.tinychief.widget.navigation.NavigationViewSetup;
@@ -24,10 +29,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public class DetailActivity extends AppCompatActivity {
+    private static final String TAG = "DetailActivity";
+
     private Toolbar mToolbar;
     private DrawerLayout mDrawerLayout;
     private NavigationViewSetup mNavigationViewSetup;
@@ -63,6 +72,7 @@ public class DetailActivity extends AppCompatActivity {
 
     public void openAR(View view) {
         Intent i = new Intent(view.getContext(), ArActivity.class);
+        i.putExtra("IMAGE", convertBitmap2Bytes(mBitmap));
         startActivity(i);
     }
 
@@ -72,13 +82,29 @@ public class DetailActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String string) {
                         try {
-                            JSONObject json = new JSONObject(string);
+                            final JSONObject json = new JSONObject(string);
                             setTitle(json.getString("title"));
-                            Glide.with(getApplicationContext()).load(json.getString("image")).centerCrop().fitCenter().into(mImageView);
+                            new AsyncTask<Void, Void, Void>() {
+                                @Override
+                                protected Void doInBackground(Void... params) {
+                                    try {
+                                        mBitmap = Glide.with(DetailActivity.this).load(json.getString("image")).asBitmap().into(-1, -1).get();
+                                    } catch (final Exception e) {
+                                        Log.e(TAG, e.getMessage());
+                                    }
+                                    return null;
+                                }
+
+                                @Override
+                                protected void onPostExecute(Void dummy) {
+                                    if (mBitmap != null)
+                                        mImageView.setImageBitmap(mBitmap);
+                                }
+                            }.execute();
                             mTitleTextView.setText(json.getString("title"));
                             mIiTextView.setText(json.get("ingredients").toString());
                             mStepTextView.setText(json.get("steps").toString());
-                        } catch (JSONException e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -97,5 +123,11 @@ public class DetailActivity extends AppCompatActivity {
             }
         };
         NetworkManager.getInstance(this).request(null, request);
+    }
+
+    private byte[] convertBitmap2Bytes(Bitmap bm) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        return baos.toByteArray();
     }
 }

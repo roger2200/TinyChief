@@ -91,7 +91,7 @@ public class ArActivity extends Activity implements ArControl, ArMenuInterface {
     private AlertDialog mErrorDialog;
     boolean mIsDroidDevice = false;
 
-    private String path;
+    private byte[] path;
 
     // Called when the activity first starts or the user navigates back to an
     // activity.
@@ -100,7 +100,7 @@ public class ArActivity extends Activity implements ArControl, ArMenuInterface {
         Log.d(LOGTAG, "onCreate");
         super.onCreate(savedInstanceState);
         Bundle bundle = this.getIntent().getExtras();
-        path=bundle.getString("IMAGE_PATH");
+        path=bundle.getByteArray("IMAGE");
         vuforiaAppSession = new ArSession(this);
 
         startLoadingAnimation();
@@ -167,7 +167,7 @@ public class ArActivity extends Activity implements ArControl, ArMenuInterface {
         try {
             BitmapFactory.Options options=new BitmapFactory.Options();
             options.inSampleSize = 6;
-            Bitmap bitmap = BitmapFactory.decodeFile(path,options);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(path, 0, path.length);
             width=bitmap.getWidth();
             height=bitmap.getHeight();
             imgData=new int[width*height * 4];

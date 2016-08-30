@@ -24,6 +24,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.JsonRequest;
 import com.roger.tinychief.R;
+import com.roger.tinychief.imgur.Upload;
 import com.roger.tinychief.util.NetworkManager;
 
 import org.json.JSONArray;
@@ -42,10 +43,10 @@ public class CreateActivity extends AppCompatActivity {
     private ArrayList<EditText> mStepEditTextList = new ArrayList<>();              //要傳給資料庫
     private ArrayList<EditText> mIiEditTextList = new ArrayList<>();                //要傳給資料庫
     private EditText mEditText;                                                    //要傳給資料庫
-    private ImageView mImageView;
+    private ImageView mImageView, mArImageView;
     private LinearLayout mStepLinearLayout, mIiLinearLayout;
-    private Bitmap mImgBitmap, mArImgBitmap;                                    //要傳給資料庫
-    private String picPath;                                         //圖片路徑
+    private Bitmap mImgBitmap, mArBitmap;                                    //要傳給資料庫
+    private Upload mUpload; // Upload object containging image and meta data
 
 
     @Override
@@ -53,9 +54,11 @@ public class CreateActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create);
         setTitle("創建食譜");
+
         mStepLinearLayout = (LinearLayout) findViewById(R.id.linearlayout_step);
         mIiLinearLayout = (LinearLayout) findViewById(R.id.linearlayout_ii);
         mImageView = (ImageView) findViewById(R.id.img_create);
+        mArImageView = (ImageView) findViewById(R.id.img_ar);
         mEditText = (EditText) findViewById(R.id.edittext_title);
         //加材料和加步驟各執行一次,這樣才有「材料1」和「步驟1」
         addIi(null);
@@ -69,14 +72,13 @@ public class CreateActivity extends AppCompatActivity {
             if (requestCode == REQUEST_PIC) {
                 // 取得檔案的 Uri
                 Uri uri = data.getData();
-                picPath = getRealPathFromURI(uri);
-                mImgBitmap = loadBitmap(picPath);
-                mImgBitmap = scaleBitmap(mImgBitmap);
+                String path = getRealPathFromURI(uri);
+                mImgBitmap = loadBitmap(path);
                 mImageView.setImageBitmap(mImgBitmap);
 
             } else if (requestCode == REQUEST_AR_PIC) {
-                byte[] bitmapData = data.getByteArrayExtra("AR_PIC");
-                mArImgBitmap = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.length);
+                mArBitmap = loadBitmap(data.getStringExtra("AR_PIC"));
+                mArImageView.setImageBitmap(mArBitmap);
             }
         }
     }
@@ -210,19 +212,5 @@ public class CreateActivity extends AppCompatActivity {
             bm = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), m, true);
         }
         return bm;
-    }
-
-    //縮小圖片,圖片太大沒用
-    private Bitmap scaleBitmap(Bitmap bitmap) {
-        Bitmap image = bitmap.copy(Bitmap.Config.ARGB_8888, true);
-        int oldwidth = image.getWidth();
-        int oldheight = image.getHeight();
-        android.graphics.Point size = new android.graphics.Point();
-        getWindowManager().getDefaultDisplay().getSize(size);
-        float scale = size.x / (float) oldwidth;
-        Matrix matrix = new Matrix();
-        matrix.postScale(scale, scale);
-        image = Bitmap.createBitmap(image, 0, 0, oldwidth, oldheight, matrix, true);
-        return image;
     }
 }

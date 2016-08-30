@@ -2,6 +2,7 @@ package com.roger.tinychief.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -11,6 +12,7 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -32,16 +34,17 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
-import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ImgprocessActivity extends AppCompatActivity {
     final String TAG = "ImgprocessActivity";
     ImageView mImageView;
-    Bitmap mBitmapImage;
+    Bitmap mBitmap;
     Rect mRect;
     BaseLoaderCallback mLoaderCallback;
     ProgressDialog mProgressDialog;
@@ -76,13 +79,9 @@ public class ImgprocessActivity extends AppCompatActivity {
             // 取得檔案的 Uri
             Uri uri = data.getData();
             if (uri != null) {
-                try {
-                    //把uri當中的圖片縮小符合手機螢幕寬度放入全域變數mBitmapImage
-                    mBitmapImage = scaleBitmap(MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri));
-                    mImageView.setImageBitmap(mBitmapImage);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                //把uri當中的圖片縮小符合手機螢幕寬度放入全域變數mBitmapImage
+                mBitmap = scaleBitmap(BitmapFactory.decodeFile(getRealPathFromURI(uri)));
+                mImageView.setImageBitmap(mBitmap);
             }
         }
     }
@@ -94,10 +93,10 @@ public class ImgprocessActivity extends AppCompatActivity {
                 switch (status) {
                     case LoaderCallbackInterface.SUCCESS:
                         Log.i("OpenCV", "OpenCV loaded successfully");
-                    break;
+                        break;
                     default:
                         super.onManagerConnected(status);
-                    break;
+                        break;
                 }
             }
         };
@@ -129,9 +128,9 @@ public class ImgprocessActivity extends AppCompatActivity {
                         rectPaint.setColor(Color.RED);
                         rectPaint.setStyle(Paint.Style.STROKE);
                         rectPaint.setStrokeWidth(5);
-                        Bitmap tmpBm = Bitmap.createBitmap(mBitmapImage.getWidth(), mBitmapImage.getHeight(), Bitmap.Config.ARGB_8888);
+                        Bitmap tmpBm = Bitmap.createBitmap(mBitmap.getWidth(), mBitmap.getHeight(), Bitmap.Config.ARGB_8888);
                         Canvas tmpCanvas = new Canvas(tmpBm);
-                        tmpCanvas.drawBitmap(mBitmapImage, 0, 0, null);
+                        tmpCanvas.drawBitmap(mBitmap, 0, 0, null);
                         tmpCanvas.drawRect(new RectF((float) mRect.x, (float) mRect.y, motionEvent.getX(), motionEvent.getY()), rectPaint);
                         mImageView.setImageBitmap(tmpBm);
                         return true;
@@ -150,15 +149,15 @@ public class ImgprocessActivity extends AppCompatActivity {
 
         @Override
         protected Integer doInBackground(Integer... integers) {
-            mBitmapImage=removeBackground(mBitmapImage);
-            mBitmapImage=makeBlackTransparent(mBitmapImage);
+            mBitmap = removeBackground(mBitmap);
+            mBitmap = makeBlackTransparent(mBitmap);
             return null;
         }
 
         @Override
-        protected void onPostExecute(Integer result){
+        protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
-            mImageView.setImageBitmap(mBitmapImage);
+            mImageView.setImageBitmap(mBitmap);
             mProgressDialog.dismiss();
         }
     }
@@ -177,19 +176,38 @@ public class ImgprocessActivity extends AppCompatActivity {
         task.execute();
     }
 
-    public void endActivity(View v){
-        byte[] bitmapdata;
-        Intent intent=new Intent();
-        ByteArrayOutputStream blob = new ByteArrayOutputStream();
+    public void endActivity(View v) {
+        try {
+            // 路徑
+            String path = Environment.getExternalStorageDirectory().toString()+ "/Tiny Chief/";
 
-        mBitmapImage.compress(Bitmap.CompressFormat.PNG, 0, blob);
-        bitmapdata = blob.toByteArray();
-        intent.putExtra("AR_PIC",bitmapdata);
-        setResult(RESULT_OK,intent);
-        finish();
+            // 開啟檔案
+            File dir = new File(path);
+            dir.mkdirs();
+
+            path+="tmpImg.png";
+            File file = new File(path);
+            file.createNewFile();
+            file.setWritable(Boolean.TRUE);
+
+            // 將 Bitmap壓縮成指定格式的圖片並寫入檔案串流
+            FileOutputStream out = new FileOutputStream(file);
+            mBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+
+            // 刷新並關閉檔案串流
+            out.flush();
+            out.close();
+
+            Intent intent = new Intent();
+            intent.putExtra("AR_PIC", path);
+            setResult(RESULT_OK, intent);
+            finish();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    private Bitmap removeBackground(Bitmap bitmap){
+    private Bitmap removeBackground(Bitmap bitmap) {
         Mat matImage = new Mat();
         Mat matMask = new Mat();
         Mat matBgdModel = new Mat();
@@ -208,6 +226,8 @@ public class ImgprocessActivity extends AppCompatActivity {
 
         Utils.matToBitmap(matForeground, bitmap);
         bitmap = makeBlackTransparent(bitmap);
+
+        bitmap = Bitmap.createBitmap(bitmap, mRect.x, mRect.y, mRect.width, mRect.height);
 
         return bitmap;
     }
@@ -247,9 +267,23 @@ public class ImgprocessActivity extends AppCompatActivity {
         return output;
     }
 
+    //將圖片的Uri轉Path
+    private String getRealPathFromURI(Uri contentUri) {
+        String[] proj = {MediaStore.Images.Media.DATA};
+        String res = null;
+        Cursor actualimagecursor = getContentResolver().query(contentUri, proj, null, null, null);
+        if (actualimagecursor != null) {
+            int index = actualimagecursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            actualimagecursor.moveToFirst();
+            res = actualimagecursor.getString(index);
+            actualimagecursor.close();
+        }
+        return res;
+    }
+
     //縮小圖片尺寸以符合螢幕寬度
     private Bitmap scaleBitmap(Bitmap bitmap) {
-        Bitmap image = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+        Bitmap image = bitmap.copy(Bitmap.Config.ARGB_4444, true);
         int oldwidth = image.getWidth();
         int oldheight = image.getHeight();
         android.graphics.Point size = new android.graphics.Point();

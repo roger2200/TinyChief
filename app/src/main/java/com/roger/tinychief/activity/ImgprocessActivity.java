@@ -22,6 +22,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.roger.tinychief.R;
+import com.roger.tinychief.util.MyHelper;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
@@ -80,7 +81,9 @@ public class ImgprocessActivity extends AppCompatActivity {
             Uri uri = data.getData();
             if (uri != null) {
                 //把uri當中的圖片縮小符合手機螢幕寬度放入全域變數mBitmapImage
-                mBitmap = scaleBitmap(BitmapFactory.decodeFile(getRealPathFromURI(uri)));
+                String imgPath = MyHelper.getRealPathFromURI(uri,this);
+                mBitmap = BitmapFactory.decodeFile(imgPath);
+                mBitmap=MyHelper.scaleBitmap(mBitmap,this);
                 mImageView.setImageBitmap(mBitmap);
             }
         }
@@ -179,13 +182,14 @@ public class ImgprocessActivity extends AppCompatActivity {
     public void endActivity(View v) {
         try {
             // 路徑
-            String path = Environment.getExternalStorageDirectory().toString()+ "/Tiny Chief/";
+            String path = Environment.getExternalStorageDirectory().toString() + "/Tiny Chief/";
 
             // 開啟檔案
             File dir = new File(path);
-            dir.mkdirs();
+            if (!dir.exists())
+                dir.mkdirs();
 
-            path+="tmpImg.png";
+            path += "tmparImg.png";
             File file = new File(path);
             file.createNewFile();
             file.setWritable(Boolean.TRUE);
@@ -265,33 +269,5 @@ public class ImgprocessActivity extends AppCompatActivity {
         Bitmap output = Bitmap.createBitmap(image.getWidth(), image.getHeight(), Bitmap.Config.ARGB_8888);
         Utils.matToBitmap(dst, output);
         return output;
-    }
-
-    //將圖片的Uri轉Path
-    private String getRealPathFromURI(Uri contentUri) {
-        String[] proj = {MediaStore.Images.Media.DATA};
-        String res = null;
-        Cursor actualimagecursor = getContentResolver().query(contentUri, proj, null, null, null);
-        if (actualimagecursor != null) {
-            int index = actualimagecursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            actualimagecursor.moveToFirst();
-            res = actualimagecursor.getString(index);
-            actualimagecursor.close();
-        }
-        return res;
-    }
-
-    //縮小圖片尺寸以符合螢幕寬度
-    private Bitmap scaleBitmap(Bitmap bitmap) {
-        Bitmap image = bitmap.copy(Bitmap.Config.ARGB_4444, true);
-        int oldwidth = image.getWidth();
-        int oldheight = image.getHeight();
-        android.graphics.Point size = new android.graphics.Point();
-        getWindowManager().getDefaultDisplay().getSize(size);
-        float scale = size.x / (float) oldwidth;
-        Matrix matrix = new Matrix();
-        matrix.postScale(scale, scale);
-        image = Bitmap.createBitmap(image, 0, 0, oldwidth, oldheight, matrix, true);
-        return image;
     }
 }

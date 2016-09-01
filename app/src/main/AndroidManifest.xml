@@ -30,7 +30,9 @@
 
         <activity android:name=".activity.DetailActivity" />
 
-        <activity android:name=".activity.CreateActivity" />
+        <activity
+            android:name=".activity.CreateActivity"
+            android:launchMode="singleTask" />
 
         <activity
             android:name=".activity.MainActivity"

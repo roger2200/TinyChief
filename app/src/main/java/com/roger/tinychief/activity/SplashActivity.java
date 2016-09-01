@@ -54,6 +54,7 @@ public class SplashActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
                         Log.e("Error", String.valueOf(volleyError));
+                        getData(); //失敗重連
                     }
                 }) {
             @Override

@@ -12,6 +12,7 @@ import android.provider.MediaStore;
 
 import com.roger.tinychief.activity.CreateActivity;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
@@ -35,8 +36,7 @@ public class MyHelper {
     }
 
     //縮小圖片尺寸以符合螢幕寬度
-    public static Bitmap scaleBitmap(Bitmap bitmap,Activity activity) {
-        Bitmap image = bitmap.copy(Bitmap.Config.ARGB_4444, true);
+    public static Bitmap scaleBitmap(Bitmap image,Activity activity) {
         int oldwidth = image.getWidth();
         int oldheight = image.getHeight();
         android.graphics.Point size = new android.graphics.Point();
@@ -84,5 +84,11 @@ public class MyHelper {
             bm = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), m, true);
         }
         return bm;
+    }
+
+    public static byte[] convertBitmap2Bytes(Bitmap bm) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.PNG, 0, baos);
+        return baos.toByteArray();
     }
 }

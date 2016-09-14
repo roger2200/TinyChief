@@ -9,7 +9,9 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -65,6 +67,7 @@ public class CreateActivity extends AppCompatActivity {
     private Toolbar mToolbar;
     private NavigationView mNavigationView;
     private NavigationViewSetup mNavigationViewSetup;
+    private CoordinatorLayout mCoordinatorLayout;
 
 
     @Override
@@ -80,6 +83,7 @@ public class CreateActivity extends AppCompatActivity {
         mEditText = (EditText) findViewById(R.id.edittext_title);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.create_drawerlayout);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.create_coordinatorlayout);
 
         mNavigationViewSetup = new NavigationViewSetup(this, mDrawerLayout, mToolbar);
         mNavigationView = mNavigationViewSetup.setNavigationView();
@@ -102,9 +106,9 @@ public class CreateActivity extends AppCompatActivity {
             if (requestCode == REQUEST_PIC) {
                 // 取得檔案的 Uri
                 Uri uri = data.getData();
-                String imgPath = MyHelper.getRealPathFromURI(uri,this);
+                String imgPath = MyHelper.getRealPathFromURI(uri, this);
                 mImgBitmap = MyHelper.rotationBitmap(imgPath);
-                mImgBitmap=MyHelper.scaleBitmap(mImgBitmap,this);
+                mImgBitmap = MyHelper.scaleBitmap(mImgBitmap, this);
                 try {
                     // 路徑
                     String path = Environment.getExternalStorageDirectory().toString() + "/Tiny Chief/";
@@ -137,7 +141,7 @@ public class CreateActivity extends AppCompatActivity {
                 String arPath = data.getStringExtra("AR_PIC");
                 mArFile = new File(arPath);
                 mArBitmap = MyHelper.rotationBitmap(arPath);
-                mArBitmap=MyHelper.scaleBitmap(mArBitmap,this);
+                mArBitmap = MyHelper.scaleBitmap(mArBitmap, this);
                 mArImageView.setImageBitmap(mArBitmap);
             }
         }
@@ -188,7 +192,7 @@ public class CreateActivity extends AppCompatActivity {
         mUpload = new Upload();
 
         mUpload.image = image;
-        mUpload.title = "test123";
+        mUpload.title = mEditText.getText().toString();
         mUpload.description = descript;
         mUpload.albumId = "2lLX3";
     }
@@ -198,13 +202,12 @@ public class CreateActivity extends AppCompatActivity {
         @Override
         public void success(ImageResponse imageResponse, retrofit.client.Response response) {
             Log.d("ImageResponse", imageResponse.data.description);
-            if(imageResponse.data.description.equals("Ar")) {
+            if (imageResponse.data.description.equals("Ar")) {
                 mArUrl = imageResponse.data.link;
 
-                if(!(mArUrl==null||mImgUrl==null))
+                if (!(mArUrl == null || mImgUrl == null))
                     upload2Server();
-            }
-            else if(imageResponse.data.description.equals("Image")) {
+            } else if (imageResponse.data.description.equals("Image")) {
                 mImgUrl = imageResponse.data.link;
                 if (mArFile != null) {
                     createUpload(mArFile, "Ar");
@@ -216,10 +219,10 @@ public class CreateActivity extends AppCompatActivity {
         @Override
         public void failure(RetrofitError error) {
             //Assume we have no connection, since error is null
-            if (error == null) {
+            if (error == null)
                 Log.e("RetrofitError", "No internet connection");
-            }
-            Log.e("RetrofitError", error.getMessage());
+            else
+                Log.e("RetrofitError", error.getMessage());
         }
     }
 
@@ -230,28 +233,28 @@ public class CreateActivity extends AppCompatActivity {
         JSONArray jsonArrStep = new JSONArray();
         try {
             for (EditText editText : mIiEditTextList) {
-                JSONObject jsonO=new JSONObject();
-                jsonO.put("name","雞塊");
-                jsonO.put("amount","496");
-                jsonO.put("unit","g");
+                JSONObject jsonO = new JSONObject();
+                jsonO.put("name", "雞塊");
+                jsonO.put("amount", "496");
+                jsonO.put("unit", "g");
                 jsonArrIi.put(jsonO);
             }
             for (EditText editText : mStepEditTextList)
-                jsonArrStep.put("123");
+                jsonArrStep.put(editText.getText());
 
-            jsonObjectAuthor.put("name","Roger");
-            jsonObjectAuthor.put("id","5787a635e07c9e0300237873");
+            jsonObjectAuthor.put("name", "Roger");
+            jsonObjectAuthor.put("id", "5787a635e07c9e0300237873");
 
-            jsonObjectMain.put("count",Integer.parseInt(mEditText.getText().toString()));
-            jsonObjectMain.put("author",jsonObjectAuthor);
-            jsonObjectMain.put("title","test");
-            jsonObjectMain.put("image",mImgUrl);
-            jsonObjectMain.put("image_ar",mArUrl);
-            jsonObjectMain.put("servings",10);
-            jsonObjectMain.put("note","testggg");
-            jsonObjectMain.put("ingredients",jsonArrIi);
-            jsonObjectMain.put("steps",jsonArrStep);
-            Log.e(LOGTAG, jsonObjectMain.toString());
+            jsonObjectMain.put("count", 10000);
+            jsonObjectMain.put("author", jsonObjectAuthor);
+            jsonObjectMain.put("title", mEditText.getText());
+            jsonObjectMain.put("image", mImgUrl);
+            jsonObjectMain.put("image_ar", mArUrl);
+            jsonObjectMain.put("servings", 10);
+            jsonObjectMain.put("note", "testggg");
+            jsonObjectMain.put("ingredients", jsonArrIi);
+            jsonObjectMain.put("steps", jsonArrStep);
+            Log.d(LOGTAG, jsonObjectMain.toString());
         } catch (JSONException e) {
             Log.e(LOGTAG, e.getMessage());
         }
@@ -260,12 +263,16 @@ public class CreateActivity extends AppCompatActivity {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
+                        Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "上傳完成", Snackbar.LENGTH_SHORT);
+                        snackbar.show();
                         Log.d(LOGTAG, "response -> " + response.toString());
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "上傳完成", Snackbar.LENGTH_SHORT);
+                        snackbar.show();
                         Log.e("Error", String.valueOf(error));
                     }
                 }) {

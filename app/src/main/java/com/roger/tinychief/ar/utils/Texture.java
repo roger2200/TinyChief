@@ -12,9 +12,11 @@ package com.roger.tinychief.ar.utils;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Environment;
 import android.util.Log;
 
 import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -38,9 +40,9 @@ public class Texture {
     public static Texture loadTextureFromApk(String fileName, AssetManager assets) {
         InputStream inputStream;
         try {
-            inputStream = assets.open(fileName, AssetManager.ACCESS_BUFFER);
-
-            BufferedInputStream bufferedStream = new BufferedInputStream(inputStream);
+            //inputStream = assets.open(fileName, AssetManager.ACCESS_BUFFER);
+            BufferedInputStream bufferedStream = new BufferedInputStream(new FileInputStream(Environment.getExternalStorageDirectory().toString() + "/Tiny Chief/"+"tmpImg.png"));
+            //BufferedInputStream bufferedStream = new BufferedInputStream(inputStream);
             Bitmap bitMap = BitmapFactory.decodeStream(bufferedStream);
 
             int[] data = new int[bitMap.getWidth() * bitMap.getHeight()];

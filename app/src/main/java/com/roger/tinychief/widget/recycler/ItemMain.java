@@ -6,10 +6,10 @@ import android.widget.ImageView;
 /**
  * Created by Roger on 7/25/2016.
  */
-public class RecyclerViewItem {
+public class ItemMain {
     private String mId,mAuthor, mTitle,mUrl;
 
-    public RecyclerViewItem(String id,String author, String title,String url) {
+    public ItemMain(String id, String author, String title, String url) {
         this.mId=id;
         this.mAuthor=author;
         this.mTitle=title;

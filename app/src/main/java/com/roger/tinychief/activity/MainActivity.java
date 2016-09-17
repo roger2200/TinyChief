@@ -1,17 +1,13 @@
 package com.roger.tinychief.activity;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Base64;
 import android.util.Log;
 
-import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -19,9 +15,9 @@ import com.android.volley.toolbox.StringRequest;
 import com.roger.tinychief.R;
 import com.roger.tinychief.util.NetworkManager;
 import com.roger.tinychief.widget.navigation.NavigationViewSetup;
-import com.roger.tinychief.widget.recycler.RecyclerViewAdapter;
-import com.roger.tinychief.widget.recycler.RecyclerViewAdapter.OnRecyclerViewItemClickListener;
-import com.roger.tinychief.widget.recycler.RecyclerViewItem;
+import com.roger.tinychief.widget.recycler.AdapterMain;
+import com.roger.tinychief.widget.recycler.AdapterMain.OnRecyclerViewItemClickListener;
+import com.roger.tinychief.widget.recycler.ItemMain;
 import com.wuxiaolong.pullloadmorerecyclerview.PullLoadMoreRecyclerView;
 
 import org.json.JSONArray;
@@ -38,11 +34,11 @@ public class MainActivity extends AppCompatActivity {
     private NavigationView mNavigationView;
     private DrawerLayout mDrawerLayout;
     private PullLoadMoreRecyclerView mRecyclerView;
-    private RecyclerViewAdapter mAdapter;
+    private AdapterMain mAdapter;
     private NavigationViewSetup mNavigationViewSetup;
     private int skipCount = 1;
 
-    ArrayList<RecyclerViewItem> mDataset = new ArrayList<>();
+    ArrayList<ItemMain> mDataset = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,8 +61,13 @@ public class MainActivity extends AppCompatActivity {
         mNavigationView.getMenu().getItem(0).setChecked(true);
     }
 
+    @Override
+    protected void onRestart(){
+        super.onRestart();
+    }
+
     public void getDataFromSever() {
-        StringRequest request = new StringRequest(Request.Method.POST, "https://tinny-chief.herokuapp.com/getSimpleCookBook",
+        StringRequest request = new StringRequest(Request.Method.POST, "https://tinny-chief.herokuapp.com/cookbook/simple",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String string) {
@@ -74,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
                             JSONArray array = new JSONArray(string);
                             for (int i = 0; i < array.length(); i++) {
                                 JSONObject json = array.getJSONObject(i);
-                                mDataset.add(new RecyclerViewItem(json.getString("_id"),json.getJSONObject("author").getString("name"), json.getString("title"), json.getString("image")));
+                                mDataset.add(new ItemMain(json.getString("_id"),json.getJSONObject("author").getString("name"), json.getString("title"), json.getString("image")));
                             }
                             mRecyclerView.setPullLoadMoreCompleted();
                         } catch (Exception e) {
@@ -99,23 +100,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setRecycleView() {
-        mRecyclerView = (PullLoadMoreRecyclerView) findViewById(R.id.main_recyview);
+        mRecyclerView = (PullLoadMoreRecyclerView) findViewById(R.id.recyview_main);
         mRecyclerView.setLinearLayout();
         mRecyclerView.setPullRefreshEnable(false);
+        mRecyclerView.animate();
         mRecyclerView.setFooterViewText("讀取中...");
 
         mRecyclerView.setOnPullLoadMoreListener(new PullLoadMoreRecyclerView.PullLoadMoreListener() {
             @Override
             public void onRefresh() {
             }
-
             @Override
             public void onLoadMore() {
                 getDataFromSever();
             }
         });
 
-        mAdapter = new RecyclerViewAdapter(mDataset);
+        mAdapter = new AdapterMain(mDataset);
         mAdapter.setOnItemClickListener(new OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(String string) {
@@ -133,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
         String[][] data = new String[LOAD_MOUNT][];
         for (int i = 0; i < data.length; i++) {
             data[i] = bundle.getStringArray("DATA" + i);
-            mDataset.add(new RecyclerViewItem(data[i][0], data[i][1], data[i][2],data[i][3]));
+            mDataset.add(new ItemMain(data[i][0], data[i][1], data[i][2],data[i][3]));
         }
         setRecycleView();
     }

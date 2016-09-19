@@ -1,5 +1,11 @@
 package com.roger.tinychief.widget.recycler;
 
+import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +16,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.roger.tinychief.R;
+import com.roger.tinychief.activity.DetailActivity;
 
 import java.util.ArrayList;
 
@@ -31,15 +38,14 @@ public class AdapterComment extends RecyclerView.Adapter<AdapterComment.ViewHold
 
     //自訂的holder,負責處理每個item裡的元素
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView mNameTextView;
-        public TextView mStartTextView;
-        public TextView mCommentView;
+        public TextView mNameTextView, mCommentView;
+        public ImageView mRateImageView;
 
         public ViewHolder(View v) {
             super(v);
             mNameTextView = (TextView) v.findViewById(R.id.txtview_name_comment);
-            mStartTextView = (TextView) v.findViewById(R.id.txtview_star_comment);
             mCommentView = (TextView) v.findViewById(R.id.txtview_comment_comment);
+            mRateImageView = (ImageView) v.findViewById(R.id.img_rate_comment);
         }
     }
 
@@ -54,9 +60,9 @@ public class AdapterComment extends RecyclerView.Adapter<AdapterComment.ViewHold
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.mNameTextView.setText(mData.get(position).getName());
-        holder.mStartTextView.setText(mData.get(position).getStar());
         holder.mCommentView.setText(mData.get(position).getComment());
         holder.itemView.setTag(mData.get(position).getId());
+        holder.mRateImageView.setImageBitmap(drawRate(mData.get(position).getRate(), mData.get(position).getContext()));
     }
 
     @Override
@@ -66,13 +72,28 @@ public class AdapterComment extends RecyclerView.Adapter<AdapterComment.ViewHold
         }
     }
 
+    @Override
+    public int getItemCount() {
+        return mData.size();
+    }
+
     //設置一個fumction,提供外部使用listener
     public void setOnItemClickListener(OnRecyclerViewItemClickListener listener) {
         this.mOnItemClickListener = listener;
     }
 
-    @Override
-    public int getItemCount() {
-        return mData.size();
+    private Bitmap drawRate(int rate, Context context) {
+        Bitmap rateF = BitmapFactory.decodeResource(context.getResources(), R.drawable.rate_star);
+        Bitmap rateN = BitmapFactory.decodeResource(context.getResources(), R.drawable.rate_star_n);
+        int picWidth = rateF.getWidth();
+        Bitmap bitmap = Bitmap.createBitmap(picWidth * 5, rateF.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas cv = new Canvas(bitmap);
+        for (int i = 0; i < rate; i++)
+            cv.drawBitmap(rateF, picWidth * i, 0, null);
+        for (int i = 0; i < 5 - rate; i++)
+            cv.drawBitmap(rateN, picWidth * rate + rateF.getWidth() * i, 0, null);
+        cv.save(Canvas.ALL_SAVE_FLAG);
+        cv.restore();
+        return bitmap;
     }
 }

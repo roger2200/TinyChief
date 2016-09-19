@@ -1,16 +1,25 @@
 package com.roger.tinychief.widget.recycler;
 
-/**
- * Created by Roger on 7/25/2016.
- */
-public class ItemComment {
-    private String mId,mName, mStar,mComment;
+import android.content.Context;
 
-    public ItemComment(String id, String name, String star, String comment) {
-        this.mId=id;
-        this.mName=name;
-        this.mStar=star;
-        this.mComment=comment;
+public class ItemComment {
+    private String mId, mName, mComment;
+    private int mRate;
+    private Context mContext;
+
+    /**
+     * @param id      評論者的id
+     * @param name    評論者的暱稱
+     * @param rate    評分
+     * @param comment 評論
+     * @param context getResource要用的
+     */
+    public ItemComment(String id, String name, int rate, String comment, Context context) {
+        this.mId = id;
+        this.mName = name;
+        this.mRate = rate;
+        this.mComment = comment;
+        this.mContext = context;
     }
 
     public String getId() {
@@ -21,11 +30,15 @@ public class ItemComment {
         return mName;
     }
 
-    public String getStar() {
-        return mStar;
+    public int getRate() {
+        return mRate;
     }
 
     public String getComment() {
         return mComment;
+    }
+
+    public Context getContext() {
+        return mContext;
     }
 }

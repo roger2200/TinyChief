@@ -66,7 +66,7 @@ public class DetailActivity extends AppCompatActivity {
         mImageView = (ImageView) findViewById(R.id.img_detail);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout_detail);
         mIiLinearLayout = (LinearLayout) findViewById(R.id.linearlayout_ii_detail);
-        mStepLinearLayout=(LinearLayout) findViewById(R.id.linearlayout_step_detail);
+        mStepLinearLayout = (LinearLayout) findViewById(R.id.linearlayout_step_detail);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
 
         mNavigationViewSetup = new NavigationViewSetup(this, mDrawerLayout, mToolbar);
@@ -99,7 +99,6 @@ public class DetailActivity extends AppCompatActivity {
                             final JSONObject json = new JSONObject(string);
                             JSONArray jsonArrayIi = json.getJSONArray("ingredients");
                             JSONArray jsonArrayStep = json.getJSONArray("steps");
-
                             //讀圖片
                             Glide.with(DetailActivity.this).load(json.getString("image")).asBitmap().into(mImageView);
                             new AsyncTask<Integer, Integer, Integer>() {
@@ -128,17 +127,28 @@ public class DetailActivity extends AppCompatActivity {
                                 textViewAmount.setGravity(Gravity.END);
 
                                 textViewName.setText(jsonArrayIi.getJSONObject(i).getString("name"));
-                                textViewAmount.setText(jsonArrayIi.getJSONObject(i).getInt("amount") +"\t"+ jsonArrayIi.getJSONObject(i).getString("unit"));
+                                textViewAmount.setText(jsonArrayIi.getJSONObject(i).getInt("amount") + "\t" + jsonArrayIi.getJSONObject(i).getString("unit"));
 
                                 linearLayout.addView(textViewName);
                                 linearLayout.addView(textViewAmount);
                                 mIiLinearLayout.addView(linearLayout);
                             }
-                            for(int i =0;i<jsonArrayStep.length();i++){
-                                TextView textViewStep=new TextView(DetailActivity.this);
+                            for (int i = 0; i < jsonArrayStep.length(); i++) {
+                                TextView textViewStep = new TextView(DetailActivity.this);
                                 textViewStep.setTextSize(26.0f);
-                                textViewStep.setText(jsonArrayStep.getString(i)+"\n");
+                                textViewStep.setText(jsonArrayStep.getString(i) + "\n");
                                 mStepLinearLayout.addView(textViewStep);
+                            }
+                            if (json.getJSONArray("comment") != null) {
+                                JSONArray jsonArrayComment = json.getJSONArray("comment");
+                                for (int i = 0; i < jsonArrayComment.length(); i++) {
+                                    mDataset.add(new ItemComment(jsonArrayComment.getJSONObject(i).getString("id")
+                                            , jsonArrayComment.getJSONObject(i).getString("name")
+                                            , jsonArrayComment.getJSONObject(i).getInt("rate")
+                                            , jsonArrayComment.getJSONObject(i).getString("message")
+                                            ,getApplicationContext()));
+                                    mAdapter.notifyItemInserted(mDataset.size()-2);
+                                }
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -164,14 +174,11 @@ public class DetailActivity extends AppCompatActivity {
     private void setRecycleView() {
         mRecyclerView = (RecyclerView) findViewById(R.id.recyview_comment_detail);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        for(int i=0;i<5;i++){
-            mDataset.add(new ItemComment(String.valueOf(i),String.valueOf(i),String.valueOf(i),String.valueOf(i)));
-        }
         mAdapter = new AdapterComment(mDataset);
         mAdapter.setOnItemClickListener(new AdapterComment.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(String string) {
-                Toast.makeText(DetailActivity.this,string,Toast.LENGTH_SHORT).show();
+                Toast.makeText(DetailActivity.this, string, Toast.LENGTH_SHORT).show();
             }
         });
         mRecyclerView.setAdapter(mAdapter);

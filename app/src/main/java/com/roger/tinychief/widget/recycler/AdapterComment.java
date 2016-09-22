@@ -91,7 +91,7 @@ public class AdapterComment extends RecyclerView.Adapter<AdapterComment.ViewHold
         for (int i = 0; i < rate; i++)
             cv.drawBitmap(rateF, picWidth * i, 0, null);
         for (int i = 0; i < 5 - rate; i++)
-            cv.drawBitmap(rateN, picWidth * rate + rateF.getWidth() * i, 0, null);
+            cv.drawBitmap(rateN, picWidth * rate + picWidth * i, 0, null);
         cv.save(Canvas.ALL_SAVE_FLAG);
         cv.restore();
         return bitmap;

@@ -2,18 +2,15 @@ package com.roger.tinychief.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -36,9 +33,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,7 +49,7 @@ public class ImgprocessActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_imgprocess);
-        mImageView = (ImageView) findViewById(R.id.imgview);
+        mImageView = (ImageView) findViewById(R.id.img_imgprocess);
         mImageView.setOnTouchListener(getOnTouchListener());
         mLoaderCallback = getBaseLoaderCallback();
         mProgressDialog = new ProgressDialog(this);
@@ -81,9 +76,9 @@ public class ImgprocessActivity extends AppCompatActivity {
             Uri uri = data.getData();
             if (uri != null) {
                 //把uri當中的圖片縮小符合手機螢幕寬度放入全域變數mBitmapImage
-                String imgPath = MyHelper.getRealPathFromURI(uri,this);
+                String imgPath = MyHelper.getRealPathFromURI(uri, this);
                 mBitmap = BitmapFactory.decodeFile(imgPath);
-                mBitmap=MyHelper.scaleBitmap(mBitmap,this);
+                mBitmap = MyHelper.scaleBitmap(mBitmap, this);
                 mImageView.setImageBitmap(mBitmap);
             }
         }

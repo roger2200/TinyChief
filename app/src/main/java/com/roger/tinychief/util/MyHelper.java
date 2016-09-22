@@ -9,7 +9,11 @@ import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.design.widget.Snackbar;
+import android.view.View;
+import android.widget.TextView;
 
+import com.roger.tinychief.R;
 import com.roger.tinychief.activity.CreateActivity;
 
 import java.io.ByteArrayOutputStream;
@@ -90,5 +94,10 @@ public class MyHelper {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bm.compress(Bitmap.CompressFormat.PNG, 0, baos);
         return baos.toByteArray();
+    }
+
+    public static void setSnackbarMessageTextColor(Snackbar snackbar, int color) {
+        View view = snackbar.getView();
+        ((TextView) view.findViewById(R.id.snackbar_text)).setTextColor(color);
     }
 }

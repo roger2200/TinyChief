@@ -17,44 +17,39 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/BaseAppTheme">
-
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
 
         <activity android:name=".activity.CookActivity" />
-
         <activity android:name=".activity.LoginActivity" />
-
         <activity android:name=".activity.RegisterActivity" />
-
         <activity android:name=".activity.DetailActivity" />
-
         <activity
             android:name=".activity.CreateActivity"
             android:launchMode="singleTask" />
-
         <activity
             android:name=".activity.MainActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".activity.ImgprocessActivity"
             android:launchMode="singleTask" />
-
         <activity android:name=".activity.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".activity.ArActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize"
             android:launchMode="singleTask"
             android:theme="@style/ArAppTheme" />
+        <activity
+            android:name=".activity.CommentDialogActivity"
+            android:theme="@style/Theme.MyDialog" />
     </application>
 
 </manifest>

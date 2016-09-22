@@ -34,7 +34,7 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void getData() {
-        StringRequest request = new StringRequest(Request.Method.POST, "https://tinny-chief.herokuapp.com/cookbook/simple",
+        StringRequest request = new StringRequest(Request.Method.POST, "http://10.0.2.2:5000/cookbook/simple",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String string) {

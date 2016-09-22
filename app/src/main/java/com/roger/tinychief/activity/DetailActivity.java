@@ -3,6 +3,8 @@ package com.roger.tinychief.activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,6 +23,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -46,6 +49,7 @@ public class DetailActivity extends AppCompatActivity {
 
     private Toolbar mToolbar;
     private DrawerLayout mDrawerLayout;
+    private CoordinatorLayout mCoordinatorLayout;
     private LinearLayout mIiLinearLayout, mStepLinearLayout;
     private TextView mTitleTextView;
     private ImageView mImageView;
@@ -64,6 +68,7 @@ public class DetailActivity extends AppCompatActivity {
 
         mTitleTextView = (TextView) findViewById(R.id.txtview_title_detail);
         mImageView = (ImageView) findViewById(R.id.img_detail);
+        mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout_detail);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout_detail);
         mIiLinearLayout = (LinearLayout) findViewById(R.id.linearlayout_ii_detail);
         mStepLinearLayout = (LinearLayout) findViewById(R.id.linearlayout_step_detail);
@@ -79,9 +84,28 @@ public class DetailActivity extends AppCompatActivity {
         getCookbook();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            Snackbar snackbar;
+            if (data.getBooleanExtra("RESULT", false))
+                snackbar = Snackbar.make(mCoordinatorLayout, "上傳評論完成", Snackbar.LENGTH_LONG);
+            else
+                snackbar = Snackbar.make(mCoordinatorLayout, "上傳評論失敗", Snackbar.LENGTH_LONG);
+            snackbar.show();
+        }
+    }
+
     public void letCook(View view) {
         Intent intent = new Intent(view.getContext(), CookActivity.class);
         startActivity(intent);
+    }
+
+    public void writeComment(View view) {
+        Intent intent = new Intent(this, CommentDialogActivity.class);
+        intent.putExtra("ID", DetailActivity.this.getIntent().getExtras().getString("ID"));
+        this.startActivity(intent);
     }
 
     public void openAR(View view) {
@@ -91,7 +115,7 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     public void getCookbook() {
-        StringRequest request = new StringRequest(Request.Method.POST, "https://tinny-chief.herokuapp.com/cookbook/detail",
+        StringRequest request = new StringRequest(Request.Method.POST, "http://10.0.2.2:5000/cookbook/detail",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String string) {
@@ -146,8 +170,8 @@ public class DetailActivity extends AppCompatActivity {
                                             , jsonArrayComment.getJSONObject(i).getString("name")
                                             , jsonArrayComment.getJSONObject(i).getInt("rate")
                                             , jsonArrayComment.getJSONObject(i).getString("message")
-                                            ,getApplicationContext()));
-                                    mAdapter.notifyItemInserted(mDataset.size()-2);
+                                            , getApplicationContext()));
+                                    mAdapter.notifyItemInserted(mDataset.size());
                                 }
                             }
                         } catch (Exception e) {
@@ -168,6 +192,7 @@ public class DetailActivity extends AppCompatActivity {
                 return param;
             }
         };
+        request.setRetryPolicy(new DefaultRetryPolicy(10000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         NetworkManager.getInstance(this).request(null, request);
     }
 

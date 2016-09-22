@@ -252,19 +252,21 @@ public class CreateActivity extends AppCompatActivity {
             Log.e(LOGTAG, e.getMessage());
         }
 
-        JsonRequest<JSONObject> jsonRequest = new JsonObjectRequest(Request.Method.POST, "https://tinny-chief.herokuapp.com/upload/cookbook", jsonObjectMain,
+        JsonRequest<JSONObject> jsonRequest = new JsonObjectRequest(Request.Method.POST, "http://10.0.2.2:5000/upload/cookbook", jsonObjectMain,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "上傳完成", Snackbar.LENGTH_SHORT);
+                        Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "上傳完成", Snackbar.LENGTH_LONG);
+                        MyHelper.setSnackbarMessageTextColor(snackbar, android.graphics.Color.WHITE);
                         snackbar.show();
-                        Log.d(LOGTAG, "response -> " + response.toString());
+                        Log.d(LOGTAG, "Create Response" + response.toString());
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "上傳完成", Snackbar.LENGTH_SHORT);
+                        Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "上傳失敗", Snackbar.LENGTH_LONG);
+                        MyHelper.setSnackbarMessageTextColor(snackbar, android.graphics.Color.WHITE);
                         snackbar.show();
                         Log.e("Error", String.valueOf(error));
                     }

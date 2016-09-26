@@ -1,9 +1,7 @@
 apply plugin: 'com.android.application'
-
-def VUFORIA_SDK_DIR='libs/vuforia-sdk-android-5-5-9'    //vuforia-sdk路徑
+def VUFORIA_SDK_DIR = 'libs/vuforia-sdk-android-5-5-9'    //vuforia-sdk路徑
 def JAR_DIR = 'build/java/vuforia'
 def NATIVE_LIB_DIR = 'build/lib'
-
 android {
     compileSdkVersion 24
     buildToolsVersion '24.0.1'
@@ -29,9 +27,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-}
-repositories {
-    mavenCentral()
 }
 //在Dependencies裡加入會使用到的Library這樣才能在app裡面用
 dependencies {

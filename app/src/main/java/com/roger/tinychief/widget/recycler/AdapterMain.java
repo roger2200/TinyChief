@@ -17,11 +17,11 @@ import java.util.ArrayList;
  * Created by Roger on 4/24/2016.
  */
 //要讓RecycleView顯示出資料,必須先使用Adapter將個別資料的內容處理好
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> implements OnClickListener {
-    private ArrayList<RecyclerViewItem> mData;
+public class AdapterMain extends RecyclerView.Adapter<AdapterMain.ViewHolder> implements OnClickListener {
+    private ArrayList<ItemMain> mData;
     private OnRecyclerViewItemClickListener mOnItemClickListener = null;
 
-    public RecyclerViewAdapter(ArrayList<RecyclerViewItem> data) {
+    public AdapterMain(ArrayList<ItemMain> data) {
         mData = data;
     }
 
@@ -37,15 +37,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         public ViewHolder(View v) {
             super(v);
-            mTitleTextView = (TextView) v.findViewById(R.id.recy_title_txt);
-            mAuthorTextView = (TextView) v.findViewById(R.id.recy_author_txt);
-            mImageView = (ImageView) v.findViewById(R.id.recy_img);
+            mTitleTextView = (TextView) v.findViewById(R.id.txtview_title_main);
+            mAuthorTextView = (TextView) v.findViewById(R.id.txtview_author_main);
+            mImageView = (ImageView) v.findViewById(R.id.img_main);
         }
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.recy_item, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.recy_item_main, parent, false);
         ViewHolder vh = new ViewHolder(v);
         v.setOnClickListener(this); //註冊onclick事件
         return vh;

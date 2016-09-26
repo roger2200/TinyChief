@@ -1,12 +1,13 @@
 <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/detail_drawerlayout"
+    android:id="@+id/drawerlayout_detail"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activity.DetailActivity">
 
     <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/coordinatorLayout_detail"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="false">
@@ -21,65 +22,85 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="5dp"
+                android:paddingTop="1dp">
 
-                <ImageView
-                    android:id="@+id/detail_imageview"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:adjustViewBounds="true"
-                    android:layout_margin="5dp" />
+                    android:background="@drawable/background_rect_radius"
+                    android:orientation="vertical">
 
-                <TextView
+                    <TextView
+                        android:id="@+id/txtview_title_detail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="40sp" />
+
+
+                    <ImageView
+                        android:id="@+id/img_detail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:adjustViewBounds="true" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="材料:"
+                        android:textSize="30sp" />
+
+                    <LinearLayout
+                        android:id="@+id/linearlayout_ii_detail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="步驟:"
+                        android:textSize="30sp" />
+
+                    <LinearLayout
+                        android:id="@+id/linearlayout_step_detail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="letCook"
+                        android:text="料理開始" />
+
+                    <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="食譜名稱:"
-                    android:textSize="30sp" />
+                    android:onClick="writeComment"
+                    android:text="撰寫評論" />
 
-                <TextView
-                    android:id="@+id/title_txtview"
-                    android:layout_width="wrap_content"
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="openAR"
+                        android:text="AR Test" />
+                </LinearLayout>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyview_comment_detail"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="25sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="材料:"
-                    android:textSize="30sp" />
-
-                <TextView
-                    android:id="@+id/ii_txtview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="25sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="步驟:"
-                    android:textSize="30sp" />
-
-                <TextView
-                    android:id="@+id/step_txtview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="25sp" />
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:onClick="letCook"
-                    android:text="料理開始" />
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:onClick="openAR"
-                    android:text="AR Test" />
-
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior" />
             </LinearLayout>
         </android.support.v4.widget.NestedScrollView>
     </android.support.design.widget.CoordinatorLayout>

@@ -1,14 +1,9 @@
 package com.roger.tinychief.activity;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -42,7 +37,6 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -76,12 +70,12 @@ public class CreateActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create);
         setTitle("創建食譜");
 
-        mStepLinearLayout = (LinearLayout) findViewById(R.id.linearlayout_step);
-        mIiLinearLayout = (LinearLayout) findViewById(R.id.linearlayout_ii);
+        mStepLinearLayout = (LinearLayout) findViewById(R.id.linearlayout_step_create);
+        mIiLinearLayout = (LinearLayout) findViewById(R.id.linearlayout_ii_create);
         mImageView = (ImageView) findViewById(R.id.img_create);
         mArImageView = (ImageView) findViewById(R.id.img_ar);
         mEditText = (EditText) findViewById(R.id.edittext_title);
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.create_drawerlayout);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout_create);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.create_coordinatorlayout);
 
@@ -204,7 +198,6 @@ public class CreateActivity extends AppCompatActivity {
             Log.d("ImageResponse", imageResponse.data.description);
             if (imageResponse.data.description.equals("Ar")) {
                 mArUrl = imageResponse.data.link;
-
                 if (!(mArUrl == null || mImgUrl == null))
                     upload2Server();
             } else if (imageResponse.data.description.equals("Image")) {
@@ -263,15 +256,17 @@ public class CreateActivity extends AppCompatActivity {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "上傳完成", Snackbar.LENGTH_SHORT);
+                        Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "上傳完成", Snackbar.LENGTH_LONG);
+                        MyHelper.setSnackbarMessageTextColor(snackbar, android.graphics.Color.WHITE);
                         snackbar.show();
-                        Log.d(LOGTAG, "response -> " + response.toString());
+                        Log.d(LOGTAG, "Create Response" + response.toString());
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "上傳完成", Snackbar.LENGTH_SHORT);
+                        Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "上傳失敗", Snackbar.LENGTH_LONG);
+                        MyHelper.setSnackbarMessageTextColor(snackbar, android.graphics.Color.WHITE);
                         snackbar.show();
                         Log.e("Error", String.valueOf(error));
                     }

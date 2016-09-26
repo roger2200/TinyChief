@@ -28,7 +28,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
-    private static final int LOAD_MOUNT = 10;//每次讀取的資料筆數,要和server相同
+    private static final int LOAD_COUNT = 10;//每次讀取的資料筆數,要和server相同
+
 
     private Toolbar mToolbar;
     private NavigationView mNavigationView;
@@ -67,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getDataFromSever() {
-        StringRequest request = new StringRequest(Request.Method.POST, "http://10.0.2.2:5000/cookbook/simple",
+        StringRequest request = new StringRequest(Request.Method.POST, "https://tinny-chief.herokuapp.com/cookbook/simple",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String string) {
@@ -131,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
     //取得並設定SplashActivity傳來的資料
     private void setInitData() {
         Bundle bundle = this.getIntent().getExtras();
-        String[][] data = new String[LOAD_MOUNT][];
+        String[][] data = new String[LOAD_COUNT][];
         for (int i = 0; i < data.length; i++) {
             data[i] = bundle.getStringArray("DATA" + i);
             mDataset.add(new ItemMain(data[i][0], data[i][1], data[i][2],data[i][3]));

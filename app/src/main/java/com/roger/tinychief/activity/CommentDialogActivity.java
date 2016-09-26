@@ -63,7 +63,7 @@ public class CommentDialogActivity extends AppCompatActivity {
     }
 
     protected void uploadComment(final View view) {
-        StringRequest request = new StringRequest(Request.Method.POST, "http://10.0.2.2:5000/upload/comment",
+        StringRequest request = new StringRequest(Request.Method.POST, "https://tinny-chief.herokuapp.com/upload/comment",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String string) {
@@ -91,7 +91,7 @@ public class CommentDialogActivity extends AppCompatActivity {
                 param.put("id_usr", "5787a635e07c9e0300237873");
                 param.put("rate", String.valueOf(rate));
                 param.put("msg", mEditText.getText().toString());
-                Log.d("Map", param.toString());
+                Log.d("Upload Comment", param.toString());
                 return param;
             }
         };

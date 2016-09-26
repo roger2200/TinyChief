@@ -46,6 +46,7 @@ import java.util.Map;
 
 public class DetailActivity extends AppCompatActivity {
     private static final String TAG = "DetailActivity";
+    private final int REQUEST_COM = 0;
 
     private Toolbar mToolbar;
     private DrawerLayout mDrawerLayout;
@@ -88,12 +89,15 @@ public class DetailActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
-            Snackbar snackbar;
-            if (data.getBooleanExtra("RESULT", false))
-                snackbar = Snackbar.make(mCoordinatorLayout, "上傳評論完成", Snackbar.LENGTH_LONG);
-            else
-                snackbar = Snackbar.make(mCoordinatorLayout, "上傳評論失敗", Snackbar.LENGTH_LONG);
-            snackbar.show();
+            if(requestCode==REQUEST_COM) {
+                Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "", Snackbar.LENGTH_LONG);
+                MyHelper.setSnackbarMessageTextColor(snackbar, android.graphics.Color.WHITE);
+                if (data.getBooleanExtra("RESULT", false))
+                    snackbar.setText("上傳評論完成");
+                else
+                    snackbar.setText("上傳評論失敗");
+                snackbar.show();
+            }
         }
     }
 
@@ -105,7 +109,7 @@ public class DetailActivity extends AppCompatActivity {
     public void writeComment(View view) {
         Intent intent = new Intent(this, CommentDialogActivity.class);
         intent.putExtra("ID", DetailActivity.this.getIntent().getExtras().getString("ID"));
-        this.startActivity(intent);
+        startActivityForResult(intent,REQUEST_COM);
     }
 
     public void openAR(View view) {
@@ -115,7 +119,7 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     public void getCookbook() {
-        StringRequest request = new StringRequest(Request.Method.POST, "http://10.0.2.2:5000/cookbook/detail",
+        StringRequest request = new StringRequest(Request.Method.POST, "https://tinny-chief.herokuapp.com/cookbook/detail",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String string) {

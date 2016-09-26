@@ -252,7 +252,7 @@ public class CreateActivity extends AppCompatActivity {
             Log.e(LOGTAG, e.getMessage());
         }
 
-        JsonRequest<JSONObject> jsonRequest = new JsonObjectRequest(Request.Method.POST, "http://10.0.2.2:5000/upload/cookbook", jsonObjectMain,
+        JsonRequest<JSONObject> jsonRequest = new JsonObjectRequest(Request.Method.POST, "https://tinny-chief.herokuapp.com/upload/cookbook", jsonObjectMain,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {

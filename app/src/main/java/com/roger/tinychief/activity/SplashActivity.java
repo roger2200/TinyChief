@@ -1,9 +1,13 @@
 package com.roger.tinychief.activity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -11,6 +15,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.roger.tinychief.R;
+import com.roger.tinychief.util.MyHelper;
 import com.roger.tinychief.util.NetworkManager;
 
 import org.json.JSONArray;
@@ -22,6 +27,7 @@ import java.util.Map;
 //歡迎畫面,會在背景從server讀取資料
 public class SplashActivity extends AppCompatActivity {
     private static final int LOAD_MOUNT = 10;//每次讀取的資料筆數,要和server相同
+    private boolean mFlagReady = false;
 
     private String[][] mData;//要傳給MainActivity的資料
 
@@ -29,8 +35,21 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+        ImageView mImageView = (ImageView) findViewById(R.id.img_splash);
+        Bitmap bitmap = BitmapFactory.decodeResource(getApplication().getResources(), R.drawable.splash_img);
+        mImageView.setImageBitmap(MyHelper.scaleBitmap(bitmap, this));
         mData = new String[LOAD_MOUNT][];
         getData();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (mFlagReady)
+                    endActivity();
+                else
+                    mFlagReady = true;
+            }
+        }, 3000);
     }
 
     private void getData() {
@@ -42,9 +61,12 @@ public class SplashActivity extends AppCompatActivity {
                             JSONArray array = new JSONArray(string);
                             for (int i = 0; i < array.length(); i++) {
                                 JSONObject json = array.getJSONObject(i);
-                                mData[i] = new String[]{json.getString("_id"),json.getJSONObject("author").getString("name"), json.getString("title"), json.getString("image")};
+                                mData[i] = new String[]{json.getString("_id"), json.getJSONObject("author").getString("name"), json.getString("title"), json.getString("image")};
                             }
-                            endActivity();
+                            if (mFlagReady)
+                                endActivity();
+                            else
+                                mFlagReady = true;
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -71,8 +93,8 @@ public class SplashActivity extends AppCompatActivity {
     //結束Activity並傳幾筆資料給MainActivity
     private void endActivity() {
         Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-        for(int i=0;i<mData.length;i++)
-            intent.putExtra("DATA"+i, mData[i]);
+        for (int i = 0; i < mData.length; i++)
+            intent.putExtra("DATA" + i, mData[i]);
         startActivity(intent);
         finish();//讓使用者就算按了返回鍵也回不來這畫面
     }

@@ -16,6 +16,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -48,12 +50,13 @@ public class CreateActivity extends AppCompatActivity {
     private final String LOGTAG = "CreateActivity";
     private final int REQUEST_PIC = 0, REQUEST_AR_PIC = 1;
     //用list儲存材料和步驟的EditText,方便計算有幾筆材料和步驟
-    private ArrayList<EditText> mStepEditTextList = new ArrayList<>();              //要傳給資料庫
-    private ArrayList<EditText> mIiEditTextList = new ArrayList<>();                //要傳給資料庫
-    private EditText mEditText;                                                    //要傳給資料庫
+    private ArrayList<TableRow> mIiEditTextList = new ArrayList<>();
+    private ArrayList<EditText> mStepEditTextList = new ArrayList<>();
+    private EditText mTitleEditText, mServingEditText, mNoteEditText;
     private ImageView mImageView, mArImageView;
-    private LinearLayout mStepLinearLayout, mIiLinearLayout;
-    private Bitmap mImgBitmap, mArBitmap;                                    //要傳給資料庫
+    private LinearLayout mStepLinearLayout;
+    private TableLayout mIiTableLayout;
+    private Bitmap mImgBitmap, mArBitmap;
     private Upload mUpload; // Upload object containging image and meta data
     private File mImgFile, mArFile;
     private String mImgUrl, mArUrl;
@@ -70,11 +73,13 @@ public class CreateActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create);
         setTitle("創建食譜");
 
+        mIiTableLayout = (TableLayout) findViewById(R.id.tablelayout_ii_create);
         mStepLinearLayout = (LinearLayout) findViewById(R.id.linearlayout_step_create);
-        mIiLinearLayout = (LinearLayout) findViewById(R.id.linearlayout_ii_create);
         mImageView = (ImageView) findViewById(R.id.img_create);
         mArImageView = (ImageView) findViewById(R.id.img_ar);
-        mEditText = (EditText) findViewById(R.id.edittext_title);
+        mTitleEditText = (EditText) findViewById(R.id.edittext_title);
+        mServingEditText = (EditText) findViewById(R.id.edittext_servings);
+        mNoteEditText = (EditText) findViewById(R.id.edittext_note);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout_create);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.create_coordinatorlayout);
@@ -154,14 +159,17 @@ public class CreateActivity extends AppCompatActivity {
     }
 
     public void addIi(View v) {
-        int currentStep = mIiEditTextList.size() + 1;     //當前的list數量+1,就是指現在要加的是第幾步驟,因為index是從0開始的
-        EditText edittxt = new EditText(this);
-        TextView txtview = new TextView(this);
-        txtview.setText("材料" + currentStep + ":");
-        mIiEditTextList.add(edittxt);                 //加入到list的尾端
+        EditText edittxtName = new EditText(this);
+        EditText edittxtAmount = new EditText(this);
+        EditText edittxtUnit = new EditText(this);
+        TableRow tablerow = new TableRow(this);
+
+        tablerow.addView(edittxtName);
+        tablerow.addView(edittxtAmount);
+        tablerow.addView(edittxtUnit);
         //加到LinearLayout裡
-        mIiLinearLayout.addView(txtview);
-        mIiLinearLayout.addView(edittxt);
+        mIiTableLayout.addView(tablerow);
+        mIiEditTextList.add(tablerow);
     }
 
     public void addStep(View v) {
@@ -186,7 +194,7 @@ public class CreateActivity extends AppCompatActivity {
         mUpload = new Upload();
 
         mUpload.image = image;
-        mUpload.title = mEditText.getText().toString();
+        mUpload.title = mTitleEditText.getText().toString();
         mUpload.description = descript;
         mUpload.albumId = "2lLX3";
     }
@@ -225,26 +233,26 @@ public class CreateActivity extends AppCompatActivity {
         JSONArray jsonArrIi = new JSONArray();
         JSONArray jsonArrStep = new JSONArray();
         try {
-            for (EditText editText : mIiEditTextList) {
-                JSONObject jsonO = new JSONObject();
-                jsonO.put("name", "雞塊");
-                jsonO.put("amount", "496");
-                jsonO.put("unit", "g");
-                jsonArrIi.put(jsonO);
+            for (TableRow tablerow : mIiEditTextList) {
+                JSONObject jsonIi = new JSONObject();
+                jsonIi.put("name", ((EditText)tablerow.getVirtualChildAt(0)).getText());
+                jsonIi.put("amount", ((EditText)tablerow.getVirtualChildAt(1)).getText());
+                jsonIi.put("unit", ((EditText)tablerow.getVirtualChildAt(2)).getText());
+                jsonArrIi.put(jsonIi);
             }
             for (EditText editText : mStepEditTextList)
                 jsonArrStep.put(editText.getText());
 
+            //這兩行之後要換掉
             jsonObjectAuthor.put("name", "Roger");
             jsonObjectAuthor.put("id", "5787a635e07c9e0300237873");
 
-            jsonObjectMain.put("count", 10000);
             jsonObjectMain.put("author", jsonObjectAuthor);
-            jsonObjectMain.put("title", mEditText.getText());
+            jsonObjectMain.put("title", mTitleEditText.getText());
             jsonObjectMain.put("image", mImgUrl);
             jsonObjectMain.put("image_ar", mArUrl);
-            jsonObjectMain.put("servings", 10);
-            jsonObjectMain.put("note", "testggg");
+            jsonObjectMain.put("servings", mServingEditText.getText());
+            jsonObjectMain.put("note", mNoteEditText.getText());
             jsonObjectMain.put("ingredients", jsonArrIi);
             jsonObjectMain.put("steps", jsonArrStep);
             Log.d(LOGTAG, jsonObjectMain.toString());

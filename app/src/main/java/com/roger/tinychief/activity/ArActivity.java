@@ -10,28 +10,28 @@ countries.
 
 package com.roger.tinychief.activity;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.hardware.Camera;
-import android.hardware.Camera.CameraInfo;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -63,13 +63,13 @@ import java.util.Vector;
 
 public class ArActivity extends Activity implements ArControl, ArMenuInterface {
     private static final String LOGTAG = "ImageTargets";
-    private static final int CAMERA_REQUEST_CODE = 1;
 
-    ArSession vuforiaAppSession;
-    private DataSet mCurrentDataset;
+
     private int mCurrentDatasetSelectionIndex = 0;
     private int mStartDatasetsIndex = 0;
     private int mDatasetsNumber = 0;
+    private ArSession vuforiaAppSession;
+    private DataSet mCurrentDataset;
     private ArrayList<String> mDatasetStrings = new ArrayList<String>();
 
     // Our OpenGL view:
@@ -100,20 +100,14 @@ public class ArActivity extends Activity implements ArControl, ArMenuInterface {
         Log.d(LOGTAG, "onCreate");
         super.onCreate(savedInstanceState);
         Bundle bundle = this.getIntent().getExtras();
-        path=bundle.getByteArray("IMAGE");
+        path = bundle.getByteArray("IMAGE");
         vuforiaAppSession = new ArSession(this);
 
         startLoadingAnimation();
 
-        mDatasetStrings.add("StonesAndChips.xml");
-        mDatasetStrings.add("Tarmac.xml");
         mDatasetStrings.add("Demo.xml");
 
-        //檢查相機使用權限
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST_CODE);
-        else
-            vuforiaAppSession.initAR(this, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        vuforiaAppSession.initAR(this, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         mGestureDetector = new GestureDetector(this, new GestureListener());
 
@@ -151,31 +145,22 @@ public class ArActivity extends Activity implements ArControl, ArMenuInterface {
 
     // We want to load specific textures from the APK, which we will later use for rendering.
     private void loadTextures() {
-        loadImage();
-        mTextures.add(Texture.loadTextureFromApk("TextureTeapotBrass.png", getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("TextureTeapotBlue.png", getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("TextureTeapotRed.png", getAssets()));
+        int[] imgData;
+        int width;
+        int height;
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        //圖片質量,數字越大越差
+        options.inSampleSize = 1;
+        Bitmap bitmap = BitmapFactory.decodeByteArray(path, 0, path.length, options);
+        width = bitmap.getWidth();
+        height = bitmap.getHeight();
+        imgData = new int[width * height * 4];
+        bitmap.getPixels(imgData, 0, width, 0, 0, width, height);
+        bitmap.recycle();
+        System.gc();
+
         mTextures.add(Texture.loadTextureFromIntBuffer(imgData, width, height));
-        mTextures.add(Texture.loadTextureFromApk("texturepizza.png", getAssets()));
-    }
-
-    int[] imgData;
-    int width;
-    int height;
-
-    private void loadImage() {
-        try {
-            BitmapFactory.Options options=new BitmapFactory.Options();
-            options.inSampleSize = 6;
-            Bitmap bitmap = BitmapFactory.decodeByteArray(path, 0, path.length);
-            width=bitmap.getWidth();
-            height=bitmap.getHeight();
-            imgData=new int[width*height * 4];
-            bitmap.getPixels(imgData,0,width,0,0,width,height);
-            bitmap.recycle();
-            System.gc();
-        } catch (Exception e) {
-        }
     }
 
     // Called when the activity will start interacting with the user.
@@ -259,17 +244,6 @@ public class ArActivity extends Activity implements ArControl, ArMenuInterface {
         System.gc();
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case CAMERA_REQUEST_CODE:
-                vuforiaAppSession.initAR(this, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                break;
-            default:
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }
-
     // Initializes AR application components.
     private void initApplicationAR() {
         // Create OpenGL ES view:
@@ -326,7 +300,7 @@ public class ArActivity extends Activity implements ArControl, ArMenuInterface {
 
             String name = "Current Dataset : " + trackable.getName();
             trackable.setUserData(name);
-            Log.d(LOGTAG, "UserData:Set the following user data " + (String) trackable.getUserData());
+            Log.d(LOGTAG, "UserData:Set the following user data " + trackable.getUserData());
         }
         return true;
     }
@@ -365,6 +339,7 @@ public class ArActivity extends Activity implements ArControl, ArMenuInterface {
             // BEFORE the camera is started and video
             // background is configured.
             addContentView(mGlView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+            setButtons();
 
             // Sets the UILayout to be drawn in front of the camera
             mUILayout.bringToFront();
@@ -498,7 +473,6 @@ public class ArActivity extends Activity implements ArControl, ArMenuInterface {
         return mExtendedTracking;
     }
 
-    final public static int CMD_BACK = -1;
     final public static int CMD_EXTENDED_TRACKING = 1;
     final public static int CMD_AUTOFOCUS = 2;
     final public static int CMD_FLASH = 3;
@@ -511,24 +485,30 @@ public class ArActivity extends Activity implements ArControl, ArMenuInterface {
         ArMenuGroup group;
 
         group = mArMenu.addGroup("", false);
-        group.addTextItem(getString(R.string.menu_back), -1);
 
-        group = mArMenu.addGroup("", true);
         group.addSelectionItem(getString(R.string.menu_extended_tracking), CMD_EXTENDED_TRACKING, false);
         group.addSelectionItem(getString(R.string.menu_contAutofocus), CMD_AUTOFOCUS, mContAutofocus);
         mFlashOptionView = group.addSelectionItem(getString(R.string.menu_flash), CMD_FLASH, false);
 
-        CameraInfo ci = new CameraInfo();
         boolean deviceHasFrontCamera = false;
         boolean deviceHasBackCamera = false;
-        for (int i = 0; i < Camera.getNumberOfCameras(); i++) {
-            Camera.getCameraInfo(i, ci);
-            if (ci.facing == CameraInfo.CAMERA_FACING_FRONT)
-                deviceHasFrontCamera = true;
-            else if (ci.facing == CameraInfo.CAMERA_FACING_BACK)
-                deviceHasBackCamera = true;
-        }
+        try {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                CameraManager manager = (CameraManager) getApplicationContext().getSystemService(Context.CAMERA_SERVICE);
 
+                String[] cameraIds = manager.getCameraIdList();
+                for (String cameraId : cameraIds) {
+                    CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
+                    int intCameraRelative = characteristics.get(CameraCharacteristics.LENS_FACING);
+                    if (intCameraRelative == CameraCharacteristics.LENS_FACING_FRONT)
+                        deviceHasFrontCamera = true;
+                    else if (intCameraRelative == CameraCharacteristics.LENS_FACING_BACK)
+                        deviceHasBackCamera = true;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         if (deviceHasBackCamera && deviceHasFrontCamera) {
             group = mArMenu.addGroup(getString(R.string.menu_camera), true);
             group.addRadioItem(getString(R.string.menu_camera_front), CMD_CAMERA_FRONT, false);
@@ -539,9 +519,7 @@ public class ArActivity extends Activity implements ArControl, ArMenuInterface {
         mStartDatasetsIndex = CMD_DATASET_START_INDEX;
         mDatasetsNumber = mDatasetStrings.size();
         //加按鈕
-        group.addRadioItem("Roger", mStartDatasetsIndex + 2, true);
-        group.addRadioItem("Stones & Chips", mStartDatasetsIndex, false);
-        group.addRadioItem("Tarmac", mStartDatasetsIndex + 1, false);
+        group.addRadioItem("Roger", mStartDatasetsIndex, true);
 
         mArMenu.attachMenu();
     }
@@ -553,10 +531,6 @@ public class ArActivity extends Activity implements ArControl, ArMenuInterface {
         boolean result = true;
 
         switch (command) {
-            case CMD_BACK:
-                finish();
-                break;
-
             case CMD_FLASH:
                 result = CameraDevice.getInstance().setFlashTorchMode(!mFlash);
 
@@ -657,5 +631,21 @@ public class ArActivity extends Activity implements ArControl, ArMenuInterface {
 
     private void showToast(String text) {
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+    }
+
+    private void setButtons() {
+        CheckBox cbFlash = new CheckBox(this);
+        cbFlash.setText("閃光燈");
+        cbFlash.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (CameraDevice.getInstance().setFlashTorchMode(!mFlash))
+                    mFlash = !mFlash;
+                else
+                    Log.e(LOGTAG, getString(mFlash ? R.string.menu_flash_error_off : R.string.menu_flash_error_on));
+
+            }
+        });
+        addContentView(cbFlash, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
     }
 }

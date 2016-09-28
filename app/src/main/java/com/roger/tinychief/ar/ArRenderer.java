@@ -16,7 +16,7 @@ import android.util.Log;
 
 import com.roger.tinychief.activity.ArActivity;
 import com.roger.tinychief.ar.utils.ArUtils;
-import com.roger.tinychief.ar.utils.CubeShaders;
+import com.roger.tinychief.ar.utils.Shaders;
 import com.roger.tinychief.ar.utils.Food;
 import com.roger.tinychief.ar.utils.LoadingDialogHandler;
 import com.roger.tinychief.ar.utils.Texture;
@@ -103,7 +103,7 @@ public class ArRenderer implements GLSurfaceView.Renderer {
             GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, t.mWidth, t.mHeight, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, t.mData);
         }
 
-        shaderProgramID = ArUtils.createProgramFromShaderSrc(CubeShaders.CUBE_MESH_VERTEX_SHADER, CubeShaders.CUBE_MESH_FRAGMENT_SHADER);
+        shaderProgramID = ArUtils.createProgramFromShaderSrc(Shaders.CUBE_MESH_VERTEX_SHADER, Shaders.CUBE_MESH_FRAGMENT_SHADER);
 
         vertexHandle = GLES20.glGetAttribLocation(shaderProgramID, "vertexPosition");
         textureCoordHandle = GLES20.glGetAttribLocation(shaderProgramID, "vertexTexCoord");
@@ -140,15 +140,19 @@ public class ArRenderer implements GLSurfaceView.Renderer {
         for (int tIdx = 0; tIdx < state.getNumTrackableResults(); tIdx++) {
             TrackableResult result = state.getTrackableResult(tIdx);
             Trackable trackable = result.getTrackable();
-            printUserData(trackable);
             Matrix44F modelViewMatrix_Vuforia = Tool.convertPose2GLMatrix(result.getPose());
             float[] modelViewMatrix = modelViewMatrix_Vuforia.getData();
             //stringA.equalsIgnoreCase(stringB)是用來判斷stringA和stringB是否一樣,回傳布林值,不考慮大小寫
             //trackable.getName()則是能取得當前使用的dataset的Target的名稱
-            String trackableName = trackable.getName();
-            int textureIndex = trackable.getName().equalsIgnoreCase("stones") ? 0 : 1;
-            textureIndex = trackable.getName().equalsIgnoreCase("tarmac") ? 2 : textureIndex;
-            textureIndex = trackable.getName().equalsIgnoreCase("test") ? 3 : textureIndex;
+            int textureIndex;
+            switch (trackable.getName()) {
+                case "test":
+                    textureIndex=0;
+                    break;
+                default:
+                    textureIndex=1;
+                    break;
+            }
 
             // deal with the modelview and projection matrices
             float[] modelViewProjection = new float[16];
@@ -186,11 +190,6 @@ public class ArRenderer implements GLSurfaceView.Renderer {
         }
         GLES20.glDisable(GLES20.GL_DEPTH_TEST);
         mRenderer.end();
-    }
-
-    private void printUserData(Trackable trackable) {
-        String userData = (String) trackable.getUserData();
-        Log.d(LOGTAG, "UserData:Retreived User Data	\"" + userData + "\"");
     }
 
     public void setTextures(Vector<Texture> textures) {

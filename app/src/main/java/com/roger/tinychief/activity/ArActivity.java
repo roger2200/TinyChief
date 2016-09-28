@@ -29,7 +29,9 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -149,8 +151,8 @@ public class ArActivity extends Activity implements ArControl, ArMenuInterface {
 
         BitmapFactory.Options options = new BitmapFactory.Options();
         //圖片質量,數字越大越差
-        options.inSampleSize = 3;
-        Bitmap bitmap = BitmapFactory.decodeByteArray(path, 0, path.length,options);
+        options.inSampleSize = 1;
+        Bitmap bitmap = BitmapFactory.decodeByteArray(path, 0, path.length, options);
         width = bitmap.getWidth();
         height = bitmap.getHeight();
         imgData = new int[width * height * 4];
@@ -337,6 +339,7 @@ public class ArActivity extends Activity implements ArControl, ArMenuInterface {
             // BEFORE the camera is started and video
             // background is configured.
             addContentView(mGlView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+            setButtons();
 
             // Sets the UILayout to be drawn in front of the camera
             mUILayout.bringToFront();
@@ -628,5 +631,21 @@ public class ArActivity extends Activity implements ArControl, ArMenuInterface {
 
     private void showToast(String text) {
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+    }
+
+    private void setButtons() {
+        CheckBox cbFlash = new CheckBox(this);
+        cbFlash.setText("閃光燈");
+        cbFlash.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (CameraDevice.getInstance().setFlashTorchMode(!mFlash))
+                    mFlash = !mFlash;
+                else
+                    Log.e(LOGTAG, getString(mFlash ? R.string.menu_flash_error_off : R.string.menu_flash_error_on));
+
+            }
+        });
+        addContentView(cbFlash, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
     }
 }

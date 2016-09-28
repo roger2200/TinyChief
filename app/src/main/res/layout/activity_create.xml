@@ -40,7 +40,7 @@
                         android:id="@+id/img_ar"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:padding="5dp"/>
+                        android:padding="5dp" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -72,20 +72,68 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="份量(人/一份):" />
+
+                <EditText
+                    android:id="@+id/edittext_note"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="備註:" />
+
+                <EditText
+                    android:id="@+id/edittext_servings"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <LinearLayout
-                        android:id="@+id/linearlayout_ii_create"
+                    <TableLayout
+                        android:id="@+id/tablelayout_ii_create"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical" />
+                        android:orientation="vertical"
+                        android:shrinkColumns="1,2"
+                        android:stretchColumns="0">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="材料" />
+
+                        <TableRow>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="材料名稱" />
+
+                            <TextView
+                                android:layout_width="40dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="end"
+                                android:text="數量" />
+
+                            <TextView
+                                android:layout_width="40dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="end"
+                                android:text="單位" />
+                        </TableRow>
+                    </TableLayout>
 
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/linearlayout_ii_create"
+                        android:layout_below="@+id/tablelayout_ii_create"
                         android:onClick="addIi"
                         android:text="新增材料" />
                 </RelativeLayout>

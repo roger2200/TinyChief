@@ -311,7 +311,7 @@ public class ArSession implements UpdateCallbackInterface {
         protected Boolean doInBackground(Void... params) {
             // Prevent the onDestroy() method to overlap with initialization:
             synchronized (mShutdownLock) {
-                Vuforia.setInitParameters(mActivity, mVuforiaFlags, "ATuIobb/////AAAAAUNBZR20LUKFh6cWm0CKMq0pGQrltn1+yeLY2/Kx1Ujav+5cfNyYfj0ctKW/6+k417bmDEl3AD6qElWZui/0/+XpQ0noMdUhP/WaOQ4GZ36sdMd7adp7EMB4rB/GjyEY2ywJCzkibYFSgDRIlxsmWthOn0QIzmdQf/3KpT/lm9i6K+aG56sTe/ddrdM6DqTMXR5a9atK9tH1sy/b0WHXAKOnFtyAhHdVSCcHteFwolKdy5u2H57k605K3bNKJuTElXWt9v2y8aao42OC46kcaKDKADBInczYB6Qo6MTzQdmM5YFJZ27sJ0KBJ2Y3lBdAQ8euoqfFcp/DGitlL8xdqE9O98NfJfUpf8vmxZcNtyZH");
+                Vuforia.setInitParameters(mActivity, mVuforiaFlags, "ATGcS0X/////AAAAGeCWjgrtAk04rtfw52C74wOOLD86r45qBgwfVjXvVOZsa3u2GFXip1ft4RXjKVy+cpfpYsiWRAINIOWdN41PuUVd0huKLcYUT/ibpswuf6nKZVTbaZ5VEUyaHacRTegBNNO1IgYp4mk7iYno0PyIhsrKusqfYsVenp+x15koGnnyvu6bsTFmajUnUaqQcUMy2YJzFlw4e7/6gBqtr32sZsXf9qu5KF0cL1bl8hxAEEEqBoXSldcZVlEPb5d1DN3XEa6XcXC+3ILsO7hjbcsm1gOuH14so3Q7elXf0tpChi13iFIvZylDCiFPTGNCU2F/xllrbVXHRtT4YaB3ldWlxMEDWLYBB6wA+8FeGHX94ioL");
 
                 do {
                     // Vuforia.init() blocks until an initialization step is

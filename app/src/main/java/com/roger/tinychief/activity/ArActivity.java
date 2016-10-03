@@ -83,9 +83,10 @@ public class ArActivity extends Activity implements ArControl, ArMenuInterface {
     private boolean mFlash = false;
     private boolean mContAutofocus = false;
     private boolean mExtendedTracking = false;
+    private double oldDist = 0;
+    private boolean multipleTouch;
     private View mFlashOptionView;
     private RelativeLayout mUILayout;
-    private ArMenu mArMenu;
     public LoadingDialogHandler loadingDialogHandler = new LoadingDialogHandler(this);
     // Alert Dialog used to display SDK errors
     private AlertDialog mErrorDialog;
@@ -360,9 +361,6 @@ public class ArActivity extends Activity implements ArControl, ArMenuInterface {
             else
                 Log.e(LOGTAG, "Unable to enable continuous autofocus");
 
-            mArMenu = new ArMenu(this, this, "Image Targets", mGlView, mUILayout, null, mRenderer);
-            setSampleAppMenuSettings();
-
         } else {
             Log.e(LOGTAG, exception.getString());
             showInitializationErrorMessage(exception.getString());
@@ -463,9 +461,26 @@ public class ArActivity extends Activity implements ArControl, ArMenuInterface {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        // Process the Gestures
-        if (mArMenu != null && mArMenu.processEvent(event))
-            return true;
+        switch (event.getActionMasked()) {
+            case MotionEvent.ACTION_POINTER_UP:
+                multipleTouch = false;
+                break;
+            case MotionEvent.ACTION_POINTER_DOWN:
+                oldDist = spacing(event);
+                multipleTouch = true;
+                break;
+            case MotionEvent.ACTION_MOVE:
+                if (multipleTouch) {
+                    double newDist = spacing(event);
+                    if (newDist > 10f) {
+                        mRenderer.resizeFood(newDist / oldDist);
+                        oldDist = newDist;
+                    }
+                }
+                break;
+            default:
+                return mGestureDetector.onTouchEvent(event);
+        }
         return mGestureDetector.onTouchEvent(event);
     }
 
@@ -479,51 +494,6 @@ public class ArActivity extends Activity implements ArControl, ArMenuInterface {
     final public static int CMD_CAMERA_FRONT = 4;
     final public static int CMD_CAMERA_REAR = 5;
     final public static int CMD_DATASET_START_INDEX = 6;
-
-    // This method sets the menu's settings
-    private void setSampleAppMenuSettings() {
-        ArMenuGroup group;
-
-        group = mArMenu.addGroup("", false);
-
-        group.addSelectionItem(getString(R.string.menu_extended_tracking), CMD_EXTENDED_TRACKING, false);
-        group.addSelectionItem(getString(R.string.menu_contAutofocus), CMD_AUTOFOCUS, mContAutofocus);
-        mFlashOptionView = group.addSelectionItem(getString(R.string.menu_flash), CMD_FLASH, false);
-
-        boolean deviceHasFrontCamera = false;
-        boolean deviceHasBackCamera = false;
-        try {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                CameraManager manager = (CameraManager) getApplicationContext().getSystemService(Context.CAMERA_SERVICE);
-
-                String[] cameraIds = manager.getCameraIdList();
-                for (String cameraId : cameraIds) {
-                    CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
-                    int intCameraRelative = characteristics.get(CameraCharacteristics.LENS_FACING);
-                    if (intCameraRelative == CameraCharacteristics.LENS_FACING_FRONT)
-                        deviceHasFrontCamera = true;
-                    else if (intCameraRelative == CameraCharacteristics.LENS_FACING_BACK)
-                        deviceHasBackCamera = true;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (deviceHasBackCamera && deviceHasFrontCamera) {
-            group = mArMenu.addGroup(getString(R.string.menu_camera), true);
-            group.addRadioItem(getString(R.string.menu_camera_front), CMD_CAMERA_FRONT, false);
-            group.addRadioItem(getString(R.string.menu_camera_back), CMD_CAMERA_REAR, true);
-        }
-
-        group = mArMenu.addGroup(getString(R.string.menu_datasets), true);
-        mStartDatasetsIndex = CMD_DATASET_START_INDEX;
-        mDatasetsNumber = mDatasetStrings.size();
-        //加按鈕
-        group.addRadioItem("Roger", mStartDatasetsIndex, true);
-
-        mArMenu.attachMenu();
-    }
-
 
     @Override
     public boolean menuProcess(int command) {
@@ -647,5 +617,11 @@ public class ArActivity extends Activity implements ArControl, ArMenuInterface {
             }
         });
         addContentView(cbFlash, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+    }
+
+    private double spacing(MotionEvent event) {
+        double x = event.getX(0) - event.getX(1);
+        double y = event.getY(0) - event.getY(1);
+        return Math.sqrt(x * x + y * y);
     }
 }

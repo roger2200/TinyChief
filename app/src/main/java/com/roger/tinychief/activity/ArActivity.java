@@ -106,7 +106,7 @@ public class ArActivity extends Activity implements ArControl, ArMenuInterface {
 
         startLoadingAnimation();
 
-        mDatasetStrings.add("Demo.xml");
+        mDatasetStrings.add("target_tiny_chief.xml");
 
         vuforiaAppSession.initAR(this, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 

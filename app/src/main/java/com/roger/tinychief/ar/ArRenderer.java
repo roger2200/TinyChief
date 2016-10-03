@@ -146,7 +146,8 @@ public class ArRenderer implements GLSurfaceView.Renderer {
             //trackable.getName()則是能取得當前使用的dataset的Target的名稱
             int textureIndex;
             switch (trackable.getName()) {
-                case "test":
+                case "card":
+                case "icon":
                     textureIndex=0;
                     break;
                 default:

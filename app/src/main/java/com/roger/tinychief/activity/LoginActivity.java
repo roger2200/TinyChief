@@ -218,13 +218,6 @@ public class LoginActivity extends AppCompatActivity {
         Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_LONG).show();
     }
 
-    private void jumpToActivity(Context ct, Class<?> lt) {
-
-        Intent intent = new Intent();
-        intent.setClass(ct, lt);
-        //startActivityForResult(intent,0);
-        startActivity(intent);
-    }
 
     private void setNavigationView() {
         navigationView = (NavigationView) findViewById(R.id.nav_view);

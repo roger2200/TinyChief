@@ -83,6 +83,20 @@
                 android:ems="10"
                 android:id="@+id/input_email"
                 android:gravity="center"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="暱稱"
+                android:gravity="center"/>
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:ems="10"
+                android:id="@+id/input_nickname"
+                android:gravity="center"/>
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

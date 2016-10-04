@@ -69,6 +69,10 @@ public class CommentDialogActivity extends AppCompatActivity {
                     public void onResponse(String string) {
                         Intent intent = new Intent();
                         intent.putExtra("RESULT", true);
+                        intent.putExtra("id_usr", "5787a635e07c9e0300237873");
+                        intent.putExtra("name", mTextView.getText().toString());
+                        intent.putExtra("rate", rate);
+                        intent.putExtra("msg", mEditText.getText().toString());
                         setResult(RESULT_OK, intent);
                         finish();
                     }

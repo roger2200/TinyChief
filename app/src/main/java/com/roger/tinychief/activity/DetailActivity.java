@@ -92,8 +92,15 @@ public class DetailActivity extends AppCompatActivity {
             if(requestCode==REQUEST_COM) {
                 Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "", Snackbar.LENGTH_LONG);
                 MyHelper.setSnackbarMessageTextColor(snackbar, android.graphics.Color.WHITE);
-                if (data.getBooleanExtra("RESULT", false))
+                if (data.getBooleanExtra("RESULT", false)) {
                     snackbar.setText("上傳評論完成");
+                    mDataset.add(new ItemComment(data.getStringExtra("id_usr")
+                            , data.getStringExtra("name")
+                            , data.getIntExtra("rate",1)
+                            , data.getStringExtra("msg")
+                            , getApplicationContext()));
+                    mAdapter.notifyItemInserted(mDataset.size());
+                }
                 else
                     snackbar.setText("上傳評論失敗");
                 snackbar.show();

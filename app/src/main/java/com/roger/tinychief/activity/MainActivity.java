@@ -7,6 +7,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -29,8 +31,8 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     private static final int LOAD_COUNT = 10;//每次讀取的資料筆數,要和server相同
-
-
+    public static String USER_NAME;
+    public static String USER_ID;
     private Toolbar mToolbar;
     private NavigationView mNavigationView;
     private DrawerLayout mDrawerLayout;
@@ -59,6 +61,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        View mHeader=mNavigationView.getHeaderView(0);
+        TextView name = (TextView) mHeader.findViewById(R.id.mUserName);
+        name.setText(MainActivity.USER_NAME);
         mNavigationView.getMenu().getItem(0).setChecked(true);
     }
 
@@ -68,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getDataFromSever() {
-        StringRequest request = new StringRequest(Request.Method.POST, "https://tinny-chief.herokuapp.com/cookbook/simple",
+        StringRequest request = new StringRequest(Request.Method.POST, "https://tiny-chief.herokuapp.com/cookbook/simple",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String string) {

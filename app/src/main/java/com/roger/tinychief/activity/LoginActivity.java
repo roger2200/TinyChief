@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
+import com.android.volley.Response;
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
 import com.android.volley.VolleyError;
@@ -61,64 +62,6 @@ public class LoginActivity extends AppCompatActivity {
     //private UserApplication uapp;
 
     private final String TAG = "Login";
-
-    private Listener<String> mResponseListener = new Listener<String>() {
-        public void onResponse(String string) {
-            try {
-                JSONArray ary = new JSONArray(string);
-                StringBuilder users = new StringBuilder();
-                StringBuilder passwords = new StringBuilder();
-                StringBuilder checkEmails = new StringBuilder();
-                for (int i = 0; i < ary.length(); i++) {
-                    JSONObject json = ary.getJSONObject(i);
-                    String user = json.getString("user");
-                    users.append(user);
-                    users.append(",");
-                    String password = json.getString("password");
-                    passwords.append(password);
-                    passwords.append(",");
-                    String checkEmail = json.getString("checkEmail");
-                    checkEmails.append(checkEmail);
-                    checkEmails.append(",");
-                }
-                TextView text1 = (TextView) findViewById(R.id.textView1);
-                text1.setText(users.toString());
-                TextView text2 = (TextView) findViewById(R.id.textView2);
-                text2.setText(checkEmails.toString());
-
-                if (text1.getText().equals("")) {
-                    showMessage("wrong account or password");
-                }
-                if (text2.getText().equals("OK,")) {
-                    showMessage("登入成功!");
-                    navigationView = (NavigationView) findViewById(R.id.nav_view);
-                    View mHeader = navigationView.getHeaderView(0);
-                    TextView name = (TextView) mHeader.findViewById(R.id.mUserName);
-                    name.setText(text1.getText());
-                    SharedPreferences remdname = getPreferences(Activity.MODE_PRIVATE);
-                    SharedPreferences.Editor edit = remdname.edit();
-                    edit.putString("name", users.toString());
-                    edit.putString("pass", passwords.toString());
-                    edit.commit();
-                    Log.d("error", name.toString());
-                }
-                if (text1.getText().length() > 2 && text2.getText().equals("NO,")) {
-                    showMessage("要認證信箱唷");
-                }
-            } catch (Exception e) {
-                Log.d("error:", e.getMessage());
-            }
-        }
-    };
-
-    private ErrorListener mErrorListener = new ErrorListener() {
-        @Override
-        public void onErrorResponse(VolleyError error) {
-            Log.e("Error", error.toString());
-        }
-    };
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         FacebookSdk.sdkInitialize(getApplicationContext());
@@ -197,8 +140,62 @@ public class LoginActivity extends AppCompatActivity {
             final String p;
             p = MD5.getMD5(input_wd.getText().toString());
             //下面這行是volley的語法,根據第一個參數,決定要執行甚麼工作,這裡是執行POST
-            StringRequest request = new StringRequest(Request.Method.POST, "https://tiny-chief.herokuapp.com/api/test", mResponseListener, mErrorListener) {
-                //執行POST時,後面要加上要傳的資料,格式可以是json,ajax或是像下面的Map
+            StringRequest request = new StringRequest(Request.Method.POST, "https://tiny-chief.herokuapp.com/login",
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String string) {
+                            try {
+                                JSONArray ary = new JSONArray(string);
+                                StringBuilder users = new StringBuilder();
+                                StringBuilder passwords = new StringBuilder();
+                                StringBuilder checkEmails = new StringBuilder();
+                                String nickname = "";
+                                String userID="";
+                                for (int i = 0; i < ary.length(); i++) {
+                                    JSONObject json = ary.getJSONObject(i);
+                                    String user = json.getString("user");
+                                    users.append(user);
+                                    users.append(",");
+                                    String password = json.getString("password");
+                                    passwords.append(password);
+                                    passwords.append(",");
+                                    String checkEmail = json.getString("checkEmail");
+                                    checkEmails.append(checkEmail);
+                                    checkEmails.append(",");
+                                    nickname = json.getString("nickname");
+                                    userID = json.getString("_id");
+                                }
+                                TextView text1 = (TextView) findViewById(R.id.textView1);
+                                text1.setText(users.toString());
+                                TextView text2 = (TextView) findViewById(R.id.textView2);
+                                text2.setText(checkEmails.toString());
+
+                                if (text1.getText().equals("")) {
+                                    showMessage("wrong account or password");
+                                }
+                                if (text2.getText().equals("OK,")) {
+                                    showMessage("登入成功!");
+                                    Intent intent = new Intent();
+                                    intent.setClass(LoginActivity.this, MainActivity.class);
+                                    Log.e("check", nickname);
+                                    MainActivity.USER_ID = userID;
+                                    MainActivity.USER_NAME = nickname;
+                                    finish();
+                                }
+                                if (text1.getText().length() > 2 && text2.getText().equals("NO,")) {
+                                    showMessage("要認證信箱唷");
+                                }
+                            } catch (Exception e) {
+                                Log.d("error:", e.getMessage());
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError volleyError) {
+                            Log.e("Error", String.valueOf(volleyError));
+                        }
+                    }) {
                 @Override
                 public Map<String, String> getParams() {
                     Map<String, String> MyData = new HashMap<>();
@@ -207,11 +204,9 @@ public class LoginActivity extends AppCompatActivity {
                     return MyData;
                 }
             };
-            //這行是把剛才StringRequest裡的工作放入佇列當中,這是volley的語法被包在NetworkManager中
             NetworkManager.getInstance(this).request(null, request);
-            getAccount();
+            request.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         }
-
     }
 
     private void setToolbar() {
@@ -229,12 +224,6 @@ public class LoginActivity extends AppCompatActivity {
         intent.setClass(ct, lt);
         //startActivityForResult(intent,0);
         startActivity(intent);
-    }
-
-    private void getAccount() {
-        StringRequest request2 = new StringRequest(Request.Method.GET, "https://intense-oasis-69003.herokuapp.com/api/test", mResponseListener, mErrorListener);
-        NetworkManager.getInstance(this).request(null, request2);
-        request2.setRetryPolicy(new DefaultRetryPolicy(10000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
     }
 
     private void setNavigationView() {

@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
+import com.android.volley.Response;
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
 import com.android.volley.VolleyError;
@@ -33,35 +34,6 @@ public class RegisterActivity extends AppCompatActivity {
         @Override
         public void onResponse(String string) {
             try {
-                JSONArray ary = new JSONArray(string);
-                StringBuilder users = new StringBuilder();
-                StringBuilder passwords = new StringBuilder();
-                StringBuilder emails = new StringBuilder();
-                for (int i = 0; i < ary.length(); i++) {
-                    JSONObject json = ary.getJSONObject(i);
-                    String user = json.getString("user");
-                    users.append(user);
-                    users.append(",");
-                    String password = json.getString("password");
-                    passwords.append(password);
-                    passwords.append(",");
-                    String email = json.getString("email");
-                    emails.append(email);
-                    emails.append(",");
-                }
-                TextView text1 = (TextView) findViewById(R.id.textView6);
-                text1.setText(users.toString());
-                TextView text2 = (TextView) findViewById(R.id.textView7);
-                text2.setText(passwords.toString());
-
-                if (text1.getText().length() > 3) {
-                    showMessage("帳號已被使用!");
-                } else {
-                    showMessage("請去認證信箱！");
-                    sendemail();
-                    checkVerified();
-                    finish();
-                }
             } catch (Exception e) {
                 Log.d("error:", e.getMessage());
             }
@@ -103,8 +75,51 @@ public class RegisterActivity extends AppCompatActivity {
         final String p;
         p = MD5.getMD5(input_password.getText().toString());
         //下面這行是volley的語法,根據第一個參數,決定要執行甚麼工作,這裡是執行POST
-        StringRequest request = new StringRequest(Request.Method.POST, "https://tiny-chief.herokuapp.com/register", mResponseListener, mErrorListener) {
-            //執行POST時,後面要加上要傳的資料,格式可以是json,ajax或是像下面的Map
+        StringRequest request = new StringRequest(Request.Method.POST, "https://tiny-chief.herokuapp.com/register",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String string) {
+                        try {
+                            JSONArray ary = new JSONArray(string);
+                            StringBuilder users = new StringBuilder();
+                            StringBuilder passwords = new StringBuilder();
+                            StringBuilder emails = new StringBuilder();
+                            for (int i = 0; i < ary.length(); i++) {
+                                JSONObject json = ary.getJSONObject(i);
+                                String user = json.getString("user");
+                                users.append(user);
+                                users.append(",");
+                                String password = json.getString("password");
+                                passwords.append(password);
+                                passwords.append(",");
+                                String email = json.getString("email");
+                                emails.append(email);
+                                emails.append(",");
+                            }
+                            TextView text1 = (TextView) findViewById(R.id.textView6);
+                            text1.setText(users.toString());
+                            TextView text2 = (TextView) findViewById(R.id.textView7);
+                            text2.setText(passwords.toString());
+
+                            if (text1.getText().length() > 3) {
+                                showMessage("帳號已被使用!");
+                            } else {
+                                showMessage("請去認證信箱！");
+                                sendemail();
+                                checkVerified();
+                                finish();
+                            }
+                        } catch (Exception e) {
+                            Log.d("error:", e.getMessage());
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        Log.e("Error", String.valueOf(volleyError));
+                    }
+                }) {
             @Override
             public Map<String, String> getParams() {
                 Map<String, String> MyData = new HashMap<String, String>();
@@ -114,10 +129,8 @@ public class RegisterActivity extends AppCompatActivity {
                 return MyData;
             }
         };
-        //這行是把剛才StringRequest裡的工作放入佇列當中,這是volley的語法被包在NetworkManager中
         NetworkManager.getInstance(this).request(null, request);
-
-        getAccount();
+        request.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
     }
 
     private void setToolbar() {
@@ -130,14 +143,25 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void sendemail() {
-        StringRequest request3 = new StringRequest(Request.Method.GET, "https://tiny-chief.herokuapp.com/send", mResponseListener, mErrorListener);
-        NetworkManager.getInstance(this).request(null, request3);
-    }
+        StringRequest request3 = new StringRequest(Request.Method.GET, "https://tiny-chief.herokuapp.com/send",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String string) {
+                        try {
 
-    private void getAccount() {
-        StringRequest request2 = new StringRequest(Request.Method.GET, "https://tiny-chief.herokuapp.com/register", mResponseListener, mErrorListener);
-        NetworkManager.getInstance(this).request(null, request2);
-        request2.setRetryPolicy(new DefaultRetryPolicy(10000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                        } catch (Exception e) {
+                            Log.d("error:", e.getMessage());
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        Log.e("Error", String.valueOf(volleyError));
+                    }
+                });
+        NetworkManager.getInstance(this).request(null, request3);
+        request3.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
     }
 
     private void checkVerified() {

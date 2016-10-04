@@ -28,7 +28,7 @@ import java.util.Map;
 
 public class RegisterActivity extends AppCompatActivity {
     private Toolbar toolbar;
-    private EditText input_account, input_password, input_email;
+    private EditText input_account, input_password, input_email,input_nickname;
 
     private Listener<String> mResponseListener = new Listener<String>() {
         @Override
@@ -60,6 +60,7 @@ public class RegisterActivity extends AppCompatActivity {
         input_email = (EditText) findViewById(R.id.input_email);
         input_account = (EditText) findViewById(R.id.input_ac2);
         input_password = (EditText) findViewById(R.id.input_wd2);
+        input_nickname = (EditText) findViewById(R.id.input_nickname);
     }
 
     public void onClickToCheckAccount(View v) {
@@ -126,6 +127,7 @@ public class RegisterActivity extends AppCompatActivity {
                 MyData.put("User", String.valueOf(input_account.getText()));//用Map放資料,第一個參數是名稱,第二個是值,到時候在server端用名稱去取出值即可
                 MyData.put("Password", p);
                 MyData.put("myEmail", String.valueOf(input_email.getText()));
+                MyData.put("nickName", String.valueOf(input_nickname.getText()));
                 return MyData;
             }
         };

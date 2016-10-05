@@ -17,9 +17,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,7 +38,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class DetailActivity extends AppCompatActivity {
@@ -56,11 +52,10 @@ public class DetailActivity extends AppCompatActivity {
     private ImageView mImageView;
     private RecyclerView mRecyclerView;
     private AdapterComment mAdapter;
-
     private Bitmap mArBitmap;
     private NavigationViewSetup mNavigationViewSetup;
-
-    ArrayList<ItemComment> mDataset = new ArrayList<>();
+    private String[] strArraySteps;
+    private ArrayList<ItemComment> mDataset = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +64,7 @@ public class DetailActivity extends AppCompatActivity {
 
         mTitleTextView = (TextView) findViewById(R.id.txtview_title_detail);
         mImageView = (ImageView) findViewById(R.id.img_detail);
-        mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout_detail);
+        mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorlayout_detail);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout_detail);
         mIiLinearLayout = (LinearLayout) findViewById(R.id.linearlayout_ii_detail);
         mStepLinearLayout = (LinearLayout) findViewById(R.id.linearlayout_step_detail);
@@ -89,12 +84,18 @@ public class DetailActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
-            if(requestCode==REQUEST_COM) {
+            if (requestCode == REQUEST_COM) {
                 Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "", Snackbar.LENGTH_LONG);
                 MyHelper.setSnackbarMessageTextColor(snackbar, android.graphics.Color.WHITE);
-                if (data.getBooleanExtra("RESULT", false))
+                if (data.getBooleanExtra("RESULT", false)) {
                     snackbar.setText("上傳評論完成");
-                else
+                    mDataset.add(new ItemComment(data.getStringExtra("id_usr")
+                            , data.getStringExtra("name")
+                            , data.getIntExtra("rate", 1)
+                            , data.getStringExtra("msg")
+                            , getApplicationContext()));
+                    mAdapter.notifyItemInserted(mDataset.size());
+                } else
                     snackbar.setText("上傳評論失敗");
                 snackbar.show();
             }
@@ -103,13 +104,14 @@ public class DetailActivity extends AppCompatActivity {
 
     public void letCook(View view) {
         Intent intent = new Intent(view.getContext(), CookActivity.class);
+        intent.putExtra("steps",strArraySteps);
         startActivity(intent);
     }
 
     public void writeComment(View view) {
         Intent intent = new Intent(this, CommentDialogActivity.class);
         intent.putExtra("ID", DetailActivity.this.getIntent().getExtras().getString("ID"));
-        startActivityForResult(intent,REQUEST_COM);
+        startActivityForResult(intent, REQUEST_COM);
     }
 
     public void openAR(View view) {
@@ -161,10 +163,13 @@ public class DetailActivity extends AppCompatActivity {
                                 linearLayout.addView(textViewAmount);
                                 mIiLinearLayout.addView(linearLayout);
                             }
+
+                            strArraySteps = new String[jsonArrayStep.length()];
                             for (int i = 0; i < jsonArrayStep.length(); i++) {
                                 TextView textViewStep = new TextView(DetailActivity.this);
                                 textViewStep.setTextSize(26.0f);
                                 textViewStep.setText(jsonArrayStep.getString(i) + "\n");
+                                strArraySteps[i] = jsonArrayStep.getString(i);
                                 mStepLinearLayout.addView(textViewStep);
                             }
                             if (json.getJSONArray("comment") != null) {

@@ -63,7 +63,7 @@ public class CommentDialogActivity extends AppCompatActivity {
     }
 
     protected void uploadComment(final View view) {
-        StringRequest request = new StringRequest(Request.Method.POST, "https://tinny-chief.herokuapp.com/upload/comment",
+        StringRequest request = new StringRequest(Request.Method.POST, "https://tiny-chief.herokuapp.com/upload/comment",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String string) {

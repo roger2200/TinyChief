@@ -1,29 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    android:id="@+id/linearlayout_header"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     android:background="#00BBFF"
-    android:id="@+id/header">
-        <ImageView
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:scaleType="centerCrop"
-            android:src="@mipmap/ic_launcher"/>
-        <TextView
-            android:id="@+id/mUserName"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="使用者"
-            android:gravity="center"
-            android:textColor="@android:color/black"
-            android:textSize="16sp" />
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="登入"
-            android:id="@+id/headerLoginButton"
-            android:textSize="16sp">
-        </Button>
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/txtview_name_header"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="使用者"
+        android:textColor="@android:color/black"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/btn_login_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="登入"
+        android:textSize="16sp" />
 </LinearLayout>

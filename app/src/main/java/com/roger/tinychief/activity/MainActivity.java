@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -50,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         setTitle("熱門食譜");
         setInitData();
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.main_drawerlayout);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout_main);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
 
         mNavigationViewSetup = new NavigationViewSetup(this, mDrawerLayout, mToolbar);
@@ -61,10 +62,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        View mHeader=mNavigationView.getHeaderView(0);
-        TextView name = (TextView) mHeader.findViewById(R.id.mUserName);
-        name.setText(MainActivity.USER_NAME);
         mNavigationView.getMenu().getItem(0).setChecked(true);
+        if(USER_NAME!=null) {
+            View header = mNavigationView.getHeaderView(0);
+            TextView name = (TextView) header.findViewById(R.id.txtview_name_header);
+            name.setText(USER_NAME);
+            Button button=(Button) header.findViewById(R.id.btn_login_header);
+            button.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override

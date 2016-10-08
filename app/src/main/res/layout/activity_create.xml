@@ -8,7 +8,7 @@
     tools:context="com.roger.tinychief.activity.CreateActivity">
 
     <android.support.design.widget.CoordinatorLayout
-        android:id="@+id/create_coordinatorlayout"
+        android:id="@+id/coordinatorlayout_create"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="false">
@@ -21,6 +21,7 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <LinearLayout
+                android:id="@+id/linearlayout_create"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">

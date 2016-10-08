@@ -1,6 +1,8 @@
 package com.roger.tinychief.activity;
 
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -19,6 +21,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.roger.tinychief.R;
 import com.roger.tinychief.util.MD5;
 import com.roger.tinychief.util.NetworkManager;
+import com.roger.tinychief.widget.navigation.NavigationViewSetup;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -27,15 +30,35 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RegisterActivity extends AppCompatActivity {
-    private Toolbar toolbar;
+    private Toolbar mToolbar;
+    private DrawerLayout mDrawerLayout;
+    private NavigationView mNavigationView;
+    private NavigationViewSetup mNavigationViewSetup;
     private EditText input_account, input_password, input_email,input_nickname;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_register);
+        setTitle("註冊");
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout_register);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        mNavigationViewSetup = new NavigationViewSetup(this, mDrawerLayout, mToolbar);
+        mNavigationView = mNavigationViewSetup.setNavigationView();
+
+        input_email = (EditText) findViewById(R.id.input_email);
+        input_account = (EditText) findViewById(R.id.input_ac2);
+        input_password = (EditText) findViewById(R.id.input_wd2);
+        input_nickname = (EditText) findViewById(R.id.edittxt_nickname);
+    }
 
     private Listener<String> mResponseListener = new Listener<String>() {
         @Override
         public void onResponse(String string) {
             try {
             } catch (Exception e) {
-                Log.d("error:", e.getMessage());
+                Log.d("onResponse Error", e.getMessage());
             }
         }
     };
@@ -47,30 +70,6 @@ public class RegisterActivity extends AppCompatActivity {
             Log.e("Error", error.toString());
         }
     };
-
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        //requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_register);
-        setTitle("註冊");
-        //setToolbar();
-
-        input_email = (EditText) findViewById(R.id.input_email);
-        input_account = (EditText) findViewById(R.id.input_ac2);
-        input_password = (EditText) findViewById(R.id.input_wd2);
-        input_nickname = (EditText) findViewById(R.id.input_nickname);
-    }
-
-    public void onClickToCheckAccount(View v) {
-        if (input_account.getText().toString().isEmpty() || input_password.getText().toString().isEmpty()) {
-            showMessage("please fill all");
-        } else if (input_account.getText().toString().length() < 5) {
-            showMessage("at least input 5 words");
-        }
-    }
-    //registerButton.setOnClickListener(new OnClickListener(){
 
     public void onClickToRegister(View v) {
         final String p;
@@ -97,12 +96,8 @@ public class RegisterActivity extends AppCompatActivity {
                                 emails.append(email);
                                 emails.append(",");
                             }
-                            TextView text1 = (TextView) findViewById(R.id.textView6);
-                            text1.setText(users.toString());
-                            TextView text2 = (TextView) findViewById(R.id.textView7);
-                            text2.setText(passwords.toString());
 
-                            if (text1.getText().length() > 3) {
+                            if (users.toString().length() > 3) {
                                 showMessage("帳號已被使用!");
                             } else {
                                 showMessage("請去認證信箱！");
@@ -133,11 +128,6 @@ public class RegisterActivity extends AppCompatActivity {
         };
         NetworkManager.getInstance(this).request(null, request);
         request.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-    }
-
-    private void setToolbar() {
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
     }
 
     private void showMessage(String msg) {

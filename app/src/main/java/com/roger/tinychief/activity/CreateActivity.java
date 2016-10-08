@@ -1,5 +1,6 @@
 package com.roger.tinychief.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -12,7 +13,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -54,7 +57,7 @@ public class CreateActivity extends AppCompatActivity {
     private ArrayList<EditText> mStepEditTextList = new ArrayList<>();
     private EditText mTitleEditText, mServingEditText, mNoteEditText;
     private ImageView mImageView, mArImageView;
-    private LinearLayout mStepLinearLayout;
+    private LinearLayout mStepLinearLayout,mLinearlayout;
     private TableLayout mIiTableLayout;
     private Bitmap mImgBitmap, mArBitmap;
     private Upload mUpload; // Upload object containging image and meta data
@@ -82,7 +85,17 @@ public class CreateActivity extends AppCompatActivity {
         mNoteEditText = (EditText) findViewById(R.id.edittext_note);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout_create);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.create_coordinatorlayout);
+        mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorlayout_create);
+        mLinearlayout=(LinearLayout)findViewById(R.id.linearlayout_create);
+
+        mLinearlayout.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                InputMethodManager imm = (InputMethodManager)view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(),0);
+                return false;
+            }
+        });
 
         mNavigationViewSetup = new NavigationViewSetup(this, mDrawerLayout, mToolbar);
         mNavigationView = mNavigationViewSetup.setNavigationView();

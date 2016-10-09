@@ -6,7 +6,7 @@
 
     <string name="button_OK">OK</string>
 
-    <string name="facebook_app_id">142160349547528</string>
+    <string name="facebook_app_id">1268359733215546</string>
 
     <!--下面這些是Vuforia的提示信息字串!-->
     <string name="UPDATE_ERROR_AUTHORIZATION_FAILED_TITLE">Authorization Error</string>

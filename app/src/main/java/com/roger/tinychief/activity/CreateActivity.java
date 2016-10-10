@@ -23,6 +23,7 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -120,7 +121,7 @@ public class CreateActivity extends AppCompatActivity {
                 Uri uri = data.getData();
                 String imgPath = MyHelper.getRealPathFromURI(uri, this);
                 mImgBitmap = MyHelper.rotationBitmap(imgPath);
-                mImgBitmap = MyHelper.scaleBitmap(mImgBitmap, this);
+                mImgBitmap = MyHelper.scaleBitmap(mImgBitmap, this,true);
                 try {
                     // 路徑
                     String path = Environment.getExternalStorageDirectory().toString() + "/Tiny Chief/";
@@ -153,7 +154,7 @@ public class CreateActivity extends AppCompatActivity {
                 String arPath = data.getStringExtra("AR_PIC");
                 mArFile = new File(arPath);
                 mArBitmap = MyHelper.rotationBitmap(arPath);
-                mArBitmap = MyHelper.scaleBitmap(mArBitmap, this);
+                mArBitmap = MyHelper.scaleBitmap(mArBitmap, this,true);
                 mArImageView.setImageBitmap(mArBitmap);
             }
         }
@@ -301,6 +302,7 @@ public class CreateActivity extends AppCompatActivity {
             }
         };
         //這行是把剛才StringRequest裡的工作放入佇列當中,這是volley的語法被包在NetworkManager中
+        jsonRequest.setRetryPolicy(new DefaultRetryPolicy(10000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         NetworkManager.getInstance(this).request(null, jsonRequest);
     }
 }

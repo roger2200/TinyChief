@@ -43,7 +43,7 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
         ImageView mImageView = (ImageView) findViewById(R.id.img_splash);
         Bitmap bitmap = BitmapFactory.decodeResource(getApplication().getResources(), R.drawable.splash_img);
-        mImageView.setImageBitmap(MyHelper.scaleBitmap(bitmap, this));
+        mImageView.setImageBitmap(MyHelper.scaleBitmap(bitmap, this,true));
         mData = new String[LOAD_MOUNT][];
         getData();
 

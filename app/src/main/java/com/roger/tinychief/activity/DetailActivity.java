@@ -157,7 +157,7 @@ public class DetailActivity extends AppCompatActivity {
                                 textViewAmount.setGravity(Gravity.END);
 
                                 textViewName.setText(jsonArrayIi.getJSONObject(i).getString("name"));
-                                textViewAmount.setText(jsonArrayIi.getJSONObject(i).getInt("amount") + "\t" + jsonArrayIi.getJSONObject(i).getString("unit"));
+                                textViewAmount.setText(jsonArrayIi.getJSONObject(i).getDouble("amount") + "\t" + jsonArrayIi.getJSONObject(i).getString("unit"));
 
                                 linearLayout.addView(textViewName);
                                 linearLayout.addView(textViewAmount);

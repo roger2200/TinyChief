@@ -36,7 +36,7 @@
                         android:id="@+id/txtview_title_detail"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
+                        android:gravity="center_horizontal"
                         android:textSize="40sp" />
 
 
@@ -49,7 +49,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="材料:"
+                        android:text="\n材料:"
                         android:textSize="30sp" />
 
                     <LinearLayout
@@ -61,7 +61,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="步驟:"
+                        android:text="\n步驟:"
                         android:textSize="30sp" />
 
                     <LinearLayout

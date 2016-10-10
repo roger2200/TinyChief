@@ -78,7 +78,7 @@ public class ImgprocessActivity extends AppCompatActivity {
                 //把uri當中的圖片縮小符合手機螢幕寬度放入全域變數mBitmapImage
                 String imgPath = MyHelper.getRealPathFromURI(uri, this);
                 mBitmap = BitmapFactory.decodeFile(imgPath);
-                mBitmap = MyHelper.scaleBitmap(mBitmap, this);
+                mBitmap = MyHelper.scaleBitmap(mBitmap, this, true);
                 mImageView.setImageBitmap(mBitmap);
             }
         }
@@ -176,6 +176,7 @@ public class ImgprocessActivity extends AppCompatActivity {
 
     public void endActivity(View v) {
         try {
+            mBitmap=MyHelper.scaleBitmap(mBitmap, this, false);
             // 路徑
             String path = Environment.getExternalStorageDirectory().toString() + "/Tiny Chief/";
 

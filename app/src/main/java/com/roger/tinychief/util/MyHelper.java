@@ -10,6 +10,7 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -40,12 +41,16 @@ public class MyHelper {
     }
 
     //縮小圖片尺寸以符合螢幕寬度
-    public static Bitmap scaleBitmap(Bitmap image,Activity activity) {
+    public static Bitmap scaleBitmap(Bitmap image, Activity activity, boolean fit) {
         int oldwidth = image.getWidth();
         int oldheight = image.getHeight();
+        float scale;
         android.graphics.Point size = new android.graphics.Point();
         activity.getWindowManager().getDefaultDisplay().getSize(size);
-        float scale = size.x / (float) oldwidth;
+        if (fit)
+            scale = size.x / (float) oldwidth;
+        else
+            scale = 200 / (float) oldwidth;
         Matrix matrix = new Matrix();
         matrix.postScale(scale, scale);
         image = Bitmap.createBitmap(image, 0, 0, oldwidth, oldheight, matrix, true);

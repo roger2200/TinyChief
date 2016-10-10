@@ -1,14 +1,29 @@
 package com.roger.tinychief.activity;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -40,8 +55,8 @@ public class MainActivity extends AppCompatActivity {
     private PullLoadMoreRecyclerView mRecyclerView;
     private AdapterMain mAdapter;
     private NavigationViewSetup mNavigationViewSetup;
+    private ActionBarDrawerToggle mActionBarDrawerToggle;
     private int skipCount = 1;
-
     ArrayList<ItemMain> mDataset = new ArrayList<>();
 
     @Override
@@ -50,10 +65,34 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setTitle("熱門食譜");
         setInitData();
-
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout_main);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                // Handle the menu item
+                return true;
+            }
+        });
+        // Inflate a menu to be displayed in the toolbar
+        mToolbar.inflateMenu(R.menu.nav_main);
+        setSupportActionBar(mToolbar);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        mActionBarDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.open, R.string.close) {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+
+            }
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+            }
+        };
+        mActionBarDrawerToggle.syncState();
+        mDrawerLayout.addDrawerListener(mActionBarDrawerToggle);
         mNavigationViewSetup = new NavigationViewSetup(this, mDrawerLayout, mToolbar);
         mNavigationView = mNavigationViewSetup.setNavigationView();
         mNavigationView.getMenu().getItem(0).setChecked(true);
@@ -71,7 +110,23 @@ public class MainActivity extends AppCompatActivity {
             button.setVisibility(View.INVISIBLE);
         }
     }
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.nav_main, menu);
 
+        MenuItem menuSearchItem = menu.findItem(R.id.my_search);
+
+        // Get the SearchView and set the searchable configuration
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menuSearchItem.getActionView();
+
+        // Assumes current activity is the searchable activity
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+        // 這邊讓icon可以還原到搜尋的icon
+        searchView.setIconifiedByDefault(true);
+        return true;
+    }
     @Override
     protected void onRestart(){
         super.onRestart();

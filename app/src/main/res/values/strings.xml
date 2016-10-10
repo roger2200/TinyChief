@@ -6,7 +6,7 @@
 
     <string name="button_OK">OK</string>
 
-    <string name="facebook_app_id">142160349547528</string>
+    <string name="facebook_app_id">1268359733215546</string>
 
     <!--下面這些是Vuforia的提示信息字串!-->
     <string name="UPDATE_ERROR_AUTHORIZATION_FAILED_TITLE">Authorization Error</string>
@@ -64,5 +64,10 @@
     <string name="menu_button_blue">Blue</string>
     <string name="menu_button_yellow">Yellow</string>
     <string name="menu_button_green">Green</string>
-
+    <string name="menu_search">Search</string>
+    <string name="action_settings">actionSettings</string>
+    <string name="search">Search</string>
+    <string name="search_title">SearchTitle</string>
+    <string name="open">open</string>
+    <string name="close">close</string>
 </resources>

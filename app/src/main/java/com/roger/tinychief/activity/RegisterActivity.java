@@ -135,7 +135,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void sendemail() {
-        StringRequest request3 = new StringRequest(Request.Method.GET, "https://tiny-chief.herokuapp.com/send",
+        StringRequest request3 = new StringRequest(Request.Method.POST, "https://tiny-chief.herokuapp.com/send",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String string) {
@@ -157,7 +157,24 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void checkVerified() {
-        StringRequest request = new StringRequest(Request.Method.GET, "https://tiny-chief.herokuapp.com/checkedEmail", mResponseListener, mErrorListener);
+        StringRequest request = new StringRequest(Request.Method.POST, "https://tiny-chief.herokuapp.com/verify",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String string) {
+                        try {
+
+                        } catch (Exception e) {
+                            Log.d("error:", e.getMessage());
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        Log.e("Error", String.valueOf(volleyError));
+                    }
+                });
         NetworkManager.getInstance(this).request(null, request);
+        request.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
     }
 }

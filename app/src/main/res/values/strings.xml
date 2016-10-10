@@ -64,5 +64,10 @@
     <string name="menu_button_blue">Blue</string>
     <string name="menu_button_yellow">Yellow</string>
     <string name="menu_button_green">Green</string>
-
+    <string name="menu_search">Search</string>
+    <string name="action_settings">actionSettings</string>
+    <string name="search">Search</string>
+    <string name="search_title">SearchTitle</string>
+    <string name="open">open</string>
+    <string name="close">close</string>
 </resources>

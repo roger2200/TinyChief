@@ -84,8 +84,10 @@ public class LoginActivity extends AppCompatActivity {
                         //讀出姓名 ID FB個人頁面連結
                         Log.d("FB", "complete");
                         Log.d("FB", object.optString("name"));
+                        MainActivity.USER_NAME = object.optString("name");
                         Log.d("FB", object.optString("link"));
                         Log.d("FB", object.optString("id"));
+                        finish();
                     }
                 });
                 //包入你想要得到的資料 送出request

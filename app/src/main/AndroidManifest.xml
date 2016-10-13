@@ -58,7 +58,6 @@
 
         <activity
             android:name=".activity.SearchResultActivity"
-            android:theme="@style/Theme.AppCompat.Light"
             android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />

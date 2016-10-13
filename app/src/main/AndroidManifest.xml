@@ -22,22 +22,6 @@
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
 
-        <activity
-            android:name=".activity.SearchableActivity"
-            android:theme="@style/Theme.AppCompat.Light"
-            android:launchMode="singleTop" >
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.app.searchable"
-                android:resource="@xml/searchable"
-                />
-        </activity>
         <activity android:name=".activity.CookActivity" />
         <activity android:name=".activity.LoginActivity" />
         <activity android:name=".activity.RegisterActivity" />
@@ -70,9 +54,24 @@
 
         <meta-data
             android:name="android.app.default_searchable"
-            android:value=".activity.SearchableActivity" />
+            android:value=".activity.SearchResultActivity" />
 
+        <activity
+            android:name=".activity.SearchResultActivity"
+            android:theme="@style/Theme.AppCompat.Light"
+            android:launchMode="singleTop" >
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+            </intent-filter>
 
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable"
+                />
+        </activity>
     </application>
 
 </manifest>

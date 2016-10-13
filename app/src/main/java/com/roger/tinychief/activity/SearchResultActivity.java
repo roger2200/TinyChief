@@ -3,12 +3,17 @@ package com.roger.tinychief.activity;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class SearchableActivity extends Activity {
+import com.roger.tinychief.R;
+
+public class SearchResultActivity extends Activity {
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_search_result);
         handleIntent(getIntent());
     }
     @Override

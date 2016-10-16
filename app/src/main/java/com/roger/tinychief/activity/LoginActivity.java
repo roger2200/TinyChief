@@ -174,6 +174,7 @@ public class LoginActivity extends AppCompatActivity {
                                     Log.e("check", nickname);
                                     MainActivity.USER_ID = userID;
                                     MainActivity.USER_NAME = nickname;
+                                    Log.e("checkID",userID);
                                     finish();
                                 }
                                 if (users.toString().length() > 2 && checkEmails.toString().equals("NO,")) {

@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         // Inflate a menu to be displayed in the toolbar
-        mToolbar.inflateMenu(R.menu.nav_main);
+        mToolbar.inflateMenu(R.menu.toolbar_main);
         setSupportActionBar(mToolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -112,13 +112,13 @@ public class MainActivity extends AppCompatActivity {
     }
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.nav_main, menu);
+        inflater.inflate(R.menu.toolbar_main, menu);
 
         MenuItem menuSearchItem = menu.findItem(R.id.my_search);
 
         // Get the SearchView and set the searchable configuration
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menuSearchItem.getActionView();
+        android.support.v7.widget.SearchView searchView = (android.support.v7.widget.SearchView) menuSearchItem.getActionView();
 
         // Assumes current activity is the searchable activity
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));

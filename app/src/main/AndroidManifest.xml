@@ -54,10 +54,10 @@
 
         <meta-data
             android:name="android.app.default_searchable"
-            android:value=".activity.SearchableActivity" />
+            android:value=".activity.SearchResultActivity" />
 
-        <activity android:name=".activity.SearchableActivity"
-            android:theme="@style/Theme.AppCompat.Light"
+        <activity
+            android:name=".activity.SearchResultActivity"
             android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />

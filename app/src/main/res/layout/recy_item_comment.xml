@@ -2,37 +2,38 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="5dp"
-    android:divider="@drawable/divider"
-    android:showDividers="beginning"
     android:background="?android:attr/selectableItemBackground"
-    android:orientation="vertical">
+    android:divider="@drawable/divider"
+    android:orientation="vertical"
+    android:showDividers="beginning|end">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:padding="5dp">
 
         <TextView
             android:id="@+id/txtview_name_comment"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:textColor="@color/gray"/>
+            android:textColor="@color/gray" />
 
         <ImageView
             android:id="@+id/img_rate_comment"
             android:layout_width="match_parent"
             android:layout_height="16dp"
-            android:scaleType="fitEnd"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"/>
-    </RelativeLayout >
+            android:scaleType="fitEnd" />
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/txtview_comment_comment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="5dp"
         android:textColor="@color/black"
-        android:textSize="16sp"/>
+        android:textSize="16sp" />
 
 </LinearLayout>

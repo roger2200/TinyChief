@@ -54,7 +54,7 @@ public class DetailActivity extends AppCompatActivity {
     private AdapterComment mAdapter;
     private Bitmap mArBitmap;
     private NavigationViewSetup mNavigationViewSetup;
-    private String[] strArraySteps;
+    private String[] mStrArrayStep, mStrArrayIi;
     private ArrayList<ItemComment> mDataset = new ArrayList<>();
 
     @Override
@@ -102,21 +102,27 @@ public class DetailActivity extends AppCompatActivity {
         }
     }
 
-    public void letCook(View view) {
+    public void onClickStartCook(View view) {
         Intent intent = new Intent(view.getContext(), CookActivity.class);
-        intent.putExtra("steps",strArraySteps);
+        intent.putExtra("STEP", mStrArrayStep);
         startActivity(intent);
     }
 
-    public void writeComment(View view) {
+    public void onClickWriteComment(View view) {
         Intent intent = new Intent(this, CommentDialogActivity.class);
         intent.putExtra("ID", DetailActivity.this.getIntent().getExtras().getString("ID"));
         startActivityForResult(intent, REQUEST_COM);
     }
 
-    public void openAR(View view) {
+    public void onClickOpenAR(View view) {
         Intent intent = new Intent(view.getContext(), ArActivity.class);
         intent.putExtra("IMAGE", MyHelper.convertBitmap2Bytes(mArBitmap));
+        startActivity(intent);
+    }
+
+    public void onClickValuation(View view) {
+        Intent intent = new Intent(view.getContext(), ValuationActivity.class);
+        intent.putExtra("II", mStrArrayIi);
         startActivity(intent);
     }
 
@@ -145,6 +151,7 @@ public class DetailActivity extends AppCompatActivity {
 
                             mTitleTextView.setText(json.getString("title"));
                             setTitle(json.getString("title"));
+                            mStrArrayIi = new String[jsonArrayIi.length()];
                             for (int i = 0; i < jsonArrayIi.length(); i++) {
                                 TextView textViewName = new TextView(DetailActivity.this);
                                 TextView textViewAmount = new TextView(DetailActivity.this);
@@ -162,16 +169,19 @@ public class DetailActivity extends AppCompatActivity {
                                 linearLayout.addView(textViewName);
                                 linearLayout.addView(textViewAmount);
                                 mIiLinearLayout.addView(linearLayout);
+
+                                mStrArrayIi[i] = jsonArrayIi.getJSONObject(i).getString("name");
                             }
 
-                            strArraySteps = new String[jsonArrayStep.length()];
+                            mStrArrayStep = new String[jsonArrayStep.length()];
                             for (int i = 0; i < jsonArrayStep.length(); i++) {
                                 TextView textViewStep = new TextView(DetailActivity.this);
                                 textViewStep.setTextSize(26.0f);
                                 textViewStep.setText(jsonArrayStep.getString(i) + "\n");
-                                strArraySteps[i] = jsonArrayStep.getString(i);
+                                mStrArrayStep[i] = jsonArrayStep.getString(i);
                                 mStepLinearLayout.addView(textViewStep);
                             }
+
                             if (json.getJSONArray("comment") != null) {
                                 JSONArray jsonArrayComment = json.getJSONArray("comment");
                                 for (int i = 0; i < jsonArrayComment.length(); i++) {

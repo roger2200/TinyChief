@@ -58,10 +58,17 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical" />
 
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:onClick="onClickValuation"
+                        android:text="價錢估算"/>
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="\n步驟:"
+                        android:text="步驟:"
                         android:textSize="30sp" />
 
                     <LinearLayout
@@ -80,19 +87,19 @@
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:onClick="letCook"
+                        android:onClick="onClickStartCook"
                         android:text="料理開始" />
 
                     <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:onClick="writeComment"
+                    android:onClick="onClickWriteComment"
                     android:text="撰寫評論" />
 
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:onClick="openAR"
+                        android:onClick="onClickOpenAR"
                         android:text="AR預覽" />
                 </LinearLayout>
 

@@ -33,7 +33,7 @@ public class CookActivity extends AppCompatActivity implements OnInitListener {
     private TextToSpeech mTts;
     private SpeechRecognizer recognizer;
     private Intent mIntentSR;
-    private String[] mStrArraySteps;
+    private String[] mStrArrayStep;
     private String[][] mStrArrayCheck = new String[3][];
     private String[] mStrRepeat = new String[]{"重", "再", "在", "站", "戰", "蟲", "寵", "崇", "衝", "暫","從","叢","3","三","片","變","成","充","沖","船"};
     private String[] mStrPrevious = new String[]{"前", "錢", "潛", "乾", "上", "尚","賽","散","帥","千","全"};
@@ -112,7 +112,7 @@ public class CookActivity extends AppCompatActivity implements OnInitListener {
                 Log.v(TAG, "Language is not available");
             else {
                 Log.v(TAG, "TTS initial success");
-                mTts.speak(mStrArraySteps[pointerStep], TextToSpeech.QUEUE_ADD, null);
+                mTts.speak(mStrArrayStep[pointerStep], TextToSpeech.QUEUE_ADD, null);
                 startRecognizer();
             }
         }
@@ -141,10 +141,10 @@ public class CookActivity extends AppCompatActivity implements OnInitListener {
 
     private void setSteps() {
         Bundle bundle = this.getIntent().getExtras();
-        mStrArraySteps = bundle.getStringArray("steps");
-        for (int i = 0; i < mStrArraySteps.length; i++) {
+        mStrArrayStep = bundle.getStringArray("STEP");
+        for (int i = 0; i < mStrArrayStep.length; i++) {
             TextView textview = new TextView(CookActivity.this);
-            textview.setText("步驟" + (i + 1) + ":\n" + mStrArraySteps[i] + "\n");
+            textview.setText("步驟" + (i + 1) + ":\n" + mStrArrayStep[i] + "\n");
             textview.setTextSize(26.0f);
             mLinearLayout.addView(textview);
         }
@@ -214,19 +214,19 @@ public class CookActivity extends AppCompatActivity implements OnInitListener {
     private void speak(List<String> resList) {
         switch (analyzeSpeech(resList)) {
             case 0:
-                mTts.speak(mStrArraySteps[pointerStep], TextToSpeech.QUEUE_ADD, null);
+                mTts.speak(mStrArrayStep[pointerStep], TextToSpeech.QUEUE_ADD, null);
                 break;
             case 1:
                 if (pointerStep == 0)
-                    mTts.speak(mStrArraySteps[pointerStep], TextToSpeech.QUEUE_ADD, null);
+                    mTts.speak(mStrArrayStep[pointerStep], TextToSpeech.QUEUE_ADD, null);
                 else
-                    mTts.speak(mStrArraySteps[--pointerStep], TextToSpeech.QUEUE_ADD, null);
+                    mTts.speak(mStrArrayStep[--pointerStep], TextToSpeech.QUEUE_ADD, null);
                 break;
             case 2:
-                if (pointerStep == mStrArraySteps.length - 1)
-                    mTts.speak(mStrArraySteps[pointerStep], TextToSpeech.QUEUE_ADD, null);
+                if (pointerStep == mStrArrayStep.length - 1)
+                    mTts.speak(mStrArrayStep[pointerStep], TextToSpeech.QUEUE_ADD, null);
                 else
-                    mTts.speak(mStrArraySteps[++pointerStep], TextToSpeech.QUEUE_ADD, null);
+                    mTts.speak(mStrArrayStep[++pointerStep], TextToSpeech.QUEUE_ADD, null);
                 break;
         }
         Log.d(TAG, "onResults -> " + resList + "," + pointerStep);

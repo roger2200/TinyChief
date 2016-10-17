@@ -4,7 +4,7 @@ def JAR_DIR = 'build/java/vuforia'
 def NATIVE_LIB_DIR = 'build/lib'
 android {
     compileSdkVersion 24
-    buildToolsVersion '24.0.1'
+    buildToolsVersion '24.0.3'
 
     sourceSets.main {
         jni.srcDirs = []

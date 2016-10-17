@@ -1,10 +1,7 @@
 package com.roger.tinychief.activity;
 
-import android.annotation.TargetApi;
-import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.RecognitionListener;
@@ -12,20 +9,12 @@ import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.roger.tinychief.R;
 import com.roger.tinychief.widget.navigation.NavigationViewSetup;
@@ -44,8 +33,13 @@ public class CookActivity extends AppCompatActivity implements OnInitListener {
     private TextToSpeech mTts;
     private SpeechRecognizer recognizer;
     private Intent mIntentSR;
-    private String strArraySteps[];
+    private String[] mStrArraySteps;
+    private String[][] mStrArrayCheck = new String[3][];
+    private String[] mStrRepeat = new String[]{"重", "再", "在", "站", "戰", "蟲", "寵", "崇", "衝", "暫","從","叢","3","三","片","變","成","充","沖","船"};
+    private String[] mStrPrevious = new String[]{"前", "錢", "潛", "乾", "上", "尚","賽","散","帥","千","全"};
+    private String[] mStrNext = new String[]{"下", "嚇", "夏", "廈", "霞", "向", "項", "像", "巷", "相","少","小","算"};
     private int pointerStep = 0;
+    private boolean isCreate = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,13 +47,14 @@ public class CookActivity extends AppCompatActivity implements OnInitListener {
         setContentView(R.layout.activity_cook);
         setTitle("開始料理");
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
-
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout_cook);
         mLinearLayout = (LinearLayout) findViewById(R.id.linearlayout_step_cook);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
-
         mNavigationViewSetup = new NavigationViewSetup(this, mDrawerLayout, mToolbar);
         mNavigationViewSetup.setNavigationView();
+        mStrArrayCheck[0] = mStrRepeat;
+        mStrArrayCheck[1] = mStrPrevious;
+        mStrArrayCheck[2] = mStrNext;
 
         recognizer = SpeechRecognizer.createSpeechRecognizer(this);
         recognizer.setRecognitionListener(new MyRecognizerListener());
@@ -76,7 +71,21 @@ public class CookActivity extends AppCompatActivity implements OnInitListener {
     }
 
     @Override
+    protected void onResume() {
+        if (isCreate) {
+            mTts = new TextToSpeech(this, this);
+            recognizer = SpeechRecognizer.createSpeechRecognizer(this);
+            recognizer.setRecognitionListener(new MyRecognizerListener());
+        } else
+            isCreate = true;
+        super.onResume();
+    }
+
+    @Override
     protected void onStop() {
+        mTts.stop();
+        mTts.shutdown();
+        recognizer.cancel();
         recognizer.stopListening();
         recognizer.destroy();
         super.onStop();
@@ -84,9 +93,11 @@ public class CookActivity extends AppCompatActivity implements OnInitListener {
 
     @Override
     protected void onDestroy() {
+        mTts.stop();
+        mTts.shutdown();
+        recognizer.cancel();
         recognizer.stopListening();
         recognizer.destroy();
-        mTts.shutdown();
         super.onDestroy();
     }
 
@@ -101,7 +112,7 @@ public class CookActivity extends AppCompatActivity implements OnInitListener {
                 Log.v(TAG, "Language is not available");
             else {
                 Log.v(TAG, "TTS initial success");
-                mTts.speak(strArraySteps[pointerStep++], TextToSpeech.QUEUE_ADD, null);
+                mTts.speak(mStrArraySteps[pointerStep], TextToSpeech.QUEUE_ADD, null);
                 startRecognizer();
             }
         }
@@ -130,10 +141,10 @@ public class CookActivity extends AppCompatActivity implements OnInitListener {
 
     private void setSteps() {
         Bundle bundle = this.getIntent().getExtras();
-        strArraySteps = bundle.getStringArray("steps");
-        for (int i = 0; i < strArraySteps.length; i++) {
+        mStrArraySteps = bundle.getStringArray("steps");
+        for (int i = 0; i < mStrArraySteps.length; i++) {
             TextView textview = new TextView(CookActivity.this);
-            textview.setText("步驟" + (i + 1) + ":\n" + strArraySteps[i] + "\n");
+            textview.setText("步驟" + (i + 1) + ":\n" + mStrArraySteps[i] + "\n");
             textview.setTextSize(26.0f);
             mLinearLayout.addView(textview);
         }
@@ -145,7 +156,7 @@ public class CookActivity extends AppCompatActivity implements OnInitListener {
         @Override
         public void onResults(Bundle results) {
             List<String> resList = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-            analyzeSpeech(resList);
+            speak(resList);
         }
 
         @Override
@@ -200,28 +211,34 @@ public class CookActivity extends AppCompatActivity implements OnInitListener {
         }, 5000);
     }
 
-    private void analyzeSpeech(List<String> resList) {
-        for (String str : resList) {
-            Log.d(TAG, "onResults -> " + str + "," + pointerStep);
-            if (str.contains("重") || str.contains("再")) {
-                mTts.speak(strArraySteps[pointerStep], TextToSpeech.QUEUE_ADD, null);
+    private void speak(List<String> resList) {
+        switch (analyzeSpeech(resList)) {
+            case 0:
+                mTts.speak(mStrArraySteps[pointerStep], TextToSpeech.QUEUE_ADD, null);
                 break;
-            }
-            if (str.contains("上") || str.contains("前")) {
+            case 1:
                 if (pointerStep == 0)
-                    mTts.speak(strArraySteps[pointerStep], TextToSpeech.QUEUE_ADD, null);
+                    mTts.speak(mStrArraySteps[pointerStep], TextToSpeech.QUEUE_ADD, null);
                 else
-                    mTts.speak(strArraySteps[--pointerStep], TextToSpeech.QUEUE_ADD, null);
+                    mTts.speak(mStrArraySteps[--pointerStep], TextToSpeech.QUEUE_ADD, null);
                 break;
-            }
-            if (str.contains("下") || str.contains("繼續")) {
-                if (pointerStep == strArraySteps.length - 1)
-                    mTts.speak(strArraySteps[pointerStep], TextToSpeech.QUEUE_ADD, null);
+            case 2:
+                if (pointerStep == mStrArraySteps.length - 1)
+                    mTts.speak(mStrArraySteps[pointerStep], TextToSpeech.QUEUE_ADD, null);
                 else
-                    mTts.speak(strArraySteps[++pointerStep], TextToSpeech.QUEUE_ADD, null);
+                    mTts.speak(mStrArraySteps[++pointerStep], TextToSpeech.QUEUE_ADD, null);
                 break;
-            }
         }
+        Log.d(TAG, "onResults -> " + resList + "," + pointerStep);
         startRecognizer();
+    }
+
+    private int analyzeSpeech(List<String> resList) {
+        for (String strList : resList)
+            for (int i = 0; i < mStrArrayCheck.length; i++)
+                for (String strSpeak : mStrArrayCheck[i])
+                    if (strList.contains(strSpeak))
+                        return i;
+        return -1;
     }
 }

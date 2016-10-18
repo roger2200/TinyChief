@@ -11,12 +11,14 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.format.DateFormat;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +39,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,7 +50,8 @@ public class DetailActivity extends AppCompatActivity {
     private Toolbar mToolbar;
     private DrawerLayout mDrawerLayout;
     private CoordinatorLayout mCoordinatorLayout;
-    private LinearLayout mIiLinearLayout, mStepLinearLayout;
+    private LinearLayout mStepLinearLayout;
+    private TableLayout mIiTableLayout;
     private TextView mTitleTextView;
     private ImageView mImageView;
     private RecyclerView mRecyclerView;
@@ -66,7 +70,7 @@ public class DetailActivity extends AppCompatActivity {
         mImageView = (ImageView) findViewById(R.id.img_detail);
         mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorlayout_detail);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout_detail);
-        mIiLinearLayout = (LinearLayout) findViewById(R.id.linearlayout_ii_detail);
+        mIiTableLayout = (TableLayout) findViewById(R.id.tablelayout_ii_detail);
         mStepLinearLayout = (LinearLayout) findViewById(R.id.linearlayout_step_detail);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
 
@@ -120,13 +124,6 @@ public class DetailActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void onClickValuation(View view) {
-        Intent intent = new Intent(view.getContext(), ValuationActivity.class);
-        intent.putExtra("NAME", mStrArrayIiN);
-        intent.putExtra("AMOUNT", mStrArrayIiA);
-        startActivity(intent);
-    }
-
     public void getCookbook() {
         StringRequest request = new StringRequest(Request.Method.POST, "https://tiny-chief.herokuapp.com/cookbook/detail",
                 new Response.Listener<String>() {
@@ -157,29 +154,55 @@ public class DetailActivity extends AppCompatActivity {
                             for (int i = 0; i < jsonArrayIi.length(); i++) {
                                 TextView textViewName = new TextView(DetailActivity.this);
                                 TextView textViewAmount = new TextView(DetailActivity.this);
-                                LinearLayout linearLayout = new LinearLayout(DetailActivity.this);
-                                LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+                                final TextView textViewPrice = new TextView(DetailActivity.this);
+                                TableRow tablerow = new TableRow(DetailActivity.this);
+                                Calendar calendar = Calendar.getInstance();
 
-                                textViewName.setTextSize(26.0f);
-                                textViewAmount.setTextSize(26.0f);
-                                textViewAmount.setLayoutParams(layoutParams);
-                                textViewAmount.setGravity(Gravity.END);
+                                textViewName.setTextSize(20.0f);
+                                textViewAmount.setTextSize(20.0f);
+                                textViewPrice.setTextSize(20.0f);
+
+                                int intYear1 = calendar.get(Calendar.YEAR) - 1911;
+                                CharSequence strDay1 = DateFormat.format(".MM.dd", calendar);
+                                calendar.add(Calendar.MONTH, -1);
+                                int intYear2 = calendar.get(Calendar.YEAR) - 1911;
+                                CharSequence strDay2 = DateFormat.format(".MM.dd", calendar);
 
                                 textViewName.setText(jsonArrayIi.getJSONObject(i).getString("name"));
                                 textViewAmount.setText(jsonArrayIi.getJSONObject(i).getDouble("amount") + "\t" + jsonArrayIi.getJSONObject(i).getString("unit"));
+                                String strClass = jsonArrayIi.getJSONObject(i).getString("class");
 
-                                linearLayout.addView(textViewName);
-                                linearLayout.addView(textViewAmount);
-                                mIiLinearLayout.addView(linearLayout);
-
-                                mStrArrayIiN[i] = jsonArrayIi.getJSONObject(i).getString("name");
-                                mStrArrayIiA[i] = jsonArrayIi.getJSONObject(i).getString("amount");
+                                if (!(strClass.equals("休市") || strClass.equals("肉類") || strClass.equals("調味料"))) {
+                                    String strURL = "http://m.coa.gov.tw/OpenData/FarmTransData.aspx?"
+                                            + "StartDate=" + intYear2 + strDay2 + "&EndDate=" + intYear1 + strDay1 + "&Crop=" + strClass;
+                                    StringRequest request = new StringRequest(Request.Method.GET, strURL,
+                                            new Response.Listener<String>() {
+                                                public void onResponse(String string) {
+                                                    try {
+                                                        JSONArray jsonArray = new JSONArray(string);
+                                                        textViewPrice.setText(jsonArray.getJSONObject(0).getString("平均價"));
+                                                    } catch (Exception e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                }
+                                            },
+                                            new Response.ErrorListener() {
+                                                @Override
+                                                public void onErrorResponse(VolleyError error) {
+                                                    Log.e("Error", error.getMessage());
+                                                }
+                                            });
+                                    NetworkManager.getInstance(DetailActivity.this).request(null, request);
+                                }
+                                tablerow.addView(textViewName);
+                                tablerow.addView(textViewAmount);
+                                tablerow.addView(textViewPrice);
+                                mIiTableLayout.addView(tablerow);
                             }
-
                             mStrArrayStep = new String[jsonArrayStep.length()];
                             for (int i = 0; i < jsonArrayStep.length(); i++) {
                                 TextView textViewStep = new TextView(DetailActivity.this);
-                                textViewStep.setTextSize(26.0f);
+                                textViewStep.setTextSize(22.0f);
                                 textViewStep.setText(jsonArrayStep.getString(i) + "\n");
                                 mStrArrayStep[i] = jsonArrayStep.getString(i);
                                 mStepLinearLayout.addView(textViewStep);

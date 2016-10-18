@@ -46,30 +46,35 @@
                         android:layout_height="wrap_content"
                         android:adjustViewBounds="true" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="\n材料:"
-                        android:textSize="30sp" />
-
-                    <LinearLayout
-                        android:id="@+id/linearlayout_ii_detail"
+                    <TableLayout
+                        android:id="@+id/tablelayout_ii_detail"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical" />
+                        android:orientation="vertical"
+                        android:stretchColumns="0,1,2">
 
-                    <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:onClick="onClickValuation"
-                        android:text="價錢估算"/>
+                        <TableRow>
+
+                            <TextView
+                                android:text="材料名稱"
+                                android:textSize="20sp" />
+
+                            <TextView
+                                android:text="數量"
+                                android:textSize="20sp" />
+
+                            <TextView
+                                android:text="時價(/kg)"
+                                android:textSize="20sp" />
+                        </TableRow>
+                    </TableLayout>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
                         android:text="步驟:"
-                        android:textSize="30sp" />
+                        android:textSize="22sp" />
 
                     <LinearLayout
                         android:id="@+id/linearlayout_step_detail"
@@ -91,10 +96,10 @@
                         android:text="料理開始" />
 
                     <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:onClick="onClickWriteComment"
-                    android:text="撰寫評論" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="onClickWriteComment"
+                        android:text="撰寫評論" />
 
                     <Button
                         android:layout_width="wrap_content"

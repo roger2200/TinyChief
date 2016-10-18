@@ -8,17 +8,23 @@ import android.os.Environment;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.database.DatabaseUtilsCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -29,6 +35,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.JsonRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.roger.tinychief.R;
 import com.roger.tinychief.imgur.ImageResponse;
 import com.roger.tinychief.imgur.Upload;
@@ -43,8 +50,12 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import retrofit.Callback;
@@ -54,11 +65,11 @@ public class CreateActivity extends AppCompatActivity {
     private final String LOGTAG = "CreateActivity";
     private final int REQUEST_PIC = 0, REQUEST_AR_PIC = 1;
     //用list儲存材料和步驟的EditText,方便計算有幾筆材料和步驟
-    private ArrayList<TableRow> mIiEditTextList = new ArrayList<>();
+    private ArrayList<TableRow> mIiTableRowList = new ArrayList<>();
     private ArrayList<EditText> mStepEditTextList = new ArrayList<>();
     private EditText mTitleEditText, mServingEditText, mNoteEditText;
     private ImageView mImageView, mArImageView;
-    private LinearLayout mStepLinearLayout,mLinearlayout;
+    private LinearLayout mStepLinearLayout, mLinearlayout;
     private TableLayout mIiTableLayout;
     private Bitmap mImgBitmap, mArBitmap;
     private Upload mUpload; // Upload object containging image and meta data
@@ -87,13 +98,13 @@ public class CreateActivity extends AppCompatActivity {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout_create);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorlayout_create);
-        mLinearlayout=(LinearLayout)findViewById(R.id.linearlayout_create);
+        mLinearlayout = (LinearLayout) findViewById(R.id.linearlayout_create);
 
         mLinearlayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                InputMethodManager imm = (InputMethodManager)view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(view.getWindowToken(),0);
+                InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 return false;
             }
         });
@@ -121,7 +132,7 @@ public class CreateActivity extends AppCompatActivity {
                 Uri uri = data.getData();
                 String imgPath = MyHelper.getRealPathFromURI(uri, this);
                 mImgBitmap = MyHelper.rotationBitmap(imgPath);
-                mImgBitmap = MyHelper.scaleBitmap(mImgBitmap, this,true);
+                mImgBitmap = MyHelper.scaleBitmap(mImgBitmap, this, true);
                 try {
                     // 路徑
                     String path = Environment.getExternalStorageDirectory().toString() + "/Tiny Chief/";
@@ -154,7 +165,7 @@ public class CreateActivity extends AppCompatActivity {
                 String arPath = data.getStringExtra("AR_PIC");
                 mArFile = new File(arPath);
                 mArBitmap = MyHelper.rotationBitmap(arPath);
-                mArBitmap = MyHelper.scaleBitmap(mArBitmap, this,true);
+                mArBitmap = MyHelper.scaleBitmap(mArBitmap, this, true);
                 mArImageView.setImageBitmap(mArBitmap);
             }
         }
@@ -173,17 +184,84 @@ public class CreateActivity extends AppCompatActivity {
     }
 
     public void addIi(View v) {
-        EditText edittxtName = new EditText(this);
+        final EditText edittxtName = new EditText(this);
         EditText edittxtAmount = new EditText(this);
         EditText edittxtUnit = new EditText(this);
+        Spinner spinner = new Spinner(this);
         TableRow tablerow = new TableRow(this);
+        final ArrayList<String> strSpinItem = new ArrayList<>();
+
+        strSpinItem.add("請選擇");
+        strSpinItem.add("調味料");
+        strSpinItem.add("肉類");
+        spinner.setSelection(0);
+        ArrayAdapter adapter = new ArrayAdapter<>(CreateActivity.this, android.R.layout.simple_spinner_item, strSpinItem);
+        spinner.setAdapter(adapter);
+
+        edittxtName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                strSpinItem.clear();
+                strSpinItem.add("請選擇");
+                strSpinItem.add("調味料");
+                strSpinItem.add("肉類");
+                Calendar calendar = Calendar.getInstance();
+
+                int intYear1 = calendar.get(Calendar.YEAR) - 1911;
+                CharSequence strDay1 = DateFormat.format(".MM.dd", calendar);
+                calendar.add(Calendar.MONTH, -1);
+                int intYear2 = calendar.get(Calendar.YEAR) - 1911;
+                CharSequence strDay2 = DateFormat.format(".MM.dd", calendar);
+
+                char[] charArrayName = edittxtName.getText().toString().toCharArray();
+                for (char c : charArrayName) {
+                    if (c == '花') continue;
+                    if (c == '麗') c = '萵';
+                    String strURL = "http://m.coa.gov.tw/OpenData/FarmTransData.aspx?"
+                            + "StartDate=" + intYear2 + strDay2 + "&EndDate=" + intYear1 + strDay1 + "&Crop=" + c;
+                    Log.d("Request",strURL);
+                    StringRequest request = new StringRequest(Request.Method.GET, strURL,
+                            new Response.Listener<String>() {
+                                public void onResponse(String string) {
+                                    try {
+                                        JSONArray jsonArray = new JSONArray(string);
+                                        for (int i = 0; i < jsonArray.length(); i++) {
+                                            String str = jsonArray.getJSONObject(i).getString("作物名稱");
+                                            if (!strSpinItem.contains(str))
+                                                strSpinItem.add(str);
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            },
+                            new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    Log.e("Error", error.getMessage());
+                                }
+                            });
+                    NetworkManager.getInstance(CreateActivity.this).request(null, request);
+                }
+            }
+        });
 
         tablerow.addView(edittxtName);
+        tablerow.addView(spinner);
         tablerow.addView(edittxtAmount);
         tablerow.addView(edittxtUnit);
+
         //加到LinearLayout裡
         mIiTableLayout.addView(tablerow);
-        mIiEditTextList.add(tablerow);
+        mIiTableRowList.add(tablerow);
     }
 
     public void addStep(View v) {
@@ -247,11 +325,12 @@ public class CreateActivity extends AppCompatActivity {
         JSONArray jsonArrIi = new JSONArray();
         JSONArray jsonArrStep = new JSONArray();
         try {
-            for (TableRow tablerow : mIiEditTextList) {
+            for (TableRow tablerow : mIiTableRowList) {
                 JSONObject jsonIi = new JSONObject();
-                jsonIi.put("name", ((EditText)tablerow.getVirtualChildAt(0)).getText());
-                jsonIi.put("amount", ((EditText)tablerow.getVirtualChildAt(1)).getText());
-                jsonIi.put("unit", ((EditText)tablerow.getVirtualChildAt(2)).getText());
+                jsonIi.put("name", ((EditText) tablerow.getVirtualChildAt(0)).getText());
+                jsonIi.put("class", ((Spinner) tablerow.getVirtualChildAt(1)).getSelectedItem().toString());
+                jsonIi.put("amount", ((EditText) tablerow.getVirtualChildAt(2)).getText());
+                jsonIi.put("unit", ((EditText) tablerow.getVirtualChildAt(3)).getText());
                 jsonArrIi.put(jsonIi);
             }
             for (EditText editText : mStepEditTextList)
@@ -269,12 +348,13 @@ public class CreateActivity extends AppCompatActivity {
             jsonObjectMain.put("note", mNoteEditText.getText());
             jsonObjectMain.put("ingredients", jsonArrIi);
             jsonObjectMain.put("steps", jsonArrStep);
+            jsonObjectMain.put("comment",new JSONArray());
             Log.d(LOGTAG, jsonObjectMain.toString());
         } catch (JSONException e) {
             Log.e(LOGTAG, e.getMessage());
         }
 
-        JsonRequest<JSONObject> jsonRequest = new JsonObjectRequest(Request.Method.POST, "https://tiny-chief.herokuapp.com/upload/cookbook", jsonObjectMain,
+        JsonRequest<JSONObject> jsonRequest = new JsonObjectRequest(Request.Method.POST, "https://tinny-chief.herokuapp.com/upload/cookbook", jsonObjectMain,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {

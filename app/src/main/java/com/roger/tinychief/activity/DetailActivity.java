@@ -54,7 +54,7 @@ public class DetailActivity extends AppCompatActivity {
     private AdapterComment mAdapter;
     private Bitmap mArBitmap;
     private NavigationViewSetup mNavigationViewSetup;
-    private String[] mStrArrayStep, mStrArrayIi;
+    private String[] mStrArrayStep, mStrArrayIiN, mStrArrayIiA;
     private ArrayList<ItemComment> mDataset = new ArrayList<>();
 
     @Override
@@ -122,7 +122,8 @@ public class DetailActivity extends AppCompatActivity {
 
     public void onClickValuation(View view) {
         Intent intent = new Intent(view.getContext(), ValuationActivity.class);
-        intent.putExtra("II", mStrArrayIi);
+        intent.putExtra("NAME", mStrArrayIiN);
+        intent.putExtra("AMOUNT", mStrArrayIiA);
         startActivity(intent);
     }
 
@@ -151,7 +152,8 @@ public class DetailActivity extends AppCompatActivity {
 
                             mTitleTextView.setText(json.getString("title"));
                             setTitle(json.getString("title"));
-                            mStrArrayIi = new String[jsonArrayIi.length()];
+                            mStrArrayIiN = new String[jsonArrayIi.length()];
+                            mStrArrayIiA = new String[jsonArrayIi.length()];
                             for (int i = 0; i < jsonArrayIi.length(); i++) {
                                 TextView textViewName = new TextView(DetailActivity.this);
                                 TextView textViewAmount = new TextView(DetailActivity.this);
@@ -170,7 +172,8 @@ public class DetailActivity extends AppCompatActivity {
                                 linearLayout.addView(textViewAmount);
                                 mIiLinearLayout.addView(linearLayout);
 
-                                mStrArrayIi[i] = jsonArrayIi.getJSONObject(i).getString("name");
+                                mStrArrayIiN[i] = jsonArrayIi.getJSONObject(i).getString("name");
+                                mStrArrayIiA[i] = jsonArrayIi.getJSONObject(i).getString("amount");
                             }
 
                             mStrArrayStep = new String[jsonArrayStep.length()];

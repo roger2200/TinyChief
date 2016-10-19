@@ -82,6 +82,7 @@ public class CreateActivity extends AppCompatActivity {
     private NavigationViewSetup mNavigationViewSetup;
     private CoordinatorLayout mCoordinatorLayout;
     private ProgressDialog mProgressDialog;
+    private ArrayList<String> strSpinItem = new ArrayList<>();
 
 
     @Override
@@ -193,7 +194,6 @@ public class CreateActivity extends AppCompatActivity {
         EditText edittxtUnit = new EditText(this);
         Spinner spinner = new Spinner(this);
         TableRow tablerow = new TableRow(this);
-        final ArrayList<String> strSpinItem = new ArrayList<>();
 
         strSpinItem.add("請選擇");
         strSpinItem.add("調味料");
@@ -217,45 +217,9 @@ public class CreateActivity extends AppCompatActivity {
                 strSpinItem.add("請選擇");
                 strSpinItem.add("調味料");
                 strSpinItem.add("肉類");
-                Calendar calendar = Calendar.getInstance();
-
-                int intYear1 = calendar.get(Calendar.YEAR) - 1911;
-                CharSequence strDay1 = DateFormat.format(".MM.dd", calendar);
-                calendar.add(Calendar.MONTH, -1);
-                int intYear2 = calendar.get(Calendar.YEAR) - 1911;
-                CharSequence strDay2 = DateFormat.format(".MM.dd", calendar);
-
-                char[] charArrayName = edittxtName.getText().toString().toCharArray();
-                for (char c : charArrayName) {
-                    if (c == '花') continue;
-                    if (c == '麗') c = '萵';
-                    String strURL = "http://m.coa.gov.tw/OpenData/FarmTransData.aspx?"
-                            + "StartDate=" + intYear2 + strDay2 + "&EndDate=" + intYear1 + strDay1 + "&Crop=" + c;
-                    Log.d("Request", strURL);
-                    StringRequest request = new StringRequest(Request.Method.GET, strURL,
-                            new Response.Listener<String>() {
-                                public void onResponse(String string) {
-                                    try {
-                                        JSONArray jsonArray = new JSONArray(string);
-                                        for (int i = 0; i < jsonArray.length(); i++) {
-                                            String str = jsonArray.getJSONObject(i).getString("作物名稱");
-                                            if (!strSpinItem.contains(str))
-                                                strSpinItem.add(str);
-                                        }
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            },
-                            new Response.ErrorListener() {
-                                @Override
-                                public void onErrorResponse(VolleyError error) {
-                                    Log.e("Error", error.toString());
-                                }
-                            });
-                    request.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                    NetworkManager.getInstance(CreateActivity.this).request(null, request);
-                }
+                String strCropName = edittxtName.getText().toString();
+                if (!strCropName.equals(""))
+                    getOpendata(strCropName);
             }
         });
 
@@ -295,6 +259,52 @@ public class CreateActivity extends AppCompatActivity {
         mUpload.title = mTitleEditText.getText().toString();
         mUpload.description = descript;
         mUpload.albumId = "2lLX3";
+    }
+
+    private void getOpendata(String parCrop) {
+        strSpinItem.clear();
+        strSpinItem.add("請選擇");
+        strSpinItem.add("調味料");
+        strSpinItem.add("肉類");
+
+        final String strCrop = parCrop;
+        Calendar calendar = Calendar.getInstance();
+        int intYear1 = calendar.get(Calendar.YEAR) - 1911;
+        CharSequence strDay1 = DateFormat.format(".MM.dd", calendar);
+        calendar.add(Calendar.MONTH, -1);
+        int intYear2 = calendar.get(Calendar.YEAR) - 1911;
+        CharSequence strDay2 = DateFormat.format(".MM.dd", calendar);
+
+        String strURL = "http://m.coa.gov.tw/OpenData/FarmTransData.aspx?"
+                + "StartDate=" + intYear2 + strDay2 + "&EndDate=" + intYear1 + strDay1 + "&Crop=" + strCrop;
+        Log.d("Request Url", strURL);
+        StringRequest request = new StringRequest(Request.Method.GET, strURL,
+                new Response.Listener<String>() {
+                    public void onResponse(String string) {
+                        try {
+                            JSONArray jsonArray = new JSONArray(string);
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                String str = jsonArray.getJSONObject(i).getString("作物名稱");
+                                if (!(strSpinItem.contains(str) || str.equals("休市"))) {
+                                    strSpinItem.add(str);
+                                }
+                            }
+                            if (strSpinItem.size() < 4)
+                                if (strCrop.length() > 1)
+                                    getOpendata(strCrop.substring(0, strCrop.length() - 1));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("Error", error.toString());
+                    }
+                });
+        request.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        NetworkManager.getInstance(CreateActivity.this).request(null, request);
     }
 
     private class UiCallback implements Callback<ImageResponse> {

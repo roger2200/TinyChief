@@ -1,5 +1,6 @@
 package com.roger.tinychief.activity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -80,6 +81,7 @@ public class CreateActivity extends AppCompatActivity {
     private NavigationView mNavigationView;
     private NavigationViewSetup mNavigationViewSetup;
     private CoordinatorLayout mCoordinatorLayout;
+    private ProgressDialog mProgressDialog;
 
 
     @Override
@@ -99,6 +101,8 @@ public class CreateActivity extends AppCompatActivity {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorlayout_create);
         mLinearlayout = (LinearLayout) findViewById(R.id.linearlayout_create);
+        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setMessage("上傳食譜中...");
 
         mLinearlayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -227,7 +231,7 @@ public class CreateActivity extends AppCompatActivity {
                     if (c == '麗') c = '萵';
                     String strURL = "http://m.coa.gov.tw/OpenData/FarmTransData.aspx?"
                             + "StartDate=" + intYear2 + strDay2 + "&EndDate=" + intYear1 + strDay1 + "&Crop=" + c;
-                    Log.d("Request",strURL);
+                    Log.d("Request", strURL);
                     StringRequest request = new StringRequest(Request.Method.GET, strURL,
                             new Response.Listener<String>() {
                                 public void onResponse(String string) {
@@ -246,9 +250,10 @@ public class CreateActivity extends AppCompatActivity {
                             new Response.ErrorListener() {
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
-                                    Log.e("Error", error.getMessage());
+                                    Log.e("Error", error.toString());
                                 }
                             });
+                    request.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
                     NetworkManager.getInstance(CreateActivity.this).request(null, request);
                 }
             }
@@ -277,6 +282,7 @@ public class CreateActivity extends AppCompatActivity {
 
     public void uploadCookBook(View v) {
         if (mImgFile != null) {
+            mProgressDialog.show();
             createUpload(mImgFile, "Image");
             new UploadService(this).Execute(mUpload, new UiCallback());
         }
@@ -316,6 +322,10 @@ public class CreateActivity extends AppCompatActivity {
                 Log.e("RetrofitError", "No internet connection");
             else
                 Log.e("RetrofitError", error.getMessage());
+            mProgressDialog.dismiss();
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "上傳失敗", Snackbar.LENGTH_LONG);
+            MyHelper.setSnackbarMessageTextColor(snackbar, android.graphics.Color.WHITE);
+            snackbar.show();
         }
     }
 
@@ -348,7 +358,7 @@ public class CreateActivity extends AppCompatActivity {
             jsonObjectMain.put("note", mNoteEditText.getText());
             jsonObjectMain.put("ingredients", jsonArrIi);
             jsonObjectMain.put("steps", jsonArrStep);
-            jsonObjectMain.put("comment",new JSONArray());
+            jsonObjectMain.put("comment", new JSONArray());
             Log.d(LOGTAG, jsonObjectMain.toString());
         } catch (JSONException e) {
             Log.e(LOGTAG, e.getMessage());
@@ -358,6 +368,7 @@ public class CreateActivity extends AppCompatActivity {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
+                        mProgressDialog.dismiss();
                         Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "上傳完成", Snackbar.LENGTH_LONG);
                         MyHelper.setSnackbarMessageTextColor(snackbar, android.graphics.Color.WHITE);
                         snackbar.show();
@@ -367,6 +378,7 @@ public class CreateActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        mProgressDialog.dismiss();
                         Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "上傳失敗", Snackbar.LENGTH_LONG);
                         MyHelper.setSnackbarMessageTextColor(snackbar, android.graphics.Color.WHITE);
                         snackbar.show();

@@ -189,9 +189,10 @@ public class DetailActivity extends AppCompatActivity {
                                             new Response.ErrorListener() {
                                                 @Override
                                                 public void onErrorResponse(VolleyError error) {
-                                                    Log.e("Error", error.getMessage());
+                                                        Log.e("Error", error.toString());
                                                 }
                                             });
+                                    request.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
                                     NetworkManager.getInstance(DetailActivity.this).request(null, request);
                                 }
                                 tablerow.addView(textViewName);
@@ -237,7 +238,7 @@ public class DetailActivity extends AppCompatActivity {
                 return param;
             }
         };
-        request.setRetryPolicy(new DefaultRetryPolicy(10000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        request.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         NetworkManager.getInstance(this).request(null, request);
     }
 

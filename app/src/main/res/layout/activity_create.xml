@@ -76,7 +76,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="份量(人/一份):" />
+                    android:text="備註:" />
 
                 <EditText
                     android:id="@+id/edittext_note"
@@ -86,7 +86,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="備註:" />
+                    android:text="份量(人/一份):" />
 
                 <EditText
                     android:id="@+id/edittext_servings"

@@ -21,6 +21,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -82,7 +83,6 @@ public class CreateActivity extends AppCompatActivity {
     private NavigationViewSetup mNavigationViewSetup;
     private CoordinatorLayout mCoordinatorLayout;
     private ProgressDialog mProgressDialog;
-    private ArrayList<String> strSpinItem = new ArrayList<>();
 
 
     @Override
@@ -129,6 +129,15 @@ public class CreateActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onDestroy() {
+        if (mImgFile != null)
+            mImgFile.delete();
+        if (mArFile != null)
+            mArFile.delete();
+        super.onDestroy();
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
@@ -138,33 +147,8 @@ public class CreateActivity extends AppCompatActivity {
                 String imgPath = MyHelper.getRealPathFromURI(uri, this);
                 mImgBitmap = MyHelper.rotationBitmap(imgPath);
                 mImgBitmap = MyHelper.scaleBitmap(mImgBitmap, this, true);
-                try {
-                    // 路徑
-                    String path = Environment.getExternalStorageDirectory().toString() + "/Tiny Chief/";
+                mImageView.setImageBitmap(mImgBitmap);
 
-                    // 開啟檔案
-                    File dir = new File(path);
-                    if (!dir.exists())
-                        dir.mkdirs();
-
-                    path += "tmpImg.png";
-                    File file = new File(path);
-                    file.createNewFile();
-                    file.setWritable(Boolean.TRUE);
-
-                    // 將 Bitmap壓縮成指定格式的圖片並寫入檔案串流
-                    FileOutputStream out = new FileOutputStream(file);
-                    mImgBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-
-                    // 刷新並關閉檔案串流
-                    out.flush();
-                    out.close();
-
-                    mImgFile = new File(path);
-                    mImageView.setImageBitmap(mImgBitmap);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
 
             } else if (requestCode == REQUEST_AR_PIC) {
                 String arPath = data.getStringExtra("AR_PIC");
@@ -189,11 +173,12 @@ public class CreateActivity extends AppCompatActivity {
     }
 
     public void addIi(View v) {
-        final EditText edittxtName = new EditText(this);
         EditText edittxtAmount = new EditText(this);
         EditText edittxtUnit = new EditText(this);
-        Spinner spinner = new Spinner(this);
         TableRow tablerow = new TableRow(this);
+        final Spinner spinner = new Spinner(this);
+        final EditText edittxtName = new EditText(this);
+        final ArrayList<String> strSpinItem = new ArrayList<>();
 
         strSpinItem.add("請選擇");
         strSpinItem.add("調味料");
@@ -201,6 +186,18 @@ public class CreateActivity extends AppCompatActivity {
         spinner.setSelection(0);
         ArrayAdapter adapter = new ArrayAdapter<>(CreateActivity.this, android.R.layout.simple_spinner_item, strSpinItem);
         spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if (i > 2)
+                    edittxtName.setText(adapterView.getSelectedItem().toString());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         edittxtName.addTextChangedListener(new TextWatcher() {
             @Override
@@ -213,13 +210,15 @@ public class CreateActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable editable) {
+                if (strSpinItem.contains(editable.toString()))
+                    return;
                 strSpinItem.clear();
                 strSpinItem.add("請選擇");
                 strSpinItem.add("調味料");
                 strSpinItem.add("肉類");
                 String strCropName = edittxtName.getText().toString();
                 if (!strCropName.equals(""))
-                    getOpendata(strCropName);
+                    getOpendata(strCropName, strSpinItem, spinner);
             }
         });
 
@@ -245,8 +244,42 @@ public class CreateActivity extends AppCompatActivity {
     }
 
     public void uploadCookBook(View v) {
-        if (mImgFile != null) {
+        for (TableRow tablerow : mIiTableRowList) {
+            if (((Spinner) tablerow.getVirtualChildAt(1)).getSelectedItemPosition() == 0) {
+                Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "請選擇材料種類", Snackbar.LENGTH_LONG);
+                MyHelper.setSnackbarMessageTextColor(snackbar, android.graphics.Color.WHITE);
+                snackbar.show();
+                return;
+            }
+        }
+        if (mImgBitmap != null) {
             mProgressDialog.show();
+            try {
+                // 路徑
+                String path = Environment.getExternalStorageDirectory().toString() + "/Tiny Chief/";
+
+                // 開啟檔案
+                File dir = new File(path);
+                if (!dir.exists())
+                    dir.mkdirs();
+
+                path += "tmpImg.png";
+                File file = new File(path);
+                file.createNewFile();
+                file.setWritable(Boolean.TRUE);
+
+                // 將 Bitmap壓縮成指定格式的圖片並寫入檔案串流
+                FileOutputStream out = new FileOutputStream(file);
+                mImgBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+
+                // 刷新並關閉檔案串流
+                out.flush();
+                out.close();
+
+                mImgFile = new File(path);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             createUpload(mImgFile, "Image");
             new UploadService(this).Execute(mUpload, new UiCallback());
         }
@@ -261,13 +294,16 @@ public class CreateActivity extends AppCompatActivity {
         mUpload.albumId = "2lLX3";
     }
 
-    private void getOpendata(String parCrop) {
+    private void getOpendata(String parCrop, ArrayList<String> parSpinItem, Spinner parSpinner) {
+        final String strCrop = parCrop;
+        final ArrayList<String> strSpinItem = parSpinItem;
+        final Spinner spinner = parSpinner;
+
         strSpinItem.clear();
         strSpinItem.add("請選擇");
         strSpinItem.add("調味料");
         strSpinItem.add("肉類");
 
-        final String strCrop = parCrop;
         Calendar calendar = Calendar.getInstance();
         int intYear1 = calendar.get(Calendar.YEAR) - 1911;
         CharSequence strDay1 = DateFormat.format(".MM.dd", calendar);
@@ -282,16 +318,18 @@ public class CreateActivity extends AppCompatActivity {
                 new Response.Listener<String>() {
                     public void onResponse(String string) {
                         try {
+                            spinner.clearFocus();
                             JSONArray jsonArray = new JSONArray(string);
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 String str = jsonArray.getJSONObject(i).getString("作物名稱");
                                 if (!(strSpinItem.contains(str) || str.equals("休市"))) {
                                     strSpinItem.add(str);
+                                    spinner.setSelection(0);
                                 }
                             }
                             if (strSpinItem.size() < 4)
                                 if (strCrop.length() > 1)
-                                    getOpendata(strCrop.substring(0, strCrop.length() - 1));
+                                    getOpendata(strCrop.substring(0, strCrop.length() - 1), strSpinItem, spinner);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -321,7 +359,8 @@ public class CreateActivity extends AppCompatActivity {
                 if (mArFile != null) {
                     createUpload(mArFile, "Ar");
                     new UploadService(CreateActivity.this).Execute(mUpload, new UiCallback());
-                }
+                } else
+                    upload2Server();
             }
         }
 
@@ -348,7 +387,6 @@ public class CreateActivity extends AppCompatActivity {
             for (TableRow tablerow : mIiTableRowList) {
                 JSONObject jsonIi = new JSONObject();
                 jsonIi.put("name", ((EditText) tablerow.getVirtualChildAt(0)).getText());
-                jsonIi.put("class", ((Spinner) tablerow.getVirtualChildAt(1)).getSelectedItem().toString());
                 jsonIi.put("amount", ((EditText) tablerow.getVirtualChildAt(2)).getText());
                 jsonIi.put("unit", ((EditText) tablerow.getVirtualChildAt(3)).getText());
                 jsonArrIi.put(jsonIi);
@@ -359,11 +397,13 @@ public class CreateActivity extends AppCompatActivity {
             //這兩行之後要換掉
             jsonObjectAuthor.put("name", "Roger");
             jsonObjectAuthor.put("id", "5787a635e07c9e0300237873");
-
             jsonObjectMain.put("author", jsonObjectAuthor);
             jsonObjectMain.put("title", mTitleEditText.getText());
             jsonObjectMain.put("image", mImgUrl);
-            jsonObjectMain.put("image_ar", mArUrl);
+            if (mArUrl != null)
+                jsonObjectMain.put("image_ar", mArUrl);
+            else
+                jsonObjectMain.put("image_ar", "");
             jsonObjectMain.put("servings", mServingEditText.getText());
             jsonObjectMain.put("note", mNoteEditText.getText());
             jsonObjectMain.put("ingredients", jsonArrIi);
@@ -371,7 +411,10 @@ public class CreateActivity extends AppCompatActivity {
             jsonObjectMain.put("comment", new JSONArray());
             Log.d(LOGTAG, jsonObjectMain.toString());
         } catch (JSONException e) {
-            Log.e(LOGTAG, e.getMessage());
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "有空格還沒填", Snackbar.LENGTH_LONG);
+            MyHelper.setSnackbarMessageTextColor(snackbar, android.graphics.Color.WHITE);
+            snackbar.show();
+            e.printStackTrace();
         }
 
         JsonRequest<JSONObject> jsonRequest = new JsonObjectRequest(Request.Method.POST, "https://tinny-chief.herokuapp.com/upload/cookbook", jsonObjectMain,

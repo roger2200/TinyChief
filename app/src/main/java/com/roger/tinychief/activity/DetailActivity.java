@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
@@ -133,19 +134,23 @@ public class DetailActivity extends AppCompatActivity {
                             final JSONObject json = new JSONObject(string);
                             JSONArray jsonArrayIi = json.getJSONArray("ingredients");
                             JSONArray jsonArrayStep = json.getJSONArray("steps");
+
                             //讀圖片
-                            Glide.with(DetailActivity.this).load(json.getString("image")).asBitmap().into(mImageView);
-                            new AsyncTask<Integer, Integer, Integer>() {
-                                @Override
-                                protected Integer doInBackground(Integer... parm) {
-                                    try {
-                                        mArBitmap = Glide.with(DetailActivity.this).load(json.getString("image_ar")).asBitmap().into(-1, -1).get();
-                                    } catch (Exception e) {
-                                        Log.e(TAG, e.getMessage());
+                            if (!json.getString("image_ar").equals("")) {
+                                findViewById(R.id.btn_openar_detail).setEnabled(true);
+                                new AsyncTask<Integer, Integer, Integer>() {
+                                    @Override
+                                    protected Integer doInBackground(Integer... parm) {
+                                        try {
+                                            mArBitmap = Glide.with(DetailActivity.this).load(json.getString("image_ar")).asBitmap().into(-1, -1).get();
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                        return null;
                                     }
-                                    return null;
-                                }
-                            }.execute();
+                                }.execute();
+                            }
+                            Glide.with(DetailActivity.this).load(json.getString("image")).asBitmap().into(mImageView);
 
                             mTitleTextView.setText(json.getString("title"));
                             setTitle(json.getString("title"));
@@ -168,13 +173,13 @@ public class DetailActivity extends AppCompatActivity {
                                 int intYear2 = calendar.get(Calendar.YEAR) - 1911;
                                 CharSequence strDay2 = DateFormat.format(".MM.dd", calendar);
 
-                                textViewName.setText(jsonArrayIi.getJSONObject(i).getString("name"));
+                                String strName = jsonArrayIi.getJSONObject(i).getString("name");
+                                textViewName.setText(strName);
                                 textViewAmount.setText(jsonArrayIi.getJSONObject(i).getDouble("amount") + "\t" + jsonArrayIi.getJSONObject(i).getString("unit"));
-                                String strClass = jsonArrayIi.getJSONObject(i).getString("class");
 
-                                if (!(strClass.equals("休市") || strClass.equals("肉類") || strClass.equals("調味料"))) {
+                                if (!(strName.equals("肉類") || strName.equals("調味料"))) {
                                     String strURL = "http://m.coa.gov.tw/OpenData/FarmTransData.aspx?"
-                                            + "StartDate=" + intYear2 + strDay2 + "&EndDate=" + intYear1 + strDay1 + "&Crop=" + strClass;
+                                            + "StartDate=" + intYear2 + strDay2 + "&EndDate=" + intYear1 + strDay1 + "&Crop=" + strName;
                                     StringRequest request = new StringRequest(Request.Method.GET, strURL,
                                             new Response.Listener<String>() {
                                                 public void onResponse(String string) {
@@ -189,7 +194,7 @@ public class DetailActivity extends AppCompatActivity {
                                             new Response.ErrorListener() {
                                                 @Override
                                                 public void onErrorResponse(VolleyError error) {
-                                                        Log.e("Error", error.toString());
+                                                    Log.e("Error", error.toString());
                                                 }
                                             });
                                     request.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));

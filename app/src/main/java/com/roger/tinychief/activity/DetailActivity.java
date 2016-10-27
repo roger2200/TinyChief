@@ -1,9 +1,14 @@
 package com.roger.tinychief.activity;
 
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -59,6 +65,7 @@ public class DetailActivity extends AppCompatActivity {
     private AdapterComment mAdapter;
     private Bitmap mArBitmap;
     private NavigationViewSetup mNavigationViewSetup;
+    private NavigationView mNavigationView;
     private String[] mStrArrayStep, mStrArrayIiN, mStrArrayIiA;
     private ArrayList<ItemComment> mDataset = new ArrayList<>();
 
@@ -76,13 +83,20 @@ public class DetailActivity extends AppCompatActivity {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
 
         mNavigationViewSetup = new NavigationViewSetup(this, mDrawerLayout, mToolbar);
-        mNavigationViewSetup.setNavigationView();
+        mNavigationView = mNavigationViewSetup.setNavigationView();
 
         setRecycleView();
 
         Bundle bundle = this.getIntent().getExtras();
         setTitle(bundle.getString("TITLE"));
         getCookbook();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        for (int i = 0; i < mNavigationView.getMenu().size(); i++)
+            mNavigationView.getMenu().getItem(i).setChecked(false);
     }
 
     @Override
@@ -157,11 +171,14 @@ public class DetailActivity extends AppCompatActivity {
                             mStrArrayIiN = new String[jsonArrayIi.length()];
                             mStrArrayIiA = new String[jsonArrayIi.length()];
                             for (int i = 0; i < jsonArrayIi.length(); i++) {
+                                int[] attrs = new int[]{android.R.attr.selectableItemBackground};
+                                Drawable drawableFromTheme = obtainStyledAttributes(attrs).getDrawable(0);
                                 TextView textViewName = new TextView(DetailActivity.this);
                                 TextView textViewAmount = new TextView(DetailActivity.this);
                                 final TextView textViewPrice = new TextView(DetailActivity.this);
                                 TableRow tablerow = new TableRow(DetailActivity.this);
                                 Calendar calendar = Calendar.getInstance();
+                                final String strName = jsonArrayIi.getJSONObject(i).getString("name");
 
                                 textViewName.setTextSize(20.0f);
                                 textViewAmount.setTextSize(20.0f);
@@ -172,8 +189,6 @@ public class DetailActivity extends AppCompatActivity {
                                 calendar.add(Calendar.MONTH, -1);
                                 int intYear2 = calendar.get(Calendar.YEAR) - 1911;
                                 CharSequence strDay2 = DateFormat.format(".MM.dd", calendar);
-
-                                String strName = jsonArrayIi.getJSONObject(i).getString("name");
                                 textViewName.setText(strName);
                                 textViewAmount.setText(jsonArrayIi.getJSONObject(i).getDouble("amount") + "\t" + jsonArrayIi.getJSONObject(i).getString("unit"));
 
@@ -200,6 +215,20 @@ public class DetailActivity extends AppCompatActivity {
                                     request.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
                                     NetworkManager.getInstance(DetailActivity.this).request(null, request);
                                 }
+
+                                //設置onclick開啟瀏覽器
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+                                    tablerow.setBackground(drawableFromTheme);
+                                tablerow.setClickable(true);
+                                tablerow.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        Intent intent = new Intent(view.getContext(), WebviewActivity.class);
+                                        intent.putExtra("URL", "http://www.happy-shopping.com.tw/search_list.aspx?k=" + strName.split("-")[0]);
+                                        startActivity(intent);
+                                    }
+                                });
+
                                 tablerow.addView(textViewName);
                                 tablerow.addView(textViewAmount);
                                 tablerow.addView(textViewPrice);

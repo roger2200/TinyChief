@@ -78,34 +78,7 @@ public class MainActivity extends AppCompatActivity {
         mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorlayout_main);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout_main);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                // Handle the menu item
-                return true;
-            }
-        });
-        // Inflate a menu to be displayed in the toolbar
-        mToolbar.inflateMenu(R.menu.toolbar_main);
-        setSupportActionBar(mToolbar);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        mActionBarDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.open, R.string.close) {
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-
-            }
-
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
-            }
-        };
-
-        mActionBarDrawerToggle.syncState();
-        mDrawerLayout.addDrawerListener(mActionBarDrawerToggle);
         mNavigationViewSetup = new NavigationViewSetup(this, mDrawerLayout, mToolbar);
         mNavigationView = mNavigationViewSetup.setNavigationView();
         mNavigationView.getMenu().getItem(0).setChecked(true);

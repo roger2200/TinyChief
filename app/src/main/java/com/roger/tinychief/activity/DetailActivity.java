@@ -139,6 +139,8 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     public void onClickOpenAR(View view) {
+        if (mArBitmap == null)
+            return;
         Intent intent = new Intent(view.getContext(), ArActivity.class);
         intent.putExtra("IMAGE", MyHelper.convertBitmap2Bytes(mArBitmap));
         startActivity(intent);

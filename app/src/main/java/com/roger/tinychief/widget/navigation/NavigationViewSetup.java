@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.roger.tinychief.R;
+import com.roger.tinychief.activity.CalendarActivity;
 import com.roger.tinychief.activity.CreateActivity;
 import com.roger.tinychief.activity.LoginActivity;
 import com.roger.tinychief.activity.MainActivity;
@@ -36,7 +37,7 @@ public class NavigationViewSetup {
         this.mDrawerLayout = drawerLayout;
         this.mToolbar = toolbar;
 
-        mNavigationView = (android.support.design.widget.NavigationView) mActivity.findViewById(R.id.nav_view);
+        mNavigationView = (NavigationView) mActivity.findViewById(R.id.nav_view);
         mView = mNavigationView.getHeaderView(0);
         mButton = (Button) mView.findViewById(R.id.btn_login_header);
         mTextView = (TextView) mView.findViewById(R.id.txtview_name_header);
@@ -47,6 +48,7 @@ public class NavigationViewSetup {
 
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(mActivity, mDrawerLayout, mToolbar, R.string.drawer_close, R.string.drawer_open);
         actionBarDrawerToggle.syncState();
+        mDrawerLayout.addDrawerListener(actionBarDrawerToggle);
 
         setButton();
 
@@ -65,11 +67,12 @@ public class NavigationViewSetup {
                             jumpToActivity(mActivity, CreateActivity.class);
                         return true;
                     case R.id.nav_item_calendar:
+                        jumpToActivity(mActivity, CalendarActivity.class);
                         return true;
                     case R.id.nav_item_setting:
                         return true;
                     default:
-                        return true;
+                        return false;
                 }
             }
         });
@@ -82,7 +85,7 @@ public class NavigationViewSetup {
         mActivity.startActivity(intent);
     }
 
-    private void setButton(){
+    private void setButton() {
         if (MainActivity.USER_NAME == null) {
             mButton.setText("登入");
             mButton.setOnClickListener(new Button.OnClickListener() {
@@ -93,8 +96,7 @@ public class NavigationViewSetup {
                     mActivity.startActivity(intent);
                 }
             });
-        }
-        else{
+        } else {
             mTextView.setText(MainActivity.USER_NAME);
             mButton.setText("登出");
             mButton.setOnClickListener(new Button.OnClickListener() {
@@ -105,6 +107,7 @@ public class NavigationViewSetup {
                     MainActivity.USER_ID = null;
                     mTextView.setText("未登入");
                     mDrawerLayout.closeDrawers();
+                    jumpToActivity(mActivity, MainActivity.class);
                     Toast.makeText(mActivity, "已登出", Toast.LENGTH_SHORT).show();
                     setButton();
                 }

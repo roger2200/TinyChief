@@ -1,5 +1,6 @@
 package com.roger.tinychief.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -35,6 +36,8 @@ import com.roger.tinychief.util.NetworkManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -84,10 +87,20 @@ public class LoginActivity extends AppCompatActivity {
                         //讀出姓名 ID FB個人頁面連結
                         Log.d("FB", "complete");
                         Log.d("FB", object.optString("name"));
-                        MainActivity.USER_NAME = object.optString("name");
-                        MainActivity.USER_ID = object.optString("id");
                         Log.d("FB", object.optString("link"));
                         Log.d("FB", object.optString("id"));
+                        MainActivity.USER_NAME = object.optString("name");
+                        MainActivity.USER_ID = object.optString("id");
+
+                        //將登入資料寫入手機記憶體
+                        String strLoginData = MainActivity.USER_NAME + "," + MainActivity.USER_ID;
+                        try {
+                            FileOutputStream fos = openFileOutput("tf_login_data", Context.MODE_PRIVATE);
+                            fos.write(strLoginData.getBytes());
+                            fos.close();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         finish();
                     }
                 });
@@ -173,9 +186,16 @@ public class LoginActivity extends AppCompatActivity {
                                     Intent intent = new Intent();
                                     intent.setClass(LoginActivity.this, MainActivity.class);
                                     Log.e("check", nickname);
+                                    Log.e("checkID", userID);
                                     MainActivity.USER_ID = userID;
                                     MainActivity.USER_NAME = nickname;
-                                    Log.e("checkID", userID);
+
+                                    //將登入資料寫入手機記憶體
+                                    String strLoginData = MainActivity.USER_NAME + "," + MainActivity.USER_ID;
+                                    FileOutputStream fos = openFileOutput("tf_login_data", Context.MODE_PRIVATE);
+                                    fos.write(strLoginData.getBytes());
+                                    fos.close();
+
                                     finish();
                                 }
                                 if (users.toString().length() > 2 && checkEmails.toString().equals("NO,")) {

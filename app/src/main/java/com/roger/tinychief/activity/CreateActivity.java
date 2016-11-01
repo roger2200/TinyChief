@@ -125,7 +125,7 @@ public class CreateActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        mNavigationView.getMenu().getItem(2).setChecked(true);
+        mNavigationView.getMenu().getItem(1).setChecked(true);
     }
 
     @Override

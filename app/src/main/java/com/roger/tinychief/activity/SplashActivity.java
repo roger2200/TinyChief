@@ -25,6 +25,7 @@ import com.roger.tinychief.util.NetworkManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,7 +44,7 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
         ImageView mImageView = (ImageView) findViewById(R.id.img_splash);
         Bitmap bitmap = BitmapFactory.decodeResource(getApplication().getResources(), R.drawable.splash_img);
-        mImageView.setImageBitmap(MyHelper.scaleBitmap(bitmap, this,true));
+        mImageView.setImageBitmap(MyHelper.scaleBitmap(bitmap, this, true));
         mData = new String[LOAD_MOUNT][];
         getData();
 
@@ -118,6 +119,25 @@ public class SplashActivity extends AppCompatActivity {
      * 結束Activity並傳幾筆資料給MainActivity
      */
     private void endActivity() {
+        //讀取登入資料(假如之前登入過)
+        try {
+            FileInputStream fos = openFileInput("tf_login_data");
+            StringBuilder builder = new StringBuilder();
+            int ch;
+            while ((ch = fos.read()) != -1)
+                builder.append((char) ch);
+            String strLoginData = builder.toString();
+            String strLoginDataArray[] = strLoginData.split(",");
+            MainActivity.USER_NAME = strLoginDataArray[0];
+            MainActivity.USER_ID = strLoginDataArray[1];
+            Log.d("Login as", MainActivity.USER_NAME);
+            Log.d("Login-ID", MainActivity.USER_ID);
+        } catch (Exception e) {
+            deleteFile("tf_login_data");
+            MainActivity.USER_NAME = null;
+            MainActivity.USER_ID = null;
+            e.printStackTrace();
+        }
         Intent intent = new Intent(SplashActivity.this, MainActivity.class);
         for (int i = 0; i < mData.length; i++)
             intent.putExtra("DATA" + i, mData[i]);

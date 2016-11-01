@@ -95,6 +95,7 @@ public class DetailActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        mNavigationView = mNavigationViewSetup.setNavigationView();
         for (int i = 0; i < mNavigationView.getMenu().size(); i++)
             mNavigationView.getMenu().getItem(i).setChecked(false);
     }

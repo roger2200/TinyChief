@@ -3,7 +3,6 @@ package com.roger.tinychief.widget.navigation;
 import android.content.Context;
 import android.content.Intent;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -18,7 +17,6 @@ import com.roger.tinychief.R;
 import com.roger.tinychief.activity.CreateActivity;
 import com.roger.tinychief.activity.LoginActivity;
 import com.roger.tinychief.activity.MainActivity;
-import com.roger.tinychief.util.MyHelper;
 
 /**
  * Created by Roger on 7/27/2016.
@@ -29,49 +27,42 @@ public class NavigationViewSetup {
     private NavigationView mNavigationView;
     private DrawerLayout mDrawerLayout;
     private Toolbar mToolbar;
+    private TextView mTextView;
+    private View mView;
+    private Button mButton;
 
     public NavigationViewSetup(AppCompatActivity activity, DrawerLayout drawerLayout, Toolbar toolbar) {
         this.mActivity = activity;
         this.mDrawerLayout = drawerLayout;
         this.mToolbar = toolbar;
+
+        mNavigationView = (android.support.design.widget.NavigationView) mActivity.findViewById(R.id.nav_view);
+        mView = mNavigationView.getHeaderView(0);
+        mButton = (Button) mView.findViewById(R.id.btn_login_header);
+        mTextView = (TextView) mView.findViewById(R.id.txtview_name_header);
     }
 
     public NavigationView setNavigationView() {
         mActivity.setSupportActionBar(mToolbar);
-        mNavigationView = (android.support.design.widget.NavigationView) mActivity.findViewById(R.id.nav_view);
-        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(mActivity, mDrawerLayout, mToolbar, R.string.openDrawer, R.string.closeDrawer);
-        //calling sync state is necessay or else your hamburger icon wont show up
-        actionBarDrawerToggle.syncState();
-        View header = mNavigationView.getHeaderView(0);
-        Button headerLogin = (Button) header.findViewById(R.id.btn_login_header);
-        if (MainActivity.USER_NAME != null) {
-            TextView name = (TextView) header.findViewById(R.id.txtview_name_header);
-            name.setText(MainActivity.USER_NAME);
-            headerLogin.setVisibility(View.INVISIBLE);
-        }
-        headerLogin.setOnClickListener(new Button.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), LoginActivity.class);
-                mDrawerLayout.closeDrawers();
-                mActivity.startActivity(intent);
-            }
 
-        });
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(mActivity, mDrawerLayout, mToolbar, R.string.drawer_close, R.string.drawer_open);
+        actionBarDrawerToggle.syncState();
+
+        setButton();
+
         mNavigationView.setNavigationItemSelectedListener(new android.support.design.widget.NavigationView.OnNavigationItemSelectedListener() {
-            // This method will trigger on item Click of navigation menu
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
                 mDrawerLayout.closeDrawers();
                 switch (menuItem.getItemId()) {
                     case R.id.nav_item_hot:
-                        jumpToActivity(mActivity, MainActivity.class,menuItem);
+                        jumpToActivity(mActivity, MainActivity.class);
                         return true;
                     case R.id.nav_item_create:
                         if (MainActivity.USER_NAME == null)
                             Toast.makeText(mActivity, "請先登入", Toast.LENGTH_SHORT).show();
                         else
-                            jumpToActivity(mActivity, CreateActivity.class,menuItem);
+                            jumpToActivity(mActivity, CreateActivity.class);
                         return true;
                     case R.id.nav_item_calendar:
                         return true;
@@ -85,9 +76,39 @@ public class NavigationViewSetup {
         return mNavigationView;
     }
 
-    private void jumpToActivity(Context ct, Class lt,MenuItem menuItem) {
+    private void jumpToActivity(Context ct, Class lt) {
         Intent intent = new Intent();
         intent.setClass(ct, lt);
         mActivity.startActivity(intent);
+    }
+
+    private void setButton(){
+        if (MainActivity.USER_NAME == null) {
+            mButton.setText("登入");
+            mButton.setOnClickListener(new Button.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(v.getContext(), LoginActivity.class);
+                    mDrawerLayout.closeDrawers();
+                    mActivity.startActivity(intent);
+                }
+            });
+        }
+        else{
+            mTextView.setText(MainActivity.USER_NAME);
+            mButton.setText("登出");
+            mButton.setOnClickListener(new Button.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    v.getContext().deleteFile("tf_login_data");
+                    MainActivity.USER_NAME = null;
+                    MainActivity.USER_ID = null;
+                    mTextView.setText("未登入");
+                    mDrawerLayout.closeDrawers();
+                    Toast.makeText(mActivity, "已登出", Toast.LENGTH_SHORT).show();
+                    setButton();
+                }
+            });
+        }
     }
 }

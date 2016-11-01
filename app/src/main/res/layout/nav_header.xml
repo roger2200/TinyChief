@@ -9,9 +9,9 @@
 
     <TextView
         android:id="@+id/txtview_name_header"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="使用者"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="未登入"
         android:textColor="@android:color/black"
         android:textSize="16sp" />
 
@@ -19,6 +19,5 @@
         android:id="@+id/btn_login_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="登入"
         android:textSize="16sp" />
 </LinearLayout>

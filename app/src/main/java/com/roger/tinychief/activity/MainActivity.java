@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -32,6 +34,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.roger.tinychief.R;
+import com.roger.tinychief.util.MyHelper;
 import com.roger.tinychief.util.NetworkManager;
 import com.roger.tinychief.widget.navigation.NavigationViewSetup;
 import com.roger.tinychief.widget.recycler.AdapterMain;
@@ -56,10 +59,12 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar mToolbar;
     private NavigationView mNavigationView;
     private DrawerLayout mDrawerLayout;
+    private CoordinatorLayout mCoordinatorLayout;
     private PullLoadMoreRecyclerView mRecyclerView;
     private AdapterMain mAdapter;
     private NavigationViewSetup mNavigationViewSetup;
     private ActionBarDrawerToggle mActionBarDrawerToggle;
+    private Snackbar mSnackbar;
     private int skipCount = 1;
     ArrayList<ItemMain> mDataset = new ArrayList<>();
 
@@ -70,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
         setTitle("熱門食譜");
         setInitData();
 
+        mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorlayout_main);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout_main);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
@@ -91,30 +97,30 @@ public class MainActivity extends AppCompatActivity {
                 super.onDrawerOpened(drawerView);
 
             }
+
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
             }
         };
+
         mActionBarDrawerToggle.syncState();
         mDrawerLayout.addDrawerListener(mActionBarDrawerToggle);
         mNavigationViewSetup = new NavigationViewSetup(this, mDrawerLayout, mToolbar);
         mNavigationView = mNavigationViewSetup.setNavigationView();
         mNavigationView.getMenu().getItem(0).setChecked(true);
+
+        mSnackbar = Snackbar.make(mCoordinatorLayout, "在按一次返回鍵退出", Snackbar.LENGTH_SHORT);
+        MyHelper.setSnackbarMessageTextColor(mSnackbar, android.graphics.Color.WHITE);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        mNavigationView = mNavigationViewSetup.setNavigationView();
         mNavigationView.getMenu().getItem(0).setChecked(true);
-        if(USER_NAME!=null) {
-            View header = mNavigationView.getHeaderView(0);
-            TextView name = (TextView) header.findViewById(R.id.txtview_name_header);
-            name.setText(USER_NAME);
-            Button button=(Button) header.findViewById(R.id.btn_login_header);
-            button.setVisibility(View.INVISIBLE);
-        }
     }
+
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.toolbar_main, menu);
@@ -132,9 +138,13 @@ public class MainActivity extends AppCompatActivity {
         searchView.setIconifiedByDefault(true);
         return true;
     }
+
     @Override
-    protected void onRestart(){
-        super.onRestart();
+    public void onBackPressed() {
+        if (mSnackbar.isShown())
+            finish();
+        else
+            mSnackbar.show();
     }
 
     public void getDataFromSever() {
@@ -146,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
                             JSONArray array = new JSONArray(string);
                             for (int i = 0; i < array.length(); i++) {
                                 JSONObject json = array.getJSONObject(i);
-                                mDataset.add(new ItemMain(json.getString("_id"),json.getJSONObject("author").getString("name"), json.getString("title"), json.getString("image")));
+                                mDataset.add(new ItemMain(json.getString("_id"), json.getJSONObject("author").getString("name"), json.getString("title"), json.getString("image")));
                             }
                             mRecyclerView.setPullLoadMoreCompleted();
                         } catch (Exception e) {
@@ -182,6 +192,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onRefresh() {
             }
+
             @Override
             public void onLoadMore() {
                 getDataFromSever();
@@ -206,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
         String[][] data = new String[LOAD_COUNT][];
         for (int i = 0; i < data.length; i++) {
             data[i] = bundle.getStringArray("DATA" + i);
-            mDataset.add(new ItemMain(data[i][0], data[i][1], data[i][2],data[i][3]));
+            mDataset.add(new ItemMain(data[i][0], data[i][1], data[i][2], data[i][3]));
         }
         setRecycleView();
     }

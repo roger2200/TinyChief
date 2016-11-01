@@ -10,7 +10,6 @@
         android:id="@+id/txtview_name_comment_dialog"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:text="Roger"
         android:textSize="30sp" />
 
     <RelativeLayout

@@ -394,9 +394,8 @@ public class CreateActivity extends AppCompatActivity {
             for (EditText editText : mStepEditTextList)
                 jsonArrStep.put(editText.getText());
 
-            //這兩行之後要換掉
-            jsonObjectAuthor.put("name", "Roger");
-            jsonObjectAuthor.put("id", "5787a635e07c9e0300237873");
+            jsonObjectAuthor.put("name", MainActivity.USER_NAME);
+            jsonObjectAuthor.put("id", MainActivity.USER_ID);
             jsonObjectMain.put("author", jsonObjectAuthor);
             jsonObjectMain.put("title", mTitleEditText.getText());
             jsonObjectMain.put("image", mImgUrl);

@@ -85,6 +85,7 @@ public class LoginActivity extends AppCompatActivity {
                         Log.d("FB", "complete");
                         Log.d("FB", object.optString("name"));
                         MainActivity.USER_NAME = object.optString("name");
+                        MainActivity.USER_ID = object.optString("id");
                         Log.d("FB", object.optString("link"));
                         Log.d("FB", object.optString("id"));
                         finish();
@@ -174,7 +175,7 @@ public class LoginActivity extends AppCompatActivity {
                                     Log.e("check", nickname);
                                     MainActivity.USER_ID = userID;
                                     MainActivity.USER_NAME = nickname;
-                                    Log.e("checkID",userID);
+                                    Log.e("checkID", userID);
                                     finish();
                                 }
                                 if (users.toString().length() > 2 && checkEmails.toString().equals("NO,")) {

@@ -128,6 +128,10 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     public void onClickWriteComment(View view) {
+        if (MainActivity.USER_NAME == null) {
+            Toast.makeText(this, "請先登入", Toast.LENGTH_SHORT).show();
+            return;
+        }
         Intent intent = new Intent(this, CommentDialogActivity.class);
         intent.putExtra("ID", DetailActivity.this.getIntent().getExtras().getString("ID"));
         startActivityForResult(intent, REQUEST_COM);
@@ -192,29 +196,31 @@ public class DetailActivity extends AppCompatActivity {
                                 textViewName.setText(strName);
                                 textViewAmount.setText(jsonArrayIi.getJSONObject(i).getDouble("amount") + "\t" + jsonArrayIi.getJSONObject(i).getString("unit"));
 
-                                if (!(strName.equals("肉類") || strName.equals("調味料"))) {
-                                    String strURL = "http://m.coa.gov.tw/OpenData/FarmTransData.aspx?"
-                                            + "StartDate=" + intYear2 + strDay2 + "&EndDate=" + intYear1 + strDay1 + "&Crop=" + strName;
-                                    StringRequest request = new StringRequest(Request.Method.GET, strURL,
-                                            new Response.Listener<String>() {
-                                                public void onResponse(String string) {
-                                                    try {
-                                                        JSONArray jsonArray = new JSONArray(string);
+                                String strURL = "http://m.coa.gov.tw/OpenData/FarmTransData.aspx?"
+                                        + "StartDate=" + intYear2 + strDay2 + "&EndDate=" + intYear1 + strDay1 + "&Crop=" + strName;
+                                StringRequest request = new StringRequest(Request.Method.GET, strURL,
+                                        new Response.Listener<String>() {
+                                            public void onResponse(String string) {
+                                                try {
+                                                    JSONArray jsonArray = new JSONArray(string);
+                                                    if (jsonArray.getJSONObject(0).getString("平均價").equals("0"))
+                                                        textViewPrice.setText("無資料");
+                                                    else
                                                         textViewPrice.setText(jsonArray.getJSONObject(0).getString("平均價"));
-                                                    } catch (Exception e) {
-                                                        e.printStackTrace();
-                                                    }
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
                                                 }
-                                            },
-                                            new Response.ErrorListener() {
-                                                @Override
-                                                public void onErrorResponse(VolleyError error) {
-                                                    Log.e("Error", error.toString());
-                                                }
-                                            });
-                                    request.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                                    NetworkManager.getInstance(DetailActivity.this).request(null, request);
-                                }
+                                            }
+                                        },
+                                        new Response.ErrorListener() {
+                                            @Override
+                                            public void onErrorResponse(VolleyError error) {
+                                                Log.e("Error", error.toString());
+                                            }
+                                        });
+                                request.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                                NetworkManager.getInstance(DetailActivity.this).request(null, request);
+
 
                                 //設置onclick開啟瀏覽器
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)

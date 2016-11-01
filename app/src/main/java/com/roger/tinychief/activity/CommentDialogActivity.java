@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -27,8 +28,8 @@ public class CommentDialogActivity extends AppCompatActivity {
     private TextView mTextView;
     private EditText mEditText;
     private ImageView mImageView;
+    private Bitmap mRateFBitmap, mRateNBitmap, mRateBitmap;
     private int rate = 5;
-    Bitmap mRateFBitmap, mRateNBitmap, mRateBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +42,7 @@ public class CommentDialogActivity extends AppCompatActivity {
         mEditText = (EditText) findViewById(R.id.edittxt_comment_dialog);
         mImageView = (ImageView) findViewById(R.id.img_rate_comment_dialog);
         mImageView.setOnTouchListener(getOnTouchListener());
+        mTextView.setText(MainActivity.USER_NAME);
 
         drawRate();
     }
@@ -69,7 +71,7 @@ public class CommentDialogActivity extends AppCompatActivity {
                     public void onResponse(String string) {
                         Intent intent = new Intent();
                         intent.putExtra("RESULT", true);
-                        intent.putExtra("id_usr", "5787a635e07c9e0300237873");
+                        intent.putExtra("id_usr", MainActivity.USER_ID);
                         intent.putExtra("name", mTextView.getText().toString());
                         intent.putExtra("rate", rate);
                         intent.putExtra("msg", mEditText.getText().toString());
@@ -92,13 +94,14 @@ public class CommentDialogActivity extends AppCompatActivity {
                 Map<String, String> param = new HashMap<>();
                 param.put("id_cb", CommentDialogActivity.this.getIntent().getExtras().getString("ID"));
                 param.put("name", mTextView.getText().toString());
-                param.put("id_usr", "5787a635e07c9e0300237873");
+                param.put("id_usr", MainActivity.USER_ID);
                 param.put("rate", String.valueOf(rate));
                 param.put("msg", mEditText.getText().toString());
                 Log.d("Upload Comment", param.toString());
                 return param;
             }
         };
+        request.setRetryPolicy(new DefaultRetryPolicy(10000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         NetworkManager.getInstance(this).request(null, request);
     }
 

@@ -7,20 +7,12 @@
         <item
             android:id="@+id/nav_item_hot"
             android:title="熱門食譜" />
-
-        <item
-            android:id="@+id/nav_item_love"
-            android:title="我的最愛" />
-
         <item
             android:id="@+id/nav_item_create"
             android:title="創建食譜" />
         <item
             android:id="@+id/nav_item_calendar"
             android:title="食譜日曆" />
-        <item
-            android:id="@+id/nav_item_history"
-            android:title="歷史紀錄" />
         <item
             android:id="@+id/nav_item_setting"
             android:title="設定" />

@@ -1,5 +1,6 @@
 package com.roger.tinychief.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -30,6 +31,7 @@ public class CommentDialogActivity extends AppCompatActivity {
     private ImageView mImageView;
     private Bitmap mRateFBitmap, mRateNBitmap, mRateBitmap;
     private int rate = 5;
+    private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +45,9 @@ public class CommentDialogActivity extends AppCompatActivity {
         mImageView = (ImageView) findViewById(R.id.img_rate_comment_dialog);
         mImageView.setOnTouchListener(getOnTouchListener());
         mTextView.setText(MainActivity.USER_NAME);
+
+        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setMessage("上傳評論中...");
 
         drawRate();
     }
@@ -65,6 +70,8 @@ public class CommentDialogActivity extends AppCompatActivity {
     }
 
     public void uploadComment(View view) {
+        mProgressDialog.show();
+
         StringRequest request = new StringRequest(Request.Method.POST, "https://tinny-chief.herokuapp.com/upload/comment",
                 new Response.Listener<String>() {
                     @Override
@@ -76,6 +83,7 @@ public class CommentDialogActivity extends AppCompatActivity {
                         intent.putExtra("rate", rate);
                         intent.putExtra("msg", mEditText.getText().toString());
                         setResult(RESULT_OK, intent);
+                        mProgressDialog.dismiss();
                         finish();
                     }
                 },

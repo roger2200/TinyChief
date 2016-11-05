@@ -475,6 +475,7 @@ public class CreateActivity extends AppCompatActivity {
                         MyHelper.setSnackbarMessageTextColor(snackbar, android.graphics.Color.WHITE);
                         snackbar.show();
                         Log.d(LOGTAG, "Create Response" + response.toString());
+                        finish();
                     }
                 },
                 new Response.ErrorListener() {

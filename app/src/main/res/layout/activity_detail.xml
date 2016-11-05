@@ -64,7 +64,7 @@
                                 android:textSize="20sp" />
 
                             <TextView
-                                android:text="時價(/kg)"
+                                android:text="時價"
                                 android:textSize="20sp" />
                         </TableRow>
                     </TableLayout>

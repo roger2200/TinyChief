@@ -65,7 +65,6 @@ public class SearchResultActivity extends AppCompatActivity {
         setRecycleView();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             final String query = intent.getStringExtra(SearchManager.QUERY);
-            Log.d("test",query);
             StringRequest request = new StringRequest(Request.Method.POST, "https://tiny-chief.herokuapp.com/search/result",
                     new Response.Listener<String>() {
                         @Override

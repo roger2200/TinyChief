@@ -54,8 +54,8 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     private static final int LOAD_COUNT = 10;//每次讀取的資料筆數,要和server相同
-    public static String USER_NAME;
-    public static String USER_ID;
+    public static String USER_NAME, USER_ID;
+    public static boolean NEED_REINIT = false;
     private Toolbar mToolbar;
     private NavigationView mNavigationView;
     private DrawerLayout mDrawerLayout;
@@ -92,6 +92,8 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         mNavigationView = mNavigationViewSetup.setNavigationView();
         mNavigationView.getMenu().getItem(0).setChecked(true);
+        if (NEED_REINIT)
+            reInit();
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -130,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
                             for (int i = 0; i < array.length(); i++) {
                                 JSONObject json = array.getJSONObject(i);
                                 mDataset.add(new ItemMain(json.getString("_id"), json.getJSONObject("author").getString("name"), json.getString("title"), json.getString("image")));
+                                mAdapter.notifyDataSetChanged();
                             }
                             mRecyclerView.setPullLoadMoreCompleted();
                         } catch (Exception e) {
@@ -193,5 +196,12 @@ public class MainActivity extends AppCompatActivity {
             mDataset.add(new ItemMain(data[i][0], data[i][1], data[i][2], data[i][3]));
         }
         setRecycleView();
+    }
+
+    private void reInit() {
+        mDataset.clear();
+        skipCount = 0;
+        getDataFromSever();
+        NEED_REINIT = false;
     }
 }

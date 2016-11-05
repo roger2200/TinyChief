@@ -415,7 +415,7 @@ public class CreateActivity extends AppCompatActivity {
             for (TableRow tablerow : mIiTableRowList) {
                 int intClass;
                 int intSpinnerPos = ((Spinner) tablerow.getVirtualChildAt(1)).getSelectedItemPosition();
-                double intAmount=Integer.parseInt(((EditText) tablerow.getVirtualChildAt(2)).getText().toString());
+                double intAmount = Integer.parseInt(((EditText) tablerow.getVirtualChildAt(2)).getText().toString());
 
                 if (intSpinnerPos == 1)// 雞
                     intClass = 0;
@@ -475,6 +475,7 @@ public class CreateActivity extends AppCompatActivity {
                         MyHelper.setSnackbarMessageTextColor(snackbar, android.graphics.Color.WHITE);
                         snackbar.show();
                         Log.d(LOGTAG, "Create Response" + response.toString());
+                        MainActivity.NEED_REINIT = true;
                         finish();
                     }
                 },

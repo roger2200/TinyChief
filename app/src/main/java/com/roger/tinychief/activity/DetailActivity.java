@@ -210,9 +210,9 @@ public class DetailActivity extends AppCompatActivity {
                                                         try {
                                                             JSONArray jsonArray = new JSONArray(string);
                                                             if (strName.equals("雞蛋")) {
-                                                                textViewPrice.setText(jsonArray.getJSONObject(0).getString("雞蛋(產地)")+"元/台斤");
+                                                                textViewPrice.setText(jsonArray.getJSONObject(0).getString("雞蛋(產地)") + "元/台斤");
                                                             } else {
-                                                                textViewPrice.setText(jsonArray.getJSONObject(0).getString("白肉雞(門市價高屏)")+"元/台斤");
+                                                                textViewPrice.setText(jsonArray.getJSONObject(0).getString("白肉雞(門市價高屏)") + "元/台斤");
                                                             }
                                                         } catch (Exception e) {
                                                             e.printStackTrace();
@@ -222,7 +222,7 @@ public class DetailActivity extends AppCompatActivity {
                                                 new Response.ErrorListener() {
                                                     @Override
                                                     public void onErrorResponse(VolleyError error) {
-                                                        Log.e("Error", error.toString());
+                                                        Log.e(TAG, error.toString());
                                                     }
                                                 });
                                         request.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
@@ -238,11 +238,11 @@ public class DetailActivity extends AppCompatActivity {
                                                         try {
                                                             JSONArray jsonArray = new JSONArray(string);
                                                             if (strName.equals("鴨蛋")) {
-                                                                textViewPrice.setText(jsonArray.getJSONObject(0).getString("鴨蛋(新蛋)(台南)")+"元/台斤");
+                                                                textViewPrice.setText(jsonArray.getJSONObject(0).getString("鴨蛋(新蛋)(台南)") + "元/台斤");
                                                             } else if (strName.equals("鴨肉")) {
-                                                                textViewPrice.setText(jsonArray.getJSONObject(0).getString("正番鴨(公)")+"元/台斤");
-                                                            }else {
-                                                                textViewPrice.setText(jsonArray.getJSONObject(0).getString("肉鵝(白羅曼)")+"元/台斤");
+                                                                textViewPrice.setText(jsonArray.getJSONObject(0).getString("正番鴨(公)") + "元/台斤");
+                                                            } else {
+                                                                textViewPrice.setText(jsonArray.getJSONObject(0).getString("肉鵝(白羅曼)") + "元/台斤");
                                                             }
                                                         } catch (Exception e) {
                                                             e.printStackTrace();
@@ -252,7 +252,7 @@ public class DetailActivity extends AppCompatActivity {
                                                 new Response.ErrorListener() {
                                                     @Override
                                                     public void onErrorResponse(VolleyError error) {
-                                                        Log.e("Error", error.toString());
+                                                        Log.e(TAG, error.toString());
                                                     }
                                                 });
 
@@ -267,9 +267,9 @@ public class DetailActivity extends AppCompatActivity {
                                                         try {
                                                             JSONObject jsonObject = new JSONObject(string);
                                                             if (strName.equals("豬肉")) {
-                                                                textViewPrice.setText(jsonObject.getString("pork")+"元/台斤");
-                                                            }else {
-                                                                textViewPrice.setText(jsonObject.getString("beef")+"元/台斤");
+                                                                textViewPrice.setText(jsonObject.getString("pork") + "元/台斤");
+                                                            } else {
+                                                                textViewPrice.setText(jsonObject.getString("beef") + "元/台斤");
                                                             }
                                                         } catch (Exception e) {
                                                             e.printStackTrace();
@@ -279,7 +279,7 @@ public class DetailActivity extends AppCompatActivity {
                                                 new Response.ErrorListener() {
                                                     @Override
                                                     public void onErrorResponse(VolleyError error) {
-                                                        Log.e("Error", error.toString());
+                                                        Log.e(TAG, error.toString());
                                                     }
                                                 });
                                         request.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
@@ -315,7 +315,7 @@ public class DetailActivity extends AppCompatActivity {
                                                 new Response.ErrorListener() {
                                                     @Override
                                                     public void onErrorResponse(VolleyError error) {
-                                                        Log.e("Error", error.toString());
+                                                        Log.e(TAG, error.toString());
                                                     }
                                                 });
                                         request.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
@@ -369,7 +369,7 @@ public class DetailActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
-                        Log.e("Error", String.valueOf(volleyError));
+                        Log.e(TAG, String.valueOf(volleyError));
                     }
                 }) {
             @Override

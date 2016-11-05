@@ -1,6 +1,7 @@
 package com.roger.tinychief.activity;
 
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
@@ -42,13 +43,12 @@ public class CalendarActivity extends AppCompatActivity {
 
         mCalendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
-            public void onSelectedDayChange(CalendarView calendarView, int year, int month, int dayOfMonth) {
+            public void onSelectedDayChange(@NonNull CalendarView calendarView, int year, int month, int dayOfMonth) {
                 mTextView.setText(year + "." + (month + 1) + "." + dayOfMonth);
             }
         });
 
         mTextView.setText(new SimpleDateFormat("yyyy.MM.dd", Locale.TAIWAN).format(mCalendarView.getDate()));
-
     }
 
     @Override

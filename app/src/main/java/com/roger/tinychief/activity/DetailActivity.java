@@ -66,7 +66,7 @@ public class DetailActivity extends AppCompatActivity {
     private Bitmap mArBitmap;
     private NavigationViewSetup mNavigationViewSetup;
     private NavigationView mNavigationView;
-    private String[] mStrArrayStep, mStrArrayIiN, mStrArrayIiA;
+    private String[] mStrArrayStep;
     private ArrayList<ItemComment> mDataset = new ArrayList<>();
 
     @Override
@@ -98,6 +98,13 @@ public class DetailActivity extends AppCompatActivity {
         mNavigationView = mNavigationViewSetup.setNavigationView();
         for (int i = 0; i < mNavigationView.getMenu().size(); i++)
             mNavigationView.getMenu().getItem(i).setChecked(false);
+    }
+
+    @Override
+    protected void onDestroy(){
+        NetworkManager.getInstance(this).cancelRequest("normal");
+        NetworkManager.getInstance(this).cancelRequest("official");
+        super.onDestroy();
     }
 
     @Override
@@ -175,8 +182,7 @@ public class DetailActivity extends AppCompatActivity {
 
                             mTitleTextView.setText(json.getString("title"));
                             setTitle(json.getString("title"));
-                            mStrArrayIiN = new String[jsonArrayIi.length()];
-                            mStrArrayIiA = new String[jsonArrayIi.length()];
+
                             for (int i = 0; i < jsonArrayIi.length(); i++) {
                                 int[] attrs = new int[]{android.R.attr.selectableItemBackground};
                                 Drawable drawableFromTheme = obtainStyledAttributes(attrs).getDrawable(0);
@@ -222,7 +228,7 @@ public class DetailActivity extends AppCompatActivity {
                                             }
                                         });
                                 request.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                                NetworkManager.getInstance(DetailActivity.this).request(null, request);
+                                NetworkManager.getInstance(DetailActivity.this).request("official", request);
 
 
                                 //設置onclick開啟瀏覽器
@@ -282,7 +288,7 @@ public class DetailActivity extends AppCompatActivity {
             }
         };
         request.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        NetworkManager.getInstance(this).request(null, request);
+        NetworkManager.getInstance(this).request("normal", request);
     }
 
     private void setRecycleView() {

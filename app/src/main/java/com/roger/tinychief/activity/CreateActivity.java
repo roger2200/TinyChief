@@ -174,23 +174,43 @@ public class CreateActivity extends AppCompatActivity {
 
     public void addIi(View v) {
         EditText edittxtAmount = new EditText(this);
-        EditText edittxtUnit = new EditText(this);
         TableRow tablerow = new TableRow(this);
         final Spinner spinner = new Spinner(this);
         final EditText edittxtName = new EditText(this);
+        final EditText edittxtUnit = new EditText(this);
         final ArrayList<String> strSpinItem = new ArrayList<>();
 
         strSpinItem.add("請選擇");
+        strSpinItem.add("雞肉");
+        strSpinItem.add("豬肉");
+        strSpinItem.add("牛肉");
+        strSpinItem.add("鴨肉");
+        strSpinItem.add("鵝肉");
+        strSpinItem.add("雞蛋");
+        strSpinItem.add("鴨蛋");
         strSpinItem.add("調味料");
-        strSpinItem.add("肉類");
+        strSpinItem.add("其他");
+
         spinner.setSelection(0);
         ArrayAdapter adapter = new ArrayAdapter<>(CreateActivity.this, android.R.layout.simple_spinner_item, strSpinItem);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if (i > 2)
+                edittxtUnit.setFocusable(false);
+                if (i == 6 || i == 7) {
+                    edittxtUnit.setText("顆");
                     edittxtName.setText(adapterView.getSelectedItem().toString());
+                } else if (i > 0 && i < 6) {
+                    edittxtUnit.setText("台斤");
+                    edittxtName.setText(adapterView.getSelectedItem().toString());
+                } else if (i == 8 || i == 9) {
+                    edittxtUnit.setFocusableInTouchMode(true);
+                    edittxtUnit.setText("");
+                } else if (i > 9) {
+                    edittxtUnit.setText("公斤");
+                    edittxtName.setText(adapterView.getSelectedItem().toString());
+                }
             }
 
             @Override
@@ -212,13 +232,9 @@ public class CreateActivity extends AppCompatActivity {
             public void afterTextChanged(Editable editable) {
                 if (strSpinItem.contains(editable.toString()))
                     return;
-                strSpinItem.clear();
-                strSpinItem.add("請選擇");
-                strSpinItem.add("調味料");
-                strSpinItem.add("肉類");
                 String strCropName = edittxtName.getText().toString();
-                if (!strCropName.equals(""))
-                    getOpendata(strCropName, strSpinItem, spinner);
+                if (strCropName.contains("高麗")) strCropName = "萵苣";
+                getOpendata(strCropName, strSpinItem, spinner);
             }
         });
 
@@ -282,6 +298,10 @@ public class CreateActivity extends AppCompatActivity {
             }
             createUpload(mImgFile, "Image");
             new UploadService(this).Execute(mUpload, new UiCallback());
+        } else {
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "請選擇一張食譜的照片", Snackbar.LENGTH_LONG);
+            MyHelper.setSnackbarMessageTextColor(snackbar, android.graphics.Color.WHITE);
+            snackbar.show();
         }
     }
 
@@ -295,14 +315,23 @@ public class CreateActivity extends AppCompatActivity {
     }
 
     private void getOpendata(String parCrop, ArrayList<String> parSpinItem, Spinner parSpinner) {
+        if (parCrop.equals(""))
+            return;
         final String strCrop = parCrop;
         final ArrayList<String> strSpinItem = parSpinItem;
         final Spinner spinner = parSpinner;
 
         strSpinItem.clear();
         strSpinItem.add("請選擇");
+        strSpinItem.add("雞肉");
+        strSpinItem.add("豬肉");
+        strSpinItem.add("牛肉");
+        strSpinItem.add("鴨肉");
+        strSpinItem.add("鵝肉");
+        strSpinItem.add("雞蛋");
+        strSpinItem.add("鴨蛋");
         strSpinItem.add("調味料");
-        strSpinItem.add("肉類");
+        strSpinItem.add("其他");
 
         Calendar calendar = Calendar.getInstance();
         int intYear1 = calendar.get(Calendar.YEAR) - 1911;
@@ -327,9 +356,8 @@ public class CreateActivity extends AppCompatActivity {
                                     spinner.setSelection(0);
                                 }
                             }
-                            if (strSpinItem.size() < 4)
-                                if (strCrop.length() > 1)
-                                    getOpendata(strCrop.substring(0, strCrop.length() - 1), strSpinItem, spinner);
+                            if (strSpinItem.size() < 11)
+                                getOpendata(strCrop.substring(0, strCrop.length() - 1), strSpinItem, spinner);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -385,10 +413,32 @@ public class CreateActivity extends AppCompatActivity {
         JSONArray jsonArrStep = new JSONArray();
         try {
             for (TableRow tablerow : mIiTableRowList) {
+                int intClass;
+                int intSpinnerPos = ((Spinner) tablerow.getVirtualChildAt(1)).getSelectedItemPosition();
+                double intAmount=Integer.parseInt(((EditText) tablerow.getVirtualChildAt(2)).getText().toString());
+
+                if (intSpinnerPos == 1)// 雞
+                    intClass = 0;
+                else if (intSpinnerPos == 6) {
+                    intClass = 0;
+                    intAmount /= 10;
+                } else if (intSpinnerPos == 4 || intSpinnerPos == 5)//鴨 鵝
+                    intClass = 1;
+                else if (intSpinnerPos == 7) {
+                    intClass = 1;
+                    intAmount /= 10;
+                } else if (intSpinnerPos == 2 || intSpinnerPos == 3)//豬 牛
+                    intClass = 2;
+                else if (intSpinnerPos == 8 || intSpinnerPos == 9)//調味料 其他
+                    intClass = 3;
+                else
+                    intClass = 4;
+
                 JSONObject jsonIi = new JSONObject();
                 jsonIi.put("name", ((EditText) tablerow.getVirtualChildAt(0)).getText());
-                jsonIi.put("amount", ((EditText) tablerow.getVirtualChildAt(2)).getText());
+                jsonIi.put("amount", intAmount);
                 jsonIi.put("unit", ((EditText) tablerow.getVirtualChildAt(3)).getText());
+                jsonIi.put("class", intClass);
                 jsonArrIi.put(jsonIi);
             }
             for (EditText editText : mStepEditTextList)
@@ -446,7 +496,7 @@ public class CreateActivity extends AppCompatActivity {
             }
         };
         //這行是把剛才StringRequest裡的工作放入佇列當中,這是volley的語法被包在NetworkManager中
-        jsonRequest.setRetryPolicy(new DefaultRetryPolicy(10000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        jsonRequest.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         NetworkManager.getInstance(this).request(null, jsonRequest);
     }
 }

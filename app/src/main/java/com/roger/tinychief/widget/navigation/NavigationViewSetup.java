@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
 import com.roger.tinychief.R;
 import com.roger.tinychief.activity.CalendarActivity;
 import com.roger.tinychief.activity.CreateActivity;
@@ -102,6 +103,7 @@ public class NavigationViewSetup {
             mButton.setOnClickListener(new Button.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    LoginManager.getInstance().logOut();
                     v.getContext().deleteFile("tf_login_data");
                     MainActivity.USER_NAME = null;
                     MainActivity.USER_ID = null;

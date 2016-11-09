@@ -18,6 +18,8 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
 import com.roger.tinychief.R;
 import com.roger.tinychief.util.MyHelper;
 import com.roger.tinychief.util.NetworkManager;
@@ -26,6 +28,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,6 +46,9 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(getApplication());
+
         ImageView mImageView = (ImageView) findViewById(R.id.img_splash);
         Bitmap bitmap = BitmapFactory.decodeResource(getApplication().getResources(), R.drawable.splash_img);
         mImageView.setImageBitmap(MyHelper.scaleBitmap(bitmap, this, true));
@@ -121,17 +128,17 @@ public class SplashActivity extends AppCompatActivity {
     private void endActivity() {
         //讀取登入資料(假如之前登入過)
         try {
-            FileInputStream fos = openFileInput("tf_login_data");
-            StringBuilder builder = new StringBuilder();
-            int ch;
-            while ((ch = fos.read()) != -1)
-                builder.append((char) ch);
-            String strLoginData = builder.toString();
+            FileReader reader = new FileReader(this.getFilesDir() + "/" + "tf_login_data");
+            char[] data = new char[128];
+
+            String strLoginData = new String(data, 0, reader.read(data));
             String strLoginDataArray[] = strLoginData.split(",");
             MainActivity.USER_NAME = strLoginDataArray[0];
             MainActivity.USER_ID = strLoginDataArray[1];
             Log.d("Login as", MainActivity.USER_NAME);
             Log.d("Login-ID", MainActivity.USER_ID);
+        } catch (FileNotFoundException e) {
+            Log.d("SplashActivity", "User's data doesn't exist.");
         } catch (Exception e) {
             deleteFile("tf_login_data");
             MainActivity.USER_NAME = null;

@@ -57,8 +57,6 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        FacebookSdk.sdkInitialize(getApplicationContext());
-        AppEventsLogger.activateApp(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         setTitle("登入");
@@ -85,7 +83,6 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onCompleted(JSONObject object, GraphResponse response) {
                         //讀出姓名 ID FB個人頁面連結
-                        Log.d("FB", "complete");
                         Log.d("FB", object.optString("name"));
                         Log.d("FB", object.optString("link"));
                         Log.d("FB", object.optString("id"));
@@ -184,8 +181,8 @@ public class LoginActivity extends AppCompatActivity {
                                     Toast.makeText(LoginActivity.this, "登入成功", Toast.LENGTH_LONG).show();
                                     Intent intent = new Intent();
                                     intent.setClass(LoginActivity.this, MainActivity.class);
-                                    Log.e("check", nickname);
-                                    Log.e("checkID", userID);
+                                    Log.d("name", nickname);
+                                    Log.d("ID", userID);
                                     MainActivity.USER_ID = userID;
                                     MainActivity.USER_NAME = nickname;
 

@@ -67,7 +67,10 @@
             android:theme="@style/ArAppTheme" />
         <activity
             android:name=".activity.CommentDialogActivity"
-            android:theme="@style/Theme.MyDialog" />
+            android:theme="@style/MyDialog" />
+        <activity
+            android:name=".activity.DatepickerDialogActivity"
+            android:theme="@style/MyDialog" />
         <activity
             android:name=".activity.SearchResultActivity"
             android:launchMode="singleTop"

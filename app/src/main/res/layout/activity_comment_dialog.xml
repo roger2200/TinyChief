@@ -49,11 +49,23 @@
             android:layout_height="wrap_content" />
     </LinearLayout>
 
-    <Button
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:onClick="uploadComment"
-        android:text="送出" />
+        android:layout_gravity="end">
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:onClick="uploadComment"
+            android:text="送出" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:onClick="Cancel"
+            android:text="取消" />
+    </LinearLayout>
 </LinearLayout>

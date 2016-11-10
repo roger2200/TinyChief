@@ -113,7 +113,13 @@ public class CommentDialogActivity extends AppCompatActivity {
         NetworkManager.getInstance(this).request(null, request);
     }
 
-    private void drawRate() {
+    public void Cancel(View view) {
+        Intent intent = new Intent();
+        setResult(RESULT_CANCELED, intent);
+        finish();
+    }
+
+        private void drawRate() {
         if (rate <= 0) rate = 1;
         mRateBitmap = Bitmap.createBitmap(mRateFBitmap.getWidth() * 5, mRateFBitmap.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas cv = new Canvas(mRateBitmap);

@@ -1,5 +1,7 @@
 package com.roger.tinychief.activity;
 
+import android.annotation.TargetApi;
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -47,7 +49,7 @@ import java.util.Map;
 
 public class DetailActivity extends AppCompatActivity {
     private static final String TAG = "DetailActivity";
-    private final int REQUEST_COM = 0;
+    private final int REQUEST_COM = 0, REQUEST_DATE = 1;
 
     private Toolbar mToolbar;
     private DrawerLayout mDrawerLayout;
@@ -62,12 +64,17 @@ public class DetailActivity extends AppCompatActivity {
     private NavigationViewSetup mNavigationViewSetup;
     private NavigationView mNavigationView;
     private String[] mStrArrayStep;
+    private String mStrID, mStrTitle;
     private ArrayList<ItemComment> mDataset = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+
+        Bundle bundle = this.getIntent().getExtras();
+        mStrID = bundle.getString("ID");
+        mStrTitle = bundle.getString("TITLE");
 
         mTitleTextView = (TextView) findViewById(R.id.txtview_title_detail);
         mImageView = (ImageView) findViewById(R.id.img_detail);
@@ -81,9 +88,7 @@ public class DetailActivity extends AppCompatActivity {
         mNavigationView = mNavigationViewSetup.setNavigationView();
 
         setRecycleView();
-
-        Bundle bundle = this.getIntent().getExtras();
-        setTitle(bundle.getString("TITLE"));
+        setTitle(mStrTitle);
         getCookbook();
     }
 
@@ -106,20 +111,29 @@ public class DetailActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
-            if (requestCode == REQUEST_COM) {
-                Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "", Snackbar.LENGTH_LONG);
-                MyHelper.setSnackbarMessageTextColor(snackbar, android.graphics.Color.WHITE);
-                if (data.getBooleanExtra("RESULT", false)) {
-                    snackbar.setText("上傳評論完成");
-                    mDataset.add(new ItemComment(data.getStringExtra("id_usr")
-                            , data.getStringExtra("name")
-                            , data.getIntExtra("rate", 1)
-                            , data.getStringExtra("msg")
-                            , getApplicationContext()));
-                    mAdapter.notifyItemInserted(mDataset.size());
-                } else
-                    snackbar.setText("上傳評論失敗");
-                snackbar.show();
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "", Snackbar.LENGTH_LONG);
+            MyHelper.setSnackbarMessageTextColor(snackbar, android.graphics.Color.WHITE);
+            switch (requestCode) {
+                case REQUEST_COM:
+                    if (data.getBooleanExtra("RESULT", false)) {
+                        snackbar.setText("上傳評論完成");
+                        mDataset.add(new ItemComment(data.getStringExtra("id_usr")
+                                , data.getStringExtra("name")
+                                , data.getIntExtra("rate", 1)
+                                , data.getStringExtra("msg")
+                                , getApplicationContext()));
+                        mAdapter.notifyItemInserted(mDataset.size());
+                    } else
+                        snackbar.setText("上傳評論失敗");
+                    snackbar.show();
+                    break;
+                case REQUEST_DATE:
+                    if (data.getBooleanExtra("RESULT", false)) {
+                        snackbar.setText("已加入食譜日曆");
+                    } else
+                        snackbar.setText("加入失敗");
+                    snackbar.show();
+                    break;
             }
         }
     }
@@ -136,7 +150,7 @@ public class DetailActivity extends AppCompatActivity {
             return;
         }
         Intent intent = new Intent(this, CommentDialogActivity.class);
-        intent.putExtra("ID", DetailActivity.this.getIntent().getExtras().getString("ID"));
+        intent.putExtra("ID", mStrID);
         startActivityForResult(intent, REQUEST_COM);
     }
 
@@ -146,6 +160,17 @@ public class DetailActivity extends AppCompatActivity {
         Intent intent = new Intent(view.getContext(), ArActivity.class);
         intent.putExtra("IMAGE", MyHelper.convertBitmap2Bytes(mArBitmap));
         startActivity(intent);
+    }
+
+    public void onClickAddCalendar(View view) {
+        if (MainActivity.USER_NAME == null) {
+            Toast.makeText(this, "請先登入", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Intent intent = new Intent(this, DatepickerDialogActivity.class);
+        intent.putExtra("ID", mStrID);
+        intent.putExtra("TITLE", mStrTitle);
+        startActivityForResult(intent, REQUEST_DATE);
     }
 
     public void getCookbook() {
@@ -306,7 +331,7 @@ public class DetailActivity extends AppCompatActivity {
                                                             if (jsonArray.getJSONObject(0).getString("平均價").equals("0"))
                                                                 textViewPrice.setText("無資料");
                                                             else
-                                                                textViewPrice.setText(jsonArray.getJSONObject(0).getString("平均價"));
+                                                                textViewPrice.setText(jsonArray.getJSONObject(0).getString("平均價") + "元/公斤");
                                                         } catch (Exception e) {
                                                             e.printStackTrace();
                                                         }

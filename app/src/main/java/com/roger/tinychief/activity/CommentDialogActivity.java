@@ -94,6 +94,7 @@ public class CommentDialogActivity extends AppCompatActivity {
                         Intent intent = new Intent();
                         intent.putExtra("RESULT", false);
                         setResult(RESULT_OK, intent);
+                        mProgressDialog.dismiss();
                         finish();
                     }
                 }) {

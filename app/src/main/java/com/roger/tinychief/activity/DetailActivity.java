@@ -131,7 +131,7 @@ public class DetailActivity extends AppCompatActivity {
                     if (data.getBooleanExtra("RESULT", false)) {
                         snackbar.setText("已加入食譜日曆");
                     } else
-                        snackbar.setText("加入失敗");
+                        snackbar.setText("加入日曆失敗");
                     snackbar.show();
                     break;
             }
@@ -169,7 +169,6 @@ public class DetailActivity extends AppCompatActivity {
         }
         Intent intent = new Intent(this, DatepickerDialogActivity.class);
         intent.putExtra("ID", mStrID);
-        intent.putExtra("TITLE", mStrTitle);
         startActivityForResult(intent, REQUEST_DATE);
     }
 
@@ -400,7 +399,7 @@ public class DetailActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getParams() {
                 Map<String, String> param = new HashMap<>();
-                param.put("id", DetailActivity.this.getIntent().getExtras().getString("ID"));
+                param.put("id", mStrID);
                 return param;
             }
         };

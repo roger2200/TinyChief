@@ -68,9 +68,10 @@ public class NavigationViewSetup {
                             jumpToActivity(mActivity, CreateActivity.class);
                         return true;
                     case R.id.nav_item_calendar:
-                        jumpToActivity(mActivity, CalendarActivity.class);
-                        return true;
-                    case R.id.nav_item_setting:
+                        if (MainActivity.USER_NAME == null)
+                            Toast.makeText(mActivity, "請先登入", Toast.LENGTH_SHORT).show();
+                        else
+                            jumpToActivity(mActivity, CalendarActivity.class);
                         return true;
                     default:
                         return false;

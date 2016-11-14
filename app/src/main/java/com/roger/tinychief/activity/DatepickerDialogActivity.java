@@ -44,10 +44,10 @@ public class DatepickerDialogActivity extends AppCompatActivity {
         mTextView = (TextView) findViewById(R.id.txtview_date_datepicker);
         mSpinner = (Spinner) findViewById(R.id.spinner_time_datepicker);
 
-        Calendar calendar=Calendar.getInstance();
-        mIntYear=calendar.get(Calendar.YEAR);
-        mIntMonth=calendar.get(Calendar.MONTH);
-        mIntDay=calendar.get(Calendar.DAY_OF_MONTH);
+        final Calendar calendar = Calendar.getInstance();
+        mIntYear = calendar.get(Calendar.YEAR);
+        mIntMonth = calendar.get(Calendar.MONTH);
+        mIntDay = calendar.get(Calendar.DAY_OF_MONTH);
 
         ArrayList<String> spinitem = new ArrayList<>(Arrays.asList("早餐", "中餐", "晚餐"));
         ArrayAdapter adapter = new ArrayAdapter<>(DatepickerDialogActivity.this, android.R.layout.simple_spinner_item, spinitem);
@@ -63,9 +63,10 @@ public class DatepickerDialogActivity extends AppCompatActivity {
             }
         });
         mTextView.setText(new SimpleDateFormat("yyyy.MM.dd", Locale.TAIWAN).format(mCalendarView.getDate()));
+        mCalendarView.setMinDate(mCalendarView.getDate());
 
         mProgressDialog = new ProgressDialog(this);
-        mProgressDialog.setMessage("請稍等一會...");
+        mProgressDialog.setMessage("加入日曆中...");
     }
 
     public void addCalendar(View view) {

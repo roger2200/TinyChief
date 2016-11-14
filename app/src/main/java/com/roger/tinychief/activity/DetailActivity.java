@@ -322,15 +322,19 @@ public class DetailActivity extends AppCompatActivity {
 
                                         strURL = "http://m.coa.gov.tw/OpenData/FarmTransData.aspx?"
                                                 + "StartDate=" + intYear2 + strDay2 + "&EndDate=" + intYear1 + strDay1 + "&Crop=" + strName;
+                                        Log.d("Get data from ", strURL);
                                         request = new StringRequest(Request.Method.GET, strURL,
                                                 new Response.Listener<String>() {
                                                     public void onResponse(String string) {
                                                         try {
                                                             JSONArray jsonArray = new JSONArray(string);
-                                                            if (jsonArray.getJSONObject(0).getString("平均價").equals("0"))
-                                                                textViewPrice.setText("無資料");
-                                                            else
-                                                                textViewPrice.setText(jsonArray.getJSONObject(0).getString("平均價") + "元/公斤");
+                                                            Log.d("Response", jsonArray.toString());
+                                                            textViewPrice.setText("無資料");
+                                                            for (int i = 0; i < jsonArray.length(); i++)
+                                                                if (!jsonArray.getJSONObject(i).getString("平均價").equals("0")) {
+                                                                    textViewPrice.setText(jsonArray.getJSONObject(i).getString("平均價") + "元/公斤");
+                                                                    break;
+                                                                }
                                                         } catch (Exception e) {
                                                             e.printStackTrace();
                                                         }

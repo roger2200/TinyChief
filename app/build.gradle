@@ -34,15 +34,15 @@ dependencies {
     //加入vuforia的jar檔
     compile files('libs/vuforia-sdk-android-5-5-9/build/java/vuforia/Vuforia.jar')
     compile project(':openCVLibrary310')
-    compile 'com.android.support:appcompat-v7:24.2.1'
-    compile 'com.android.support:design:24.2.1'
-    compile 'com.android.support:recyclerview-v7:24.2.1'
-    compile 'com.android.support:cardview-v7:24.2.1'
+    compile 'com.android.support:appcompat-v7:24.1.1'
+    compile 'com.android.support:design:24.1.1'
+    compile 'com.android.support:recyclerview-v7:24.1.1'
+    compile 'com.android.support:cardview-v7:24.1.1'
     compile 'com.wuxiaolong.pullloadmorerecyclerview:library:1.0.4'
     compile 'com.mcxiaoke.volley:library:1.0.19'
     compile 'com.facebook.android:facebook-android-sdk:[4,5)'
     compile 'com.github.bumptech.glide:volley-integration:1.4.0'
     compile 'com.squareup.retrofit:retrofit:1.9.0'
-    compile 'com.android.support:support-v4:24.2.1'
+    compile 'com.android.support:support-v4:24.1.1'
     testCompile 'junit:junit:4.12'
 }

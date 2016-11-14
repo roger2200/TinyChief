@@ -24,7 +24,4 @@
     <string name="menu_contAutofocus_error_on">Unable to activate Continuous Auto-Focus</string>
     <string name="menu_contAutofocus_error_off">Unable to deactivate Continuous Auto-Focus</string>
     <string name="search_title">SearchTitle</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

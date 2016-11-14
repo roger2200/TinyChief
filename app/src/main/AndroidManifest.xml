@@ -71,6 +71,8 @@
         <activity
             android:name=".activity.DatepickerDialogActivity"
             android:theme="@style/MyDialog" />
+        <activity android:name=".IiDetailDialogActivity"
+            android:theme="@style/MyDialog"/>
         <activity
             android:name=".activity.SearchResultActivity"
             android:launchMode="singleTop"

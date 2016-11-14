@@ -1,12 +1,9 @@
 package com.roger.tinychief.activity;
 
-import android.annotation.TargetApi;
-import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -16,7 +13,6 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -32,6 +28,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.bumptech.glide.Glide;
+import com.roger.tinychief.IiDetailDialogActivity;
 import com.roger.tinychief.R;
 import com.roger.tinychief.util.MyHelper;
 import com.roger.tinychief.util.NetworkManager;
@@ -43,7 +40,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -204,180 +200,28 @@ public class DetailActivity extends AppCompatActivity {
                             mTitleTextView.setText(mStrTitle);
                             setTitle(mStrTitle);
 
-                            for (int i = 0; i < jsonArrayIi.length(); i++) {
-                                final double doubleAmount = jsonArrayIi.getJSONObject(i).getDouble("amount");
-                                final String strUnit = jsonArrayIi.getJSONObject(i).getString("unit");
+                            for (int i = 0; i < jsonArrayIi.length(); i++)
+                                addIi(jsonArrayIi.getJSONObject(i).getString("name"),
+                                        jsonArrayIi.getJSONObject(i).getDouble("amount"),
+                                        jsonArrayIi.getJSONObject(i).getString("unit"),
+                                        jsonArrayIi.getJSONObject(i).getInt("class"));
 
-                                int[] attrs = new int[]{android.R.attr.selectableItemBackground};
-                                final String strName = jsonArrayIi.getJSONObject(i).getString("name");
-                                final TextView textViewPrice = new TextView(DetailActivity.this);
-                                final TextView textViewAmount = new TextView(DetailActivity.this);
-                                Drawable drawableFromTheme = obtainStyledAttributes(attrs).getDrawable(0);
-                                TextView textViewName = new TextView(DetailActivity.this);
-                                TableRow tablerow = new TableRow(DetailActivity.this);
-
-                                textViewName.setTextSize(20.0f);
-                                textViewAmount.setTextSize(20.0f);
-                                textViewPrice.setTextSize(20.0f);
-
-                                textViewName.setText(strName);
-                                textViewAmount.setText(doubleAmount + "\t" + strUnit);
-
-                                StringRequest request;
-                                String strURL;
-                                switch (jsonArrayIi.getJSONObject(i).getInt("class")) {
-                                    case 0:
-                                        if (strName.equals("雞蛋"))
-                                            textViewAmount.setText((doubleAmount * 10) + "\t" + strUnit);
-                                        strURL = "http://m.coa.gov.tw/OpenData/PoultryTransBoiledChickenData.aspx";
-                                        request = new StringRequest(Request.Method.GET, strURL,
-                                                new Response.Listener<String>() {
-                                                    public void onResponse(String string) {
-                                                        try {
-                                                            JSONArray jsonArray = new JSONArray(string);
-                                                            if (strName.equals("雞蛋")) {
-                                                                textViewPrice.setText(jsonArray.getJSONObject(0).getString("雞蛋(產地)") + "元/台斤");
-                                                            } else {
-                                                                textViewPrice.setText(jsonArray.getJSONObject(0).getString("白肉雞(門市價高屏)") + "元/台斤");
-                                                            }
-                                                        } catch (Exception e) {
-                                                            e.printStackTrace();
-                                                        }
-                                                    }
-                                                },
-                                                new Response.ErrorListener() {
-                                                    @Override
-                                                    public void onErrorResponse(VolleyError error) {
-                                                        Log.e(TAG, error.toString());
-                                                    }
-                                                });
-                                        request.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                                        NetworkManager.getInstance(DetailActivity.this).request("official", request);
-                                        break;
-                                    case 1:
-                                        if (strName.equals("鴨蛋"))
-                                            textViewAmount.setText((doubleAmount * 10) + "\t" + strUnit);
-                                        strURL = "http://m.coa.gov.tw/OpenData/PoultryTransGooseDuckData.aspx";
-                                        request = new StringRequest(Request.Method.GET, strURL,
-                                                new Response.Listener<String>() {
-                                                    public void onResponse(String string) {
-                                                        try {
-                                                            JSONArray jsonArray = new JSONArray(string);
-                                                            if (strName.equals("鴨蛋")) {
-                                                                textViewPrice.setText(jsonArray.getJSONObject(0).getString("鴨蛋(新蛋)(台南)") + "元/台斤");
-                                                            } else if (strName.equals("鴨肉")) {
-                                                                textViewPrice.setText(jsonArray.getJSONObject(0).getString("正番鴨(公)") + "元/台斤");
-                                                            } else {
-                                                                textViewPrice.setText(jsonArray.getJSONObject(0).getString("肉鵝(白羅曼)") + "元/台斤");
-                                                            }
-                                                        } catch (Exception e) {
-                                                            e.printStackTrace();
-                                                        }
-                                                    }
-                                                },
-                                                new Response.ErrorListener() {
-                                                    @Override
-                                                    public void onErrorResponse(VolleyError error) {
-                                                        Log.e(TAG, error.toString());
-                                                    }
-                                                });
-
-                                        request.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                                        NetworkManager.getInstance(DetailActivity.this).request("official", request);
-                                        break;
-                                    case 2:
-                                        strURL = "https://tinny-chief.herokuapp.com/get/price";
-                                        request = new StringRequest(Request.Method.GET, strURL,
-                                                new Response.Listener<String>() {
-                                                    public void onResponse(String string) {
-                                                        try {
-                                                            JSONObject jsonObject = new JSONObject(string);
-                                                            if (strName.equals("豬肉")) {
-                                                                textViewPrice.setText(jsonObject.getString("pork") + "元/台斤");
-                                                            } else {
-                                                                textViewPrice.setText(jsonObject.getString("beef") + "元/台斤");
-                                                            }
-                                                        } catch (Exception e) {
-                                                            e.printStackTrace();
-                                                        }
-                                                    }
-                                                },
-                                                new Response.ErrorListener() {
-                                                    @Override
-                                                    public void onErrorResponse(VolleyError error) {
-                                                        Log.e(TAG, error.toString());
-                                                    }
-                                                });
-                                        request.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                                        NetworkManager.getInstance(DetailActivity.this).request("official", request);
-                                        break;
-                                    case 3:
-                                        textViewPrice.setText("無資料");
-                                        break;
-                                    case 4:
-                                        Calendar calendar = Calendar.getInstance();
-                                        int intYear1 = calendar.get(Calendar.YEAR) - 1911;
-                                        CharSequence strDay1 = DateFormat.format(".MM.dd", calendar);
-                                        calendar.add(Calendar.MONTH, -1);
-                                        int intYear2 = calendar.get(Calendar.YEAR) - 1911;
-                                        CharSequence strDay2 = DateFormat.format(".MM.dd", calendar);
-
-                                        strURL = "http://m.coa.gov.tw/OpenData/FarmTransData.aspx?"
-                                                + "StartDate=" + intYear2 + strDay2 + "&EndDate=" + intYear1 + strDay1 + "&Crop=" + strName;
-                                        Log.d("Get data from ", strURL);
-                                        request = new StringRequest(Request.Method.GET, strURL,
-                                                new Response.Listener<String>() {
-                                                    public void onResponse(String string) {
-                                                        try {
-                                                            JSONArray jsonArray = new JSONArray(string);
-                                                            Log.d("Response", jsonArray.toString());
-                                                            textViewPrice.setText("無資料");
-                                                            for (int i = 0; i < jsonArray.length(); i++)
-                                                                if (!jsonArray.getJSONObject(i).getString("平均價").equals("0")) {
-                                                                    textViewPrice.setText(jsonArray.getJSONObject(i).getString("平均價") + "元/公斤");
-                                                                    break;
-                                                                }
-                                                        } catch (Exception e) {
-                                                            e.printStackTrace();
-                                                        }
-                                                    }
-                                                },
-                                                new Response.ErrorListener() {
-                                                    @Override
-                                                    public void onErrorResponse(VolleyError error) {
-                                                        Log.e(TAG, error.toString());
-                                                    }
-                                                });
-                                        request.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                                        NetworkManager.getInstance(DetailActivity.this).request("official", request);
-                                        break;
-                                }
-
-                                //設置onclick開啟瀏覽器
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
-                                    tablerow.setBackground(drawableFromTheme);
-                                tablerow.setClickable(true);
-                                tablerow.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        Intent intent = new Intent(view.getContext(), WebviewActivity.class);
-                                        intent.putExtra("URL", "http://www.happy-shopping.com.tw/search_list.aspx?k=" + strName.split("-")[0]);
-                                        startActivity(intent);
-                                    }
-                                });
-
-                                tablerow.addView(textViewName);
-                                tablerow.addView(textViewAmount);
-                                //tablerow.addView(textViewPrice);
-                                mIiTableLayout.addView(tablerow);
-                            }
                             mStrArrayStep = new String[jsonArrayStep.length()];
                             for (int i = 0; i < jsonArrayStep.length(); i++) {
-                                TextView textViewStep = new TextView(DetailActivity.this);
-                                textViewStep.setTextSize(22.0f);
-                                textViewStep.setText(jsonArrayStep.getString(i) + "\n");
                                 mStrArrayStep[i] = jsonArrayStep.getString(i);
-                                mStepLinearLayout.addView(textViewStep);
+                                LinearLayout linearLayout = new LinearLayout(DetailActivity.this);
+                                TextView textViewStepCount = new TextView(DetailActivity.this);
+                                TextView textViewStep = new TextView(DetailActivity.this);
+
+                                textViewStep.setTextSize(22.0f);
+                                textViewStepCount.setTextSize(22.0f);
+
+                                textViewStepCount.setText((i + 1) + ".  ");
+                                textViewStep.setText(jsonArrayStep.getString(i) + "\n");
+
+                                linearLayout.addView(textViewStepCount);
+                                linearLayout.addView(textViewStep);
+                                mStepLinearLayout.addView(linearLayout);
                             }
 
                             if (json.getJSONArray("comment") != null) {
@@ -418,5 +262,50 @@ public class DetailActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mAdapter = new AdapterComment(mDataset);
         mRecyclerView.setAdapter(mAdapter);
+    }
+
+    private void addIi(final String name, double amount, String unit, final int intClass) {
+        Drawable drawable;
+        TextView textViewPrice = new TextView(DetailActivity.this);
+        TextView textViewAmount = new TextView(DetailActivity.this);
+        TextView textViewName = new TextView(DetailActivity.this);
+        TableRow tablerow = new TableRow(DetailActivity.this);
+        TableLayout.LayoutParams lp = new TableLayout.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT,
+                TableLayout.LayoutParams.WRAP_CONTENT);
+
+        lp.setMargins(5, 5, 5, 5);
+        tablerow.setLayoutParams(lp);
+        tablerow.setPadding(10, 10, 10, 10);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            drawable = DetailActivity.this.getResources().getDrawable(R.drawable.background_rect_radius, getTheme());
+            tablerow.setBackground(drawable);
+        } else {
+            drawable = DetailActivity.this.getResources().getDrawable(R.drawable.background_rect_radius);
+            tablerow.setBackgroundDrawable(drawable);
+        }
+
+        tablerow.setClickable(true);
+        tablerow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(view.getContext(), IiDetailDialogActivity.class);
+                intent.putExtra("NAME", name);
+                intent.putExtra("CLASS", intClass);
+                startActivity(intent);
+            }
+        });
+        textViewName.setTextSize(24.0f);
+        textViewAmount.setTextSize(24.0f);
+        textViewPrice.setTextSize(24.0f);
+
+        textViewName.setText(name);
+        if (name.equals("雞蛋") || name.equals("鴨蛋"))
+            textViewAmount.setText((amount * 10) + "  " + unit);
+        else
+            textViewAmount.setText(amount + "  " + unit);
+
+        tablerow.addView(textViewName);
+        tablerow.addView(textViewAmount);
+        mIiTableLayout.addView(tablerow);
     }
 }

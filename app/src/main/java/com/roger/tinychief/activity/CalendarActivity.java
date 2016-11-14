@@ -1,5 +1,8 @@
 package com.roger.tinychief.activity;
 
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
@@ -24,8 +27,7 @@ import com.roger.tinychief.widget.navigation.NavigationViewSetup;
 
 
 import org.json.JSONArray;
-
-import android.text.format.DateFormat;
+import org.json.JSONException;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -87,6 +89,7 @@ public class CalendarActivity extends AppCompatActivity {
         mDateCurrentSelect = new Date(mCalendarView.getDate());
 
         getData();
+        setTitle("食譜日曆");
     }
 
     @Override
@@ -136,7 +139,27 @@ public class CalendarActivity extends AppCompatActivity {
                     Date jsonDate = simpleDf.parse(mJSONArray.getJSONObject(i).getString("date"));
                     if (simpleDf.format(jsonDate).equals(strDate)) {
                         TextView txtview = new TextView(CalendarActivity.this);
+                        final int finalI = i;
+                        int[] attrs = new int[]{android.R.attr.selectableItemBackground};
+                        Drawable drawableFromTheme = obtainStyledAttributes(attrs).getDrawable(0);
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+                            txtview.setBackground(drawableFromTheme);
+                        txtview.setClickable(true);
                         txtview.setText(mJSONArray.getJSONObject(i).getString("title"));
+                        txtview.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                try {
+                                    Intent intent = new Intent(view.getContext(), DetailActivity.class);
+                                    intent.putExtra("ID", mJSONArray.getJSONObject(finalI).getString("id"));
+                                    startActivity(intent);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+
                         switch (mJSONArray.getJSONObject(i).getString("time")) {
                             case "早餐":
                                 if (!haveMorning) {

@@ -368,7 +368,7 @@ public class DetailActivity extends AppCompatActivity {
 
                                 tablerow.addView(textViewName);
                                 tablerow.addView(textViewAmount);
-                                tablerow.addView(textViewPrice);
+                                //tablerow.addView(textViewPrice);
                                 mIiTableLayout.addView(tablerow);
                             }
                             mStrArrayStep = new String[jsonArrayStep.length()];

@@ -22,67 +22,60 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="5dp"
-                android:paddingTop="1dp">
+                android:orientation="vertical">
 
-                <LinearLayout
+                <android.support.v7.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/background_rect_radius"
-                    android:orientation="vertical"
-                    android:padding="10dp">
+                    android:layout_margin="5dp">
 
-                    <TextView
-                        android:id="@+id/txtview_title_detail"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
-                        android:textSize="40sp" />
-
-
-                    <ImageView
-                        android:id="@+id/img_detail"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:adjustViewBounds="true" />
-
-                    <TableLayout
-                        android:id="@+id/tablelayout_ii_detail"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:stretchColumns="0,1,2">
+                        android:padding="10dp">
 
-                        <TableRow>
+                        <TextView
+                            android:id="@+id/txtview_title_detail"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_horizontal"
+                            android:textSize="40sp" />
 
-                            <TextView
-                                android:text="材料名稱"
-                                android:textSize="20sp" />
 
-                            <TextView
-                                android:text="數量"
-                                android:textSize="20sp" />
+                        <ImageView
+                            android:id="@+id/img_detail"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="20dp"
+                            android:adjustViewBounds="true" />
 
-                            <TextView
-                                android:text="時價"
-                                android:textSize="20sp" />
-                        </TableRow>
-                    </TableLayout>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="材料" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
-                        android:text="步驟:"
-                        android:textSize="22sp" />
+                        <TableLayout
+                            android:id="@+id/tablelayout_ii_detail"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:stretchColumns="0,1" />
 
-                    <LinearLayout
-                        android:id="@+id/linearlayout_step_detail"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical" />
-                </LinearLayout>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="20dp"
+                            android:text="步驟:"
+                            android:textSize="22sp" />
+
+                        <LinearLayout
+                            android:id="@+id/linearlayout_step_detail"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical" />
+                    </LinearLayout>
+                </android.support.v7.widget.CardView>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -93,12 +86,14 @@
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:background="@color/white"
                         android:onClick="onClickStartCook"
                         android:text="料理開始" />
 
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:background="@color/white"
                         android:onClick="onClickWriteComment"
                         android:text="撰寫評論" />
 
@@ -106,6 +101,7 @@
                         android:id="@+id/btn_openar_detail"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:background="@color/white"
                         android:enabled="false"
                         android:onClick="onClickOpenAR"
                         android:text="AR預覽" />
@@ -114,6 +110,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:onClick="onClickAddCalendar"
+                        android:background="@color/white"
                         android:text="加到日曆" />
                 </LinearLayout>
 

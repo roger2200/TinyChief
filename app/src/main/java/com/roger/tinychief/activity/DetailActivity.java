@@ -74,7 +74,7 @@ public class DetailActivity extends AppCompatActivity {
 
         Bundle bundle = this.getIntent().getExtras();
         mStrID = bundle.getString("ID");
-        mStrTitle = bundle.getString("TITLE");
+
 
         mTitleTextView = (TextView) findViewById(R.id.txtview_title_detail);
         mImageView = (ImageView) findViewById(R.id.img_detail);
@@ -88,8 +88,8 @@ public class DetailActivity extends AppCompatActivity {
         mNavigationView = mNavigationViewSetup.setNavigationView();
 
         setRecycleView();
-        setTitle(mStrTitle);
         getCookbook();
+        setTitle(mStrTitle);
     }
 
     @Override
@@ -169,6 +169,7 @@ public class DetailActivity extends AppCompatActivity {
         }
         Intent intent = new Intent(this, DatepickerDialogActivity.class);
         intent.putExtra("ID", mStrID);
+        intent.putExtra("TITLE", mStrTitle);
         startActivityForResult(intent, REQUEST_DATE);
     }
 
@@ -199,8 +200,9 @@ public class DetailActivity extends AppCompatActivity {
                             }
                             Glide.with(DetailActivity.this).load(json.getString("image")).asBitmap().into(mImageView);
 
-                            mTitleTextView.setText(json.getString("title"));
-                            setTitle(json.getString("title"));
+                            mStrTitle = json.getString("title");
+                            mTitleTextView.setText(mStrTitle);
+                            setTitle(mStrTitle);
 
                             for (int i = 0; i < jsonArrayIi.length(); i++) {
                                 final double doubleAmount = jsonArrayIi.getJSONObject(i).getDouble("amount");

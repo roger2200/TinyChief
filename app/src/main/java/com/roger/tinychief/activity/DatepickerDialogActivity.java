@@ -72,7 +72,7 @@ public class DatepickerDialogActivity extends AppCompatActivity {
     public void addCalendar(View view) {
         mProgressDialog.show();
 
-        StringRequest request = new StringRequest(Request.Method.POST, "https://tinny-chief.herokuapp.com/upload/calendar",
+        StringRequest request = new StringRequest(Request.Method.POST, "https://tinny-chief.herokuapp.com/calendar/upload",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String string) {
@@ -103,6 +103,7 @@ public class DatepickerDialogActivity extends AppCompatActivity {
                 param.put("month", String.valueOf(mIntMonth));
                 param.put("day", String.valueOf(mIntDay));
                 param.put("time", mSpinner.getSelectedItem().toString());
+                param.put("title", DatepickerDialogActivity.this.getIntent().getExtras().getString("TITLE"));
                 Log.d("Upload Calendar", param.toString());
                 return param;
             }

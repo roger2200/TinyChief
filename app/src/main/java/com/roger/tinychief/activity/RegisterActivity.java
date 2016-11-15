@@ -34,11 +34,7 @@ public class RegisterActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
     private NavigationViewSetup mNavigationViewSetup;
-<<<<<<< HEAD
     private EditText input_account, input_password, input_email,input_nickname,input_password2;
-=======
-    private EditText input_account, input_password, input_email, input_nickname;
->>>>>>> c32daaf4adad8d782c172c0cf7e90951b98e8325
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

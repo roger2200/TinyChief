@@ -91,7 +91,7 @@ public class LoginActivity extends AppCompatActivity {
                         Log.d("FB", object.optString("id"));
                         MainActivity.USER_NAME = object.optString("name");
                         MainActivity.USER_ID = object.optString("id");
-
+                        insertFBInfo();
                         //將登入資料寫入手機記憶體
                         String strLoginData = MainActivity.USER_NAME + "," + MainActivity.USER_ID;
                         try {
@@ -188,7 +188,7 @@ public class LoginActivity extends AppCompatActivity {
                                     Log.e("checkID", userID);
                                     MainActivity.USER_ID = userID;
                                     MainActivity.USER_NAME = nickname;
-
+                                    insertFBInfo();
                                     //將登入資料寫入手機記憶體
                                     String strLoginData = MainActivity.USER_NAME + "," + MainActivity.USER_ID;
                                     FileOutputStream fos = openFileOutput("tf_login_data", Context.MODE_PRIVATE);
@@ -222,5 +222,34 @@ public class LoginActivity extends AppCompatActivity {
             NetworkManager.getInstance(this).request(null, request);
             request.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         }
+    }
+    private void insertFBInfo() {
+        StringRequest request3 = new StringRequest(Request.Method.POST, "https://tiny-chief.herokuapp.com/inserFBInfo",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String string) {
+                        try {
+
+                        } catch (Exception e) {
+                            Log.d("error:", e.getMessage());
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        Log.e("Error", String.valueOf(volleyError));
+                    }
+                }) {
+            @Override
+            public Map<String, String> getParams() {
+                Map<String, String> MyData = new HashMap<>();
+                MyData.put("UserID", MainActivity.USER_ID);//用Map放資料,第一個參數是名稱,第二個是值,到時候在server端用名稱去取出值即可
+                MyData.put("FBName", MainActivity.USER_NAME);
+                return MyData;
+            }
+        };
+        NetworkManager.getInstance(this).request(null, request3);
+        request3.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
     }
 }

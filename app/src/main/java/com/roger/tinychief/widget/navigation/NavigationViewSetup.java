@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
 import com.roger.tinychief.R;
 import com.roger.tinychief.activity.CalendarActivity;
 import com.roger.tinychief.activity.CreateActivity;
@@ -67,9 +68,10 @@ public class NavigationViewSetup {
                             jumpToActivity(mActivity, CreateActivity.class);
                         return true;
                     case R.id.nav_item_calendar:
-                        jumpToActivity(mActivity, CalendarActivity.class);
-                        return true;
-                    case R.id.nav_item_setting:
+                        if (MainActivity.USER_NAME == null)
+                            Toast.makeText(mActivity, "請先登入", Toast.LENGTH_SHORT).show();
+                        else
+                            jumpToActivity(mActivity, CalendarActivity.class);
                         return true;
                     default:
                         return false;
@@ -102,6 +104,7 @@ public class NavigationViewSetup {
             mButton.setOnClickListener(new Button.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    LoginManager.getInstance().logOut();
                     v.getContext().deleteFile("tf_login_data");
                     MainActivity.USER_NAME = null;
                     MainActivity.USER_ID = null;

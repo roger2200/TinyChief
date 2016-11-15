@@ -72,7 +72,7 @@ public class CommentDialogActivity extends AppCompatActivity {
     public void uploadComment(View view) {
         mProgressDialog.show();
 
-        StringRequest request = new StringRequest(Request.Method.POST, "https://tinny-chief.herokuapp.com/upload/comment",
+        StringRequest request = new StringRequest(Request.Method.POST, "https://tinny-chief.herokuapp.com/calendar/upload",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String string) {
@@ -94,6 +94,7 @@ public class CommentDialogActivity extends AppCompatActivity {
                         Intent intent = new Intent();
                         intent.putExtra("RESULT", false);
                         setResult(RESULT_OK, intent);
+                        mProgressDialog.dismiss();
                         finish();
                     }
                 }) {
@@ -113,7 +114,13 @@ public class CommentDialogActivity extends AppCompatActivity {
         NetworkManager.getInstance(this).request(null, request);
     }
 
-    private void drawRate() {
+    public void Cancel(View view) {
+        Intent intent = new Intent();
+        setResult(RESULT_CANCELED, intent);
+        finish();
+    }
+
+        private void drawRate() {
         if (rate <= 0) rate = 1;
         mRateBitmap = Bitmap.createBitmap(mRateFBitmap.getWidth() * 5, mRateFBitmap.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas cv = new Canvas(mRateBitmap);

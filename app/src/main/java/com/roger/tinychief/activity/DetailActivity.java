@@ -28,7 +28,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.bumptech.glide.Glide;
-import com.roger.tinychief.IiDetailDialogActivity;
 import com.roger.tinychief.R;
 import com.roger.tinychief.util.MyHelper;
 import com.roger.tinychief.util.NetworkManager;
@@ -170,7 +169,7 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     public void getCookbook() {
-        StringRequest request = new StringRequest(Request.Method.POST, "https://tinny-chief.herokuapp.com/cookbook/detail",
+        StringRequest request = new StringRequest(Request.Method.POST, "https://tiny-chief.herokuapp.com/cookbook/detail",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String string) {

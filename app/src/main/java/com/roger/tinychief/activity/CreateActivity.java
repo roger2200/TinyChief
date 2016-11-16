@@ -30,6 +30,7 @@ import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -466,14 +467,12 @@ public class CreateActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        JsonRequest<JSONObject> jsonRequest = new JsonObjectRequest(Request.Method.POST, "https://tinny-chief.herokuapp.com/upload/cookbook", jsonObjectMain,
+        JsonRequest<JSONObject> jsonRequest = new JsonObjectRequest(Request.Method.POST, "https://tiny-chief.herokuapp.com/upload/cookbook", jsonObjectMain,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         mProgressDialog.dismiss();
-                        Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "上傳完成", Snackbar.LENGTH_LONG);
-                        MyHelper.setSnackbarMessageTextColor(snackbar, android.graphics.Color.WHITE);
-                        snackbar.show();
+                        Toast.makeText(CreateActivity.this,"上傳完成",Toast.LENGTH_LONG).show();
                         Log.d(LOGTAG, "Create Response" + response.toString());
                         MainActivity.NEED_REINIT = true;
                         finish();
@@ -483,9 +482,7 @@ public class CreateActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         mProgressDialog.dismiss();
-                        Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "上傳失敗", Snackbar.LENGTH_LONG);
-                        MyHelper.setSnackbarMessageTextColor(snackbar, android.graphics.Color.WHITE);
-                        snackbar.show();
+                        Toast.makeText(CreateActivity.this,"上傳失敗",Toast.LENGTH_LONG).show();
                         Log.e("Error", String.valueOf(error));
                     }
                 }) {

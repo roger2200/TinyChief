@@ -7,7 +7,7 @@
     android:background="@drawable/background_rect_radius_dialog"
     android:orientation="vertical"
     android:padding="20dp"
-    tools:context="com.roger.tinychief.IiDetailDialogActivity">
+    tools:context="com.roger.tinychief.activity.IiDetailDialogActivity">
 
     <TextView
         android:id="@+id/txtview_name_detail_dialog"

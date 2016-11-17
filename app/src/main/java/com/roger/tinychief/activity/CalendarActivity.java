@@ -1,6 +1,7 @@
 package com.roger.tinychief.activity;
 
 import android.content.Intent;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -53,6 +54,10 @@ public class CalendarActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
 
+        Point size = new Point();
+        getWindowManager().getDefaultDisplay().getSize(size);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(size.x, (int)(size.y / 1.5));
+
         mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorlayout_calendar);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout_calendar);
         mLinearLayoutMorning = (LinearLayout) findViewById(R.id.linearlayout_morning_calendar);
@@ -61,6 +66,8 @@ public class CalendarActivity extends AppCompatActivity {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mTextView = (TextView) findViewById(R.id.txtview_date_calendar);
         mCalendarView = (CalendarView) findViewById(R.id.calendarview_calendar);
+
+        mCalendarView.setLayoutParams(params);
 
         mNavigationViewSetup = new NavigationViewSetup(this, mDrawerLayout, mToolbar);
         mNavigationView = mNavigationViewSetup.setNavigationView();

@@ -76,6 +76,7 @@ public class CommentDialogActivity extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String string) {
+                        Log.d("Response",string);
                         Intent intent = new Intent();
                         intent.putExtra("RESULT", true);
                         intent.putExtra("id_usr", MainActivity.USER_ID);

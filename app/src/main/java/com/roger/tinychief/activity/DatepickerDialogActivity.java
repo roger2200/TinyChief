@@ -2,13 +2,16 @@ package com.roger.tinychief.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Point;
 import android.support.annotation.NonNull;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CalendarView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -40,9 +43,15 @@ public class DatepickerDialogActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_datepicker);
 
+        Point size = new Point();
+        getWindowManager().getDefaultDisplay().getSize(size);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int)(size.x / 1.1), (int)(size.y / 1.5));
+
         mCalendarView = (CalendarView) findViewById(R.id.calendarview_datepicker);
         mTextView = (TextView) findViewById(R.id.txtview_date_datepicker);
         mSpinner = (Spinner) findViewById(R.id.spinner_time_datepicker);
+
+        mCalendarView.setLayoutParams(params);
 
         final Calendar calendar = Calendar.getInstance();
         mIntYear = calendar.get(Calendar.YEAR);

@@ -70,7 +70,7 @@ public class CreateActivity extends AppCompatActivity {
     //用list儲存材料和步驟的EditText,方便計算有幾筆材料和步驟
     private ArrayList<TableRow> mIiTableRowList = new ArrayList<>();
     private ArrayList<EditText> mStepEditTextList = new ArrayList<>();
-    private EditText mTitleEditText, mServingEditText, mNoteEditText;
+    private EditText mTitleEditText;
     private ImageView mImageView, mArImageView;
     private LinearLayout mStepLinearLayout, mLinearlayout;
     private TableLayout mIiTableLayout;
@@ -97,8 +97,6 @@ public class CreateActivity extends AppCompatActivity {
         mImageView = (ImageView) findViewById(R.id.img_create);
         mArImageView = (ImageView) findViewById(R.id.img_ar);
         mTitleEditText = (EditText) findViewById(R.id.edittext_title);
-        mServingEditText = (EditText) findViewById(R.id.edittext_servings);
-        mNoteEditText = (EditText) findViewById(R.id.edittext_note);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout_create);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorlayout_create);
@@ -198,20 +196,12 @@ public class CreateActivity extends AppCompatActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                edittxtUnit.setFocusable(false);
-                if (i == 6 || i == 7) {
-                    edittxtUnit.setText("顆");
+                if (i == 6 || i == 7)
                     edittxtName.setText(adapterView.getSelectedItem().toString());
-                } else if (i > 0 && i < 6) {
-                    edittxtUnit.setText("台斤");
+                else if (i > 0 && i < 6)
                     edittxtName.setText(adapterView.getSelectedItem().toString());
-                } else if (i == 8 || i == 9) {
-                    edittxtUnit.setFocusableInTouchMode(true);
-                    edittxtUnit.setText("");
-                } else if (i > 9) {
-                    edittxtUnit.setText("公斤");
+                else if (i > 9)
                     edittxtName.setText(adapterView.getSelectedItem().toString());
-                }
             }
 
             @Override
@@ -418,21 +408,15 @@ public class CreateActivity extends AppCompatActivity {
                 int intSpinnerPos = ((Spinner) tablerow.getVirtualChildAt(1)).getSelectedItemPosition();
                 double intAmount = Integer.parseInt(((EditText) tablerow.getVirtualChildAt(2)).getText().toString());
 
-                if (intSpinnerPos == 1)// 雞
+                if (intSpinnerPos == 1||intSpinnerPos == 6)// 雞
                     intClass = 0;
-                else if (intSpinnerPos == 6) {
-                    intClass = 0;
-                    intAmount /= 10;
-                } else if (intSpinnerPos == 4 || intSpinnerPos == 5)//鴨 鵝
+                else if (intSpinnerPos == 4 || intSpinnerPos == 5 ||intSpinnerPos == 7)//鴨 鵝
                     intClass = 1;
-                else if (intSpinnerPos == 7) {
-                    intClass = 1;
-                    intAmount /= 10;
-                } else if (intSpinnerPos == 2 || intSpinnerPos == 3)//豬 牛
+                else if (intSpinnerPos == 2 || intSpinnerPos == 3)//豬 牛
                     intClass = 2;
                 else if (intSpinnerPos == 8 || intSpinnerPos == 9)//調味料 其他
                     intClass = 3;
-                else
+                else                                    //open data
                     intClass = 4;
 
                 JSONObject jsonIi = new JSONObject();
@@ -454,11 +438,10 @@ public class CreateActivity extends AppCompatActivity {
                 jsonObjectMain.put("image_ar", mArUrl);
             else
                 jsonObjectMain.put("image_ar", "");
-            jsonObjectMain.put("servings", mServingEditText.getText());
-            jsonObjectMain.put("note", mNoteEditText.getText());
             jsonObjectMain.put("ingredients", jsonArrIi);
             jsonObjectMain.put("steps", jsonArrStep);
             jsonObjectMain.put("comment", new JSONArray());
+            jsonObjectMain.put("rate_avg", 5);
             Log.d(LOGTAG, jsonObjectMain.toString());
         } catch (JSONException e) {
             Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "有空格還沒填", Snackbar.LENGTH_LONG);
@@ -467,12 +450,12 @@ public class CreateActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        JsonRequest<JSONObject> jsonRequest = new JsonObjectRequest(Request.Method.POST, "https://tiny-chief.herokuapp.com/upload/cookbook", jsonObjectMain,
+        JsonRequest<JSONObject> jsonRequest = new JsonObjectRequest(Request.Method.POST, "https://tinny-chief.herokuapp.com/upload/cookbook", jsonObjectMain,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         mProgressDialog.dismiss();
-                        Toast.makeText(CreateActivity.this,"上傳完成",Toast.LENGTH_LONG).show();
+                        Toast.makeText(CreateActivity.this, "上傳完成", Toast.LENGTH_LONG).show();
                         Log.d(LOGTAG, "Create Response" + response.toString());
                         MainActivity.NEED_REINIT = true;
                         finish();
@@ -482,7 +465,7 @@ public class CreateActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         mProgressDialog.dismiss();
-                        Toast.makeText(CreateActivity.this,"上傳失敗",Toast.LENGTH_LONG).show();
+                        Toast.makeText(CreateActivity.this, "上傳失敗", Toast.LENGTH_LONG).show();
                         Log.e("Error", String.valueOf(error));
                     }
                 }) {

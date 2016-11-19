@@ -1,6 +1,7 @@
 package com.roger.tinychief.activity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -56,7 +57,7 @@ public class CalendarActivity extends AppCompatActivity {
 
         Point size = new Point();
         getWindowManager().getDefaultDisplay().getSize(size);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(size.x, (int)(size.y / 1.5));
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(size.x, (int) (size.y / 1.5));
 
         mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorlayout_calendar);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout_calendar);
@@ -172,7 +173,11 @@ public class CalendarActivity extends AppCompatActivity {
                                 if (!haveMorning) {
                                     TextView txtviewT = new TextView(CalendarActivity.this);
                                     txtviewT.setText("早餐");
+                                    View view = new View(CalendarActivity.this);
+                                    view.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1));
+                                    view.setBackgroundColor(Color.BLACK);
                                     mLinearLayoutMorning.addView(txtviewT);
+                                    mLinearLayoutMorning.addView(view);
                                     haveMorning = true;
                                 }
                                 mLinearLayoutMorning.addView(txtview);
@@ -181,7 +186,11 @@ public class CalendarActivity extends AppCompatActivity {
                                 if (!haveNoon) {
                                     TextView txtviewT = new TextView(CalendarActivity.this);
                                     txtviewT.setText("中餐");
+                                    View view = new View(CalendarActivity.this);
+                                    view.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1));
+                                    view.setBackgroundColor(Color.BLACK);
                                     mLinearLayoutNoon.addView(txtviewT);
+                                    mLinearLayoutNoon.addView(view);
                                     haveNoon = true;
                                 }
                                 mLinearLayoutNoon.addView(txtview);
@@ -190,7 +199,11 @@ public class CalendarActivity extends AppCompatActivity {
                                 if (!haveNight) {
                                     TextView txtviewT = new TextView(CalendarActivity.this);
                                     txtviewT.setText("晚餐");
+                                    View view = new View(CalendarActivity.this);
+                                    view.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1));
+                                    view.setBackgroundColor(Color.BLACK);
                                     mLinearLayoutNight.addView(txtviewT);
+                                    mLinearLayoutNight.addView(view);
                                     haveNight = true;
                                 }
                                 mLinearLayoutNight.addView(txtview);

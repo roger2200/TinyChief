@@ -40,8 +40,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center_horizontal"
-                            android:textSize="40sp"
-                            />
+                            android:textSize="40sp" />
 
 
                         <ImageView
@@ -55,13 +54,13 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="食材"
-                            android:textSize="24sp"/>
+                            android:textSize="24sp" />
 
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
-                            android:background="#000000"
-                            android:layout_marginBottom="16dp"/>
+                            android:layout_marginBottom="16dp"
+                            android:background="#000000" />
 
                         <TableLayout
                             android:id="@+id/tablelayout_ii_detail"
@@ -80,8 +79,8 @@
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
-                            android:background="#000000"
-                            android:layout_marginBottom="16dp"/>
+                            android:layout_marginBottom="16dp"
+                            android:background="#000000" />
 
                         <LinearLayout
                             android:id="@+id/linearlayout_step_detail"
@@ -94,42 +93,46 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
                     android:gravity="center"
-                    android:orientation="horizontal"
-                    android:layout_margin="5dp">
+                    android:orientation="horizontal">
 
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_margin="2dp"
                         android:background="@drawable/background_rect_radius_btn"
                         android:onClick="onClickStartCook"
-                        android:layout_margin="2dp"
+                        android:padding="10dp"
                         android:text="料理開始" />
 
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_margin="2dp"
                         android:background="@drawable/background_rect_radius_btn"
                         android:onClick="onClickWriteComment"
-                        android:layout_margin="2dp"
+                        android:padding="10dp"
                         android:text="撰寫評論" />
 
                     <Button
                         android:id="@+id/btn_openar_detail"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_margin="2dp"
                         android:background="@drawable/background_rect_radius_btn"
                         android:enabled="false"
                         android:onClick="onClickOpenAR"
-                        android:layout_margin="2dp"
+                        android:padding="10dp"
                         android:text="AR預覽" />
 
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_margin="2dp"
                         android:background="@drawable/background_rect_radius_btn"
                         android:onClick="onClickAddCalendar"
-                        android:layout_margin="2dp"
+                        android:padding="10dp"
                         android:text="加到日曆" />
                 </LinearLayout>
 

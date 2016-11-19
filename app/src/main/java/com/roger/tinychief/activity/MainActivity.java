@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getDataFromSever() {
-        StringRequest request = new StringRequest(Request.Method.POST, "https://tinny-chief.herokuapp.com/cookbook/simple",
+        StringRequest request = new StringRequest(Request.Method.POST, "https://tiny-chief.herokuapp.com/cookbook/simple",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String string) {

@@ -88,7 +88,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        Log.d("Resume","sdf");
         super.onResume();
         mNavigationView = mNavigationViewSetup.setNavigationView();
         mNavigationView.getMenu().getItem(0).setChecked(true);

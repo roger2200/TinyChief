@@ -60,6 +60,7 @@ public class DetailActivity extends AppCompatActivity {
     private NavigationView mNavigationView;
     private String[] mStrArrayStep;
     private String mStrID, mStrTitle;
+    private Snackbar mSnackbar;
     private ArrayList<ItemComment> mDataset = new ArrayList<>();
 
     @Override
@@ -78,6 +79,9 @@ public class DetailActivity extends AppCompatActivity {
         mIiTableLayout = (TableLayout) findViewById(R.id.tablelayout_ii_detail);
         mStepLinearLayout = (LinearLayout) findViewById(R.id.linearlayout_step_detail);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        mSnackbar = Snackbar.make(mCoordinatorLayout, "", Snackbar.LENGTH_LONG);
+        MyHelper.setSnackbarMessageTextColor(mSnackbar, android.graphics.Color.WHITE);
 
         mNavigationViewSetup = new NavigationViewSetup(this, mDrawerLayout, mToolbar);
         mNavigationView = mNavigationViewSetup.setNavigationView();
@@ -106,12 +110,10 @@ public class DetailActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
-            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "", Snackbar.LENGTH_LONG);
-            MyHelper.setSnackbarMessageTextColor(snackbar, android.graphics.Color.WHITE);
             switch (requestCode) {
                 case REQUEST_COM:
                     if (data.getBooleanExtra("RESULT", false)) {
-                        snackbar.setText("上傳評論完成");
+                        mSnackbar.setText("上傳評論完成");
                         mDataset.add(new ItemComment(data.getStringExtra("id_usr")
                                 , data.getStringExtra("name")
                                 , data.getIntExtra("rate", 1)
@@ -119,15 +121,15 @@ public class DetailActivity extends AppCompatActivity {
                                 , getApplicationContext()));
                         mAdapter.notifyItemInserted(mDataset.size());
                     } else
-                        snackbar.setText("上傳評論失敗");
-                    snackbar.show();
+                        mSnackbar.setText("上傳評論失敗");
+                    mSnackbar.show();
                     break;
                 case REQUEST_DATE:
                     if (data.getBooleanExtra("RESULT", false)) {
-                        snackbar.setText("已加入食譜日曆");
+                        mSnackbar.setText("已加入食譜日曆");
                     } else
-                        snackbar.setText("加入日曆失敗");
-                    snackbar.show();
+                        mSnackbar.setText("加入日曆失敗");
+                    mSnackbar.show();
                     break;
             }
         }
@@ -141,7 +143,8 @@ public class DetailActivity extends AppCompatActivity {
 
     public void onClickWriteComment(View view) {
         if (MainActivity.USER_NAME == null) {
-            Toast.makeText(this, "請先登入", Toast.LENGTH_SHORT).show();
+            mSnackbar.setText("請先登入");
+            mSnackbar.show();
             return;
         }
         Intent intent = new Intent(this, CommentDialogActivity.class);
@@ -150,8 +153,10 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     public void onClickOpenAR(View view) {
-        if (mArBitmap == null)
-            return;
+        if (mArBitmap == null) {
+            mSnackbar.setText("這個食譜沒有Ar的相片");
+            mSnackbar.show();
+        }
         Intent intent = new Intent(view.getContext(), ArActivity.class);
         intent.putExtra("IMAGE", MyHelper.convertBitmap2Bytes(mArBitmap));
         startActivity(intent);
@@ -298,10 +303,7 @@ public class DetailActivity extends AppCompatActivity {
         textViewPrice.setTextSize(24.0f);
 
         textViewName.setText(name);
-        if (name.equals("雞蛋") || name.equals("鴨蛋"))
-            textViewAmount.setText((amount * 10) + "  " + unit);
-        else
-            textViewAmount.setText(amount + "  " + unit);
+        textViewAmount.setText(amount + "  " + unit);
 
         tablerow.addView(textViewName);
         tablerow.addView(textViewAmount);

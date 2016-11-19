@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/img_main"
             android:padding="5dp"
-            android:textSize="40sp" />
+            android:textSize="30sp" />
 
         <TextView
             android:id="@+id/txtview_author_main"

@@ -63,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
     private PullLoadMoreRecyclerView mRecyclerView;
     private AdapterMain mAdapter;
     private NavigationViewSetup mNavigationViewSetup;
-    private ActionBarDrawerToggle mActionBarDrawerToggle;
     private Snackbar mSnackbar;
     private int skipCount = 1;
     ArrayList<ItemMain> mDataset = new ArrayList<>();
@@ -89,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+        Log.d("Resume","sdf");
         super.onResume();
         mNavigationView = mNavigationViewSetup.setNavigationView();
         mNavigationView.getMenu().getItem(0).setChecked(true);
@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getDataFromSever() {
-        StringRequest request = new StringRequest(Request.Method.POST, "https://tiny-chief.herokuapp.com/cookbook/simple",
+        StringRequest request = new StringRequest(Request.Method.POST, "https://tinny-chief.herokuapp.com/cookbook/simple",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String string) {

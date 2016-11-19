@@ -90,6 +90,7 @@ public class NavigationViewSetup {
     private void setButton() {
         if (MainActivity.USER_NAME == null) {
             mButton.setText("登入");
+            mTextView.setText("未登入");
             mButton.setOnClickListener(new Button.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -108,7 +109,6 @@ public class NavigationViewSetup {
                     v.getContext().deleteFile("tf_login_data");
                     MainActivity.USER_NAME = null;
                     MainActivity.USER_ID = null;
-                    mTextView.setText("未登入");
                     mDrawerLayout.closeDrawers();
                     jumpToActivity(mActivity, MainActivity.class);
                     Toast.makeText(mActivity, "已登出", Toast.LENGTH_SHORT).show();

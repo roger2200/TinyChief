@@ -63,9 +63,10 @@ public class MainActivity extends AppCompatActivity {
     private PullLoadMoreRecyclerView mRecyclerView;
     private AdapterMain mAdapter;
     private NavigationViewSetup mNavigationViewSetup;
-    private ActionBarDrawerToggle mActionBarDrawerToggle;
+    private android.support.v7.widget.SearchView mSearchView;
     private Snackbar mSnackbar;
     private int skipCount = 1;
+    private int backCount = 0;
     ArrayList<ItemMain> mDataset = new ArrayList<>();
 
     @Override
@@ -94,6 +95,8 @@ public class MainActivity extends AppCompatActivity {
         mNavigationView.getMenu().getItem(0).setChecked(true);
         if (NEED_REINIT)
             reInit();
+        if(backCount==0){
+        }
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -104,26 +107,30 @@ public class MainActivity extends AppCompatActivity {
 
         // Get the SearchView and set the searchable configuration
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        android.support.v7.widget.SearchView searchView = (android.support.v7.widget.SearchView) menuSearchItem.getActionView();
+        mSearchView = (android.support.v7.widget.SearchView) menuSearchItem.getActionView();
 
         // Assumes current activity is the searchable activity
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
         // 這邊讓icon可以還原到搜尋的icon
-        searchView.setIconifiedByDefault(true);
+        mSearchView.setIconifiedByDefault(true);
         return true;
     }
 
     @Override
     public void onBackPressed() {
-        if (mSnackbar.isShown())
+        if (mSnackbar.isShown()) {
             finish();
-        else
+        }
+        else {
+            mSearchView.onActionViewCollapsed();  //collapse your ActionView
+            mSearchView.setQuery("",false);       //clears your query without submit
             mSnackbar.show();
+        }
     }
 
     public void getDataFromSever() {
-        StringRequest request = new StringRequest(Request.Method.POST, "https://tinny-chief.herokuapp.com/cookbook/simple",
+        StringRequest request = new StringRequest(Request.Method.POST, "https://tiny-chief.herokuapp.com/cookbook/simple",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String string) {

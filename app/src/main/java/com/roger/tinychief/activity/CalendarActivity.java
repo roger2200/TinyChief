@@ -100,7 +100,7 @@ public class CalendarActivity extends AppCompatActivity {
     }
 
     private void getData() {
-        StringRequest request = new StringRequest(Request.Method.POST, "https://tinny-chief.herokuapp.com/calendar/get",
+        StringRequest request = new StringRequest(Request.Method.POST, "https://tiny-chief.herokuapp.com/calendar/get",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String string) {

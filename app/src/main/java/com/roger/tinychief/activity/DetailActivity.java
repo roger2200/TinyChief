@@ -170,7 +170,7 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     public void getCookbook() {
-        StringRequest request = new StringRequest(Request.Method.POST, "https://tinny-chief.herokuapp.com/cookbook/detail",
+        StringRequest request = new StringRequest(Request.Method.POST, "https://tiny-chief.herokuapp.com/cookbook/detail",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String string) {

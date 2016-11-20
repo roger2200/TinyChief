@@ -1,4 +1,4 @@
-package com.roger.tinychief;
+package com.roger.tinychief.activity;
 
 import android.content.Intent;
 import android.graphics.Point;
@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -17,8 +16,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.roger.tinychief.activity.DetailActivity;
-import com.roger.tinychief.activity.WebviewActivity;
+import com.roger.tinychief.R;
 import com.roger.tinychief.util.NetworkManager;
 
 import org.json.JSONArray;

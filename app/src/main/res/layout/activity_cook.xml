@@ -23,6 +23,7 @@
                 android:id="@+id/linearlayout_step_cook"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:padding="20dp"
                 android:orientation="vertical" />
 
         </android.support.v4.widget.NestedScrollView>

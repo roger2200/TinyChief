@@ -11,6 +11,7 @@ import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.LinearLayout;
@@ -35,9 +36,9 @@ public class CookActivity extends AppCompatActivity implements OnInitListener {
     private Intent mIntentSR;
     private String[] mStrArrayStep;
     private String[][] mStrArrayCheck = new String[3][];
-    private String[] mStrRepeat = new String[]{"重", "再", "在", "站", "戰", "蟲", "寵", "崇", "衝", "暫","從","叢","3","三","片","變","成","充","沖","船"};
-    private String[] mStrPrevious = new String[]{"前", "錢", "潛", "乾", "上", "尚","賽","散","帥","千","全"};
-    private String[] mStrNext = new String[]{"下", "嚇", "夏", "廈", "霞", "向", "項", "像", "巷", "相","少","小","算"};
+    private String[] mStrRepeat = new String[]{"重", "再", "在", "站", "戰", "蟲", "寵", "崇", "衝", "暫", "從", "叢", "3", "三", "片", "變", "成", "充", "沖", "船"};
+    private String[] mStrPrevious = new String[]{"前", "錢", "潛", "乾", "上", "尚", "賽", "散", "帥", "千", "全"};
+    private String[] mStrNext = new String[]{"下", "嚇", "夏", "廈", "霞", "向", "項", "像", "巷", "相", "少", "小", "算"};
     private int pointerStep = 0;
     private boolean isCreate = false;
 
@@ -142,11 +143,16 @@ public class CookActivity extends AppCompatActivity implements OnInitListener {
     private void setSteps() {
         Bundle bundle = this.getIntent().getExtras();
         mStrArrayStep = bundle.getStringArray("STEP");
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(20, 20, 20, 20);
         for (int i = 0; i < mStrArrayStep.length; i++) {
+            CardView cardView = new CardView(CookActivity.this);
             TextView textview = new TextView(CookActivity.this);
             textview.setText("步驟" + (i + 1) + ":\n" + mStrArrayStep[i] + "\n");
-            textview.setTextSize(26.0f);
-            mLinearLayout.addView(textview);
+            textview.setPadding(40, 40, 40, 40);
+            cardView.setLayoutParams(params);
+            cardView.addView(textview);
+            mLinearLayout.addView(cardView);
         }
     }
 

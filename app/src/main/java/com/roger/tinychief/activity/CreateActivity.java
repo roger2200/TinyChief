@@ -4,12 +4,12 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
-import android.support.v4.database.DatabaseUtilsCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -30,6 +30,7 @@ import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -47,17 +48,13 @@ import com.roger.tinychief.util.NetworkManager;
 import com.roger.tinychief.widget.navigation.NavigationViewSetup;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import retrofit.Callback;
@@ -69,9 +66,9 @@ public class CreateActivity extends AppCompatActivity {
     //用list儲存材料和步驟的EditText,方便計算有幾筆材料和步驟
     private ArrayList<TableRow> mIiTableRowList = new ArrayList<>();
     private ArrayList<EditText> mStepEditTextList = new ArrayList<>();
-    private EditText mTitleEditText, mServingEditText, mNoteEditText;
+    private EditText mTitleEditText;
     private ImageView mImageView, mArImageView;
-    private LinearLayout mStepLinearLayout, mLinearlayout;
+    private LinearLayout mStepLinearLayout, mLinearlayout, mHintArLinearLayout, mHintRLinearLayout;
     private TableLayout mIiTableLayout;
     private Bitmap mImgBitmap, mArBitmap;
     private Upload mUpload; // Upload object containging image and meta data
@@ -93,11 +90,11 @@ public class CreateActivity extends AppCompatActivity {
 
         mIiTableLayout = (TableLayout) findViewById(R.id.tablelayout_ii_create);
         mStepLinearLayout = (LinearLayout) findViewById(R.id.linearlayout_step_create);
+        mHintArLinearLayout = (LinearLayout) findViewById(R.id.linearlayout_hintar_create);
+        mHintRLinearLayout = (LinearLayout) findViewById(R.id.linearlayout_hintr_create);
         mImageView = (ImageView) findViewById(R.id.img_create);
         mArImageView = (ImageView) findViewById(R.id.img_ar);
         mTitleEditText = (EditText) findViewById(R.id.edittext_title);
-        mServingEditText = (EditText) findViewById(R.id.edittext_servings);
-        mNoteEditText = (EditText) findViewById(R.id.edittext_note);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout_create);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorlayout_create);
@@ -148,13 +145,32 @@ public class CreateActivity extends AppCompatActivity {
                 mImgBitmap = MyHelper.rotationBitmap(imgPath);
                 mImgBitmap = MyHelper.scaleBitmap(mImgBitmap, this, true);
                 mImageView.setImageBitmap(mImgBitmap);
-
-
             } else if (requestCode == REQUEST_AR_PIC) {
                 String arPath = data.getStringExtra("AR_PIC");
                 mArFile = new File(arPath);
                 mArBitmap = MyHelper.rotationBitmap(arPath);
                 mArBitmap = MyHelper.scaleBitmap(mArBitmap, this, true);
+
+                if (mHintArLinearLayout.getChildCount() == 0) {
+                    View view1 = new View(CreateActivity.this);
+                    view1.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1));
+                    view1.setBackgroundColor(Color.BLACK);
+
+                    View view2 = new View(CreateActivity.this);
+                    view2.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1));
+                    view2.setBackgroundColor(Color.BLACK);
+
+                    TextView textViewB = new TextView(CreateActivity.this);
+                    textViewB.setText("食譜照片");
+                    mHintRLinearLayout.addView(textViewB);
+                    mHintRLinearLayout.addView(view1);
+
+                    TextView textViewAR = new TextView(CreateActivity.this);
+                    textViewAR.setText("AR照片");
+                    mHintArLinearLayout.addView(textViewAR);
+                    mHintArLinearLayout.addView(view2);
+                }
+
                 mArImageView.setImageBitmap(mArBitmap);
             }
         }
@@ -180,6 +196,8 @@ public class CreateActivity extends AppCompatActivity {
         final EditText edittxtUnit = new EditText(this);
         final ArrayList<String> strSpinItem = new ArrayList<>();
 
+        tablerow.setPadding(0, 20, 0, 20);
+
         strSpinItem.add("請選擇");
         strSpinItem.add("雞肉");
         strSpinItem.add("豬肉");
@@ -197,20 +215,12 @@ public class CreateActivity extends AppCompatActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                edittxtUnit.setFocusable(false);
-                if (i == 6 || i == 7) {
-                    edittxtUnit.setText("顆");
+                if (i == 6 || i == 7)
                     edittxtName.setText(adapterView.getSelectedItem().toString());
-                } else if (i > 0 && i < 6) {
-                    edittxtUnit.setText("台斤");
+                else if (i > 0 && i < 6)
                     edittxtName.setText(adapterView.getSelectedItem().toString());
-                } else if (i == 8 || i == 9) {
-                    edittxtUnit.setFocusableInTouchMode(true);
-                    edittxtUnit.setText("");
-                } else if (i > 9) {
-                    edittxtUnit.setText("公斤");
+                else if (i > 9)
                     edittxtName.setText(adapterView.getSelectedItem().toString());
-                }
             }
 
             @Override
@@ -417,21 +427,15 @@ public class CreateActivity extends AppCompatActivity {
                 int intSpinnerPos = ((Spinner) tablerow.getVirtualChildAt(1)).getSelectedItemPosition();
                 double intAmount = Integer.parseInt(((EditText) tablerow.getVirtualChildAt(2)).getText().toString());
 
-                if (intSpinnerPos == 1)// 雞
+                if (intSpinnerPos == 1 || intSpinnerPos == 6)// 雞
                     intClass = 0;
-                else if (intSpinnerPos == 6) {
-                    intClass = 0;
-                    intAmount /= 10;
-                } else if (intSpinnerPos == 4 || intSpinnerPos == 5)//鴨 鵝
+                else if (intSpinnerPos == 4 || intSpinnerPos == 5 || intSpinnerPos == 7)//鴨 鵝
                     intClass = 1;
-                else if (intSpinnerPos == 7) {
-                    intClass = 1;
-                    intAmount /= 10;
-                } else if (intSpinnerPos == 2 || intSpinnerPos == 3)//豬 牛
+                else if (intSpinnerPos == 2 || intSpinnerPos == 3)//豬 牛
                     intClass = 2;
                 else if (intSpinnerPos == 8 || intSpinnerPos == 9)//調味料 其他
                     intClass = 3;
-                else
+                else                                    //open data
                     intClass = 4;
 
                 JSONObject jsonIi = new JSONObject();
@@ -453,14 +457,13 @@ public class CreateActivity extends AppCompatActivity {
                 jsonObjectMain.put("image_ar", mArUrl);
             else
                 jsonObjectMain.put("image_ar", "");
-            jsonObjectMain.put("servings", mServingEditText.getText());
-            jsonObjectMain.put("note", mNoteEditText.getText());
             jsonObjectMain.put("ingredients", jsonArrIi);
             jsonObjectMain.put("steps", jsonArrStep);
             jsonObjectMain.put("comment", new JSONArray());
+            jsonObjectMain.put("rate_avg", 5);
             Log.d(LOGTAG, jsonObjectMain.toString());
-        } catch (JSONException e) {
-            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "有空格還沒填", Snackbar.LENGTH_LONG);
+        } catch (Exception e) {
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "有地方填錯了呦", Snackbar.LENGTH_LONG);
             MyHelper.setSnackbarMessageTextColor(snackbar, android.graphics.Color.WHITE);
             snackbar.show();
             e.printStackTrace();
@@ -471,9 +474,7 @@ public class CreateActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject response) {
                         mProgressDialog.dismiss();
-                        Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "上傳完成", Snackbar.LENGTH_LONG);
-                        MyHelper.setSnackbarMessageTextColor(snackbar, android.graphics.Color.WHITE);
-                        snackbar.show();
+                        Toast.makeText(CreateActivity.this, "上傳完成", Toast.LENGTH_LONG).show();
                         Log.d(LOGTAG, "Create Response" + response.toString());
                         MainActivity.NEED_REINIT = true;
                         finish();
@@ -483,9 +484,7 @@ public class CreateActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         mProgressDialog.dismiss();
-                        Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "上傳失敗", Snackbar.LENGTH_LONG);
-                        MyHelper.setSnackbarMessageTextColor(snackbar, android.graphics.Color.WHITE);
-                        snackbar.show();
+                        Toast.makeText(CreateActivity.this, "上傳失敗", Toast.LENGTH_LONG).show();
                         Log.e("Error", String.valueOf(error));
                     }
                 }) {

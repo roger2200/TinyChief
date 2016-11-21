@@ -76,9 +76,12 @@ public class CommentDialogActivity extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String string) {
-                        Log.d("Response",string);
+                        Log.d("Response", string);
                         Intent intent = new Intent();
-                        intent.putExtra("RESULT", true);
+                        if (string.equals("success"))
+                            intent.putExtra("RESULT", true);
+                        else
+                            intent.putExtra("RESULT", false);
                         intent.putExtra("id_usr", MainActivity.USER_ID);
                         intent.putExtra("name", mTextView.getText().toString());
                         intent.putExtra("rate", rate);
@@ -121,7 +124,7 @@ public class CommentDialogActivity extends AppCompatActivity {
         finish();
     }
 
-        private void drawRate() {
+    private void drawRate() {
         if (rate <= 0) rate = 1;
         mRateBitmap = Bitmap.createBitmap(mRateFBitmap.getWidth() * 5, mRateFBitmap.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas cv = new Canvas(mRateBitmap);

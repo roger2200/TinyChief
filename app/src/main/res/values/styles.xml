@@ -20,6 +20,7 @@
     <style name="MyDialog" parent="@style/Theme.AppCompat.Light.Dialog">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:textSize">@dimen/general_textsize</item>
         <item name="android:windowBackground">@drawable/background_rect_radius_dialog</item>
     </style>
 </resources>

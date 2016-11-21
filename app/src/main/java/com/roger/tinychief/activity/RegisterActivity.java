@@ -72,6 +72,10 @@ public class RegisterActivity extends AppCompatActivity {
         }
     };
 
+    public void onClickCancel(View view) {
+        finish();
+    }
+
     public void onClickToRegister(View v) {
         if (input_password.getText().toString().equals(input_password2.getText().toString())) {
             final String p;

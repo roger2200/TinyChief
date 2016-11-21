@@ -3,21 +3,24 @@
     android:id="@+id/linearlayout_header"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#00BBFF"
+    android:background="@color/blue"
     android:gravity="center"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="10dp">
 
     <TextView
         android:id="@+id/txtview_name_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
         android:text="未登入"
         android:textColor="@android:color/black"
-        android:textSize="16sp" />
+        android:textStyle="bold" />
 
     <Button
         android:id="@+id/btn_login_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="16sp" />
+        android:layout_margin="4dp"
+        android:background="@color/light_orange"/>
 </LinearLayout>

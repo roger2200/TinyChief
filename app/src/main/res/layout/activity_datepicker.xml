@@ -8,9 +8,9 @@
 
     <CalendarView
         android:id="@+id/calendarview_datepicker"
-        android:background="@color/light_orange"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:background="@color/light_orange" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -21,19 +21,17 @@
             android:id="@+id/txtview_date_datepicker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="17.2sp"
-            android:textColor="@color/black"
+            android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp"
-            android:layout_marginLeft="10dp" />
+            android:textColor="@color/black" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="17.2sp"
-            android:textColor="@color/black"
-            android:text="的"
             android:layout_toLeftOf="@+id/spinner_time_datepicker"
-            android:layout_toStartOf="@+id/spinner_time_datepicker"/>
+            android:layout_toStartOf="@+id/spinner_time_datepicker"
+            android:text="的"
+            android:textColor="@color/black" />
 
         <Spinner
             android:id="@+id/spinner_time_datepicker"
@@ -48,11 +46,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
+        android:layout_margin="10dp"
         android:orientation="horizontal">
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="10dp"
             android:background="@color/white"
             android:onClick="addCalendar"
             android:text="確定" />
@@ -60,6 +60,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="10dp"
             android:background="@color/white"
             android:onClick="Cancel"
             android:text="取消" />

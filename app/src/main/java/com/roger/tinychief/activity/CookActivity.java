@@ -36,9 +36,9 @@ public class CookActivity extends AppCompatActivity implements OnInitListener {
     private Intent mIntentSR;
     private String[] mStrArrayStep;
     private String[][] mStrArrayCheck = new String[3][];
-    private String[] mStrRepeat = new String[]{"重", "再", "在", "站", "戰", "蟲", "寵", "崇", "衝", "暫", "從", "叢", "3", "三", "片", "變", "成", "充", "沖", "船"};
+    private String[] mStrRepeat = new String[]{"重", "再","正","辯", "在", "站", "戰", "蟲", "寵", "崇", "衝", "暫", "從", "叢", "3", "三", "片", "變", "成", "充", "沖", "船"};
     private String[] mStrPrevious = new String[]{"前", "錢", "潛", "乾", "上", "尚", "賽", "散", "帥", "千", "全"};
-    private String[] mStrNext = new String[]{"下", "嚇", "夏", "廈", "霞", "向", "項", "像", "巷", "相", "少", "小", "算"};
+    private String[] mStrNext = new String[]{"下", "嚇", "夏", "廈", "霞", "向", "項", "像", "巷", "相", "少", "小", "算","塞"};
     private int pointerStep = 0;
     private boolean isCreate = false;
 

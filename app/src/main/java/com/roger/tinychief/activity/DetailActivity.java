@@ -217,9 +217,6 @@ public class DetailActivity extends AppCompatActivity {
                                 TextView textViewStepCount = new TextView(DetailActivity.this);
                                 TextView textViewStep = new TextView(DetailActivity.this);
 
-                                textViewStep.setTextSize(22.0f);
-                                textViewStepCount.setTextSize(22.0f);
-
                                 textViewStepCount.setText((i + 1) + ".  ");
                                 textViewStep.setText(jsonArrayStep.getString(i) + "\n");
 
@@ -298,9 +295,6 @@ public class DetailActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        textViewName.setTextSize(24.0f);
-        textViewAmount.setTextSize(24.0f);
-        textViewPrice.setTextSize(24.0f);
 
         textViewName.setText(name);
         textViewAmount.setText(amount + "  " + unit);

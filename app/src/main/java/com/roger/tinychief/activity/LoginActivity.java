@@ -220,6 +220,11 @@ public class LoginActivity extends AppCompatActivity {
             request.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         }
     }
+
+    public void onClickCancel(View view) {
+        finish();
+    }
+
     private void insertFBInfo() {
         StringRequest request3 = new StringRequest(Request.Method.POST, "https://tiny-chief.herokuapp.com/inserFBInfo",
                 new Response.Listener<String>() {

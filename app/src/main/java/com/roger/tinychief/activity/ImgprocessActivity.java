@@ -11,15 +11,22 @@ import android.graphics.RectF;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import com.roger.tinychief.R;
 import com.roger.tinychief.util.MyHelper;
+import com.roger.tinychief.widget.navigation.NavigationViewSetup;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
@@ -39,18 +46,35 @@ import java.util.List;
 
 public class ImgprocessActivity extends AppCompatActivity {
     final String TAG = "ImgprocessActivity";
-    ImageView mImageView;
-    Bitmap mBitmap;
-    Rect mRect;
-    BaseLoaderCallback mLoaderCallback;
-    ProgressDialog mProgressDialog;
+    private Toolbar mToolbar;
+    private NavigationView mNavigationView;
+    private DrawerLayout mDrawerLayout;
+    private NavigationViewSetup mNavigationViewSetup;
+    private ImageView mImageView;
+    private Bitmap mBitmap = null;
+    private Rect mRect;
+    private Snackbar mSnackbar;
+    private CoordinatorLayout mCoordinatorLayout;
+    private BaseLoaderCallback mLoaderCallback;
+    private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_imgprocess);
+
         mImageView = (ImageView) findViewById(R.id.img_imgprocess);
         mImageView.setOnTouchListener(getOnTouchListener());
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout_imgprocess);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorlayout_imgprocess);
+
+        mSnackbar = Snackbar.make(mCoordinatorLayout, "", Snackbar.LENGTH_LONG);
+        MyHelper.setSnackbarMessageTextColor(mSnackbar, android.graphics.Color.WHITE);
+
+        mNavigationViewSetup = new NavigationViewSetup(this, mDrawerLayout, mToolbar);
+        mNavigationView = mNavigationViewSetup.setNavigationView();
+
         mLoaderCallback = getBaseLoaderCallback();
         mProgressDialog = new ProgressDialog(this);
         mProgressDialog.setMessage("處理圖片中...");
@@ -104,6 +128,8 @@ public class ImgprocessActivity extends AppCompatActivity {
         return new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (mBitmap == null)
+                    return false;
                 switch (motionEvent.getActionMasked()) {
                     case MotionEvent.ACTION_DOWN:
                         mRect = new Rect((int) motionEvent.getX(), (int) motionEvent.getY(), 1, 1);
@@ -170,13 +196,24 @@ public class ImgprocessActivity extends AppCompatActivity {
 
     //button-處理圖片的onclick
     public void proccessImg(View v) {
+        if (mBitmap == null) {
+            mSnackbar.setText("請先選擇一張圖片");
+            mSnackbar.show();
+            return;
+        }
+        if(mRect==null)
+        {
+            mSnackbar.setText("請選取圖片中要保留的部分");
+            mSnackbar.show();
+            return;
+        }
         ProcessImageTask task = new ProcessImageTask();
         task.execute();
     }
 
     public void endActivity(View v) {
         try {
-            mBitmap=MyHelper.scaleBitmap(mBitmap, this, false);
+            mBitmap = MyHelper.scaleBitmap(mBitmap, this, false);
             // 路徑
             String path = Environment.getExternalStorageDirectory().toString() + "/Tiny Chief/";
 

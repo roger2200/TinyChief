@@ -19,62 +19,85 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:background="@drawable/food_background"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:scaleType="centerCrop"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <TextView
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@color/white"
                 android:gravity="center"
-                android:text="帳號" />
+                android:orientation="vertical"
+                android:padding="40dp">
 
-            <EditText
-                android:id="@+id/edittxt_account_login"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:gravity="center"
-                android:inputType="text" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="帳號" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="密碼"
-                android:textSize="@dimen/general_textsize" />
+                <EditText
+                    android:id="@+id/edittxt_account_login"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:gravity="center"
+                    android:inputType="text" />
 
-            <EditText
-                android:id="@+id/edittxt_password_login"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:gravity="center"
-                android:inputType="textPassword"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="密碼" />
 
-            <Button
-                android:id="@+id/btn_login_login"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:onClick="onClickUpload"
-                android:text="登入" />
+                <EditText
+                    android:id="@+id/edittxt_password_login"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:gravity="center"
+                    android:inputType="textPassword" />
 
-            <Button
-                android:id="@+id/btn_register_login"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:onClick="onClickRegister"
-                android:text="註冊" />
+                <Button
+                    android:id="@+id/btn_login_login"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="6dp"
+                    android:background="@drawable/background_rect_radius_btn"
+                    android:gravity="center"
+                    android:onClick="onClickUpload"
+                    android:text="登入" />
 
-            <com.facebook.login.widget.LoginButton
-                android:id="@+id/login_button_fb"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="30dp"
-                android:layout_marginTop="30dp" />
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="6dp"
+                    android:background="@drawable/background_rect_radius_btn"
+                    android:gravity="center"
+                    android:onClick="onClickCancel"
+                    android:text="返回" />
+
+                <Button
+                    android:id="@+id/btn_register_login"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="6dp"
+                    android:background="@drawable/background_rect_radius_btn"
+                    android:gravity="center"
+                    android:onClick="onClickRegister"
+                    android:text="註冊" />
+
+                <com.facebook.login.widget.LoginButton
+                    android:id="@+id/login_button_fb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="16dp" />
+
+            </LinearLayout>
         </LinearLayout>
     </android.support.design.widget.CoordinatorLayout>
 

@@ -39,8 +39,8 @@
                             android:id="@+id/txtview_title_detail"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_horizontal"
-                            android:textSize="40sp" />
+                            android:textSize="@dimen/big_textsize"
+                            android:gravity="center_horizontal" />
 
 
                         <ImageView
@@ -53,8 +53,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="食材"
-                            android:textSize="24sp" />
+                            android:text="食材" />
 
                         <View
                             android:layout_width="match_parent"
@@ -73,8 +72,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="20dp"
-                            android:text="步驟"
-                            android:textSize="24sp" />
+                            android:text="步驟"/>
 
                         <View
                             android:layout_width="match_parent"
@@ -93,47 +91,47 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
+                    android:layout_margin="4dp"
                     android:gravity="center"
                     android:orientation="horizontal">
 
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_margin="2dp"
+                        android:layout_margin="1dp"
                         android:background="@drawable/background_rect_radius_btn"
                         android:onClick="onClickStartCook"
-                        android:padding="10dp"
+                        android:padding="4dp"
                         android:text="料理開始" />
 
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_margin="2dp"
+                        android:layout_margin="1dp"
                         android:background="@drawable/background_rect_radius_btn"
                         android:onClick="onClickWriteComment"
-                        android:padding="10dp"
+                        android:padding="4dp"
                         android:text="撰寫評論" />
 
                     <Button
                         android:id="@+id/btn_openar_detail"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_margin="2dp"
+                        android:layout_margin="1dp"
                         android:background="@drawable/background_rect_radius_btn"
                         android:enabled="false"
                         android:onClick="onClickOpenAR"
-                        android:padding="10dp"
+                        android:padding="4dp"
                         android:text="AR預覽" />
 
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_margin="2dp"
+                        android:layout_margin="1dp"
                         android:background="@drawable/background_rect_radius_btn"
                         android:onClick="onClickAddCalendar"
-                        android:padding="10dp"
-                        android:text="加到日曆" />
+                        android:padding="4dp"
+                        android:text="加進日曆" />
                 </LinearLayout>
 
                 <android.support.v7.widget.RecyclerView

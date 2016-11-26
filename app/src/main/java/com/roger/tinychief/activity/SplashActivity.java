@@ -38,6 +38,7 @@ public class SplashActivity extends AppCompatActivity {
     private static final int LOAD_MOUNT = 10;//每次讀取的資料筆數,要和server相同
     private static final int CAMERA_REQUEST_CODE = 0;
     private static final int WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 1;
+    private static final int RECORD_AUDIO_REQUEST_CODE = 2;
     private boolean mFlagReady = false;
 
     private String[][] mData;//要傳給MainActivity的資料
@@ -60,6 +61,8 @@ public class SplashActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE_REQUEST_CODE);
         else if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED)
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST_CODE);
+        else if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_DENIED)
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, RECORD_AUDIO_REQUEST_CODE);
         else
             countDown();
     }
@@ -76,6 +79,12 @@ public class SplashActivity extends AppCompatActivity {
                     countDown();
                 break;
             case CAMERA_REQUEST_CODE:
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_DENIED)
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, CAMERA_REQUEST_CODE);
+                else
+                    countDown();
+                break;
+            case RECORD_AUDIO_REQUEST_CODE:
                 countDown();
                 break;
             default:

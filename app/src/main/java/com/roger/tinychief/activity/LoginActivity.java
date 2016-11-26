@@ -3,7 +3,9 @@ package com.roger.tinychief.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -31,6 +33,7 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.roger.tinychief.R;
 import com.roger.tinychief.util.MD5;
+import com.roger.tinychief.util.MyHelper;
 import com.roger.tinychief.util.NetworkManager;
 
 import org.json.JSONArray;
@@ -49,7 +52,9 @@ public class LoginActivity extends AppCompatActivity {
     private Toolbar mToolbar;
     private NavigationView mNavigationView;
     private DrawerLayout mDrawerLayout;
+    private CoordinatorLayout mCoordinatorLayout;
     private Button mRegisterButton;
+    private Snackbar mSnackbar;
     private NavigationViewSetup mNavigationViewSetup;
     private EditText input_ac, input_wd;
     CallbackManager callbackManager;
@@ -61,12 +66,15 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         setTitle("登入");
 
+        mCoordinatorLayout=(CoordinatorLayout)findViewById(R.id.coordinatorlayout_login);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout_login);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
 
+        mSnackbar = Snackbar.make(mCoordinatorLayout, "", Snackbar.LENGTH_LONG);
+        MyHelper.setSnackbarMessageTextColor(mSnackbar, android.graphics.Color.WHITE);
+
         mNavigationViewSetup = new NavigationViewSetup(this, mDrawerLayout, mToolbar);
         mNavigationView = mNavigationViewSetup.setNavigationView();
-
         callbackManager = CallbackManager.Factory.create();
 
         LoginButton loginFbBtn = (LoginButton) findViewById(R.id.login_button_fb);
@@ -113,7 +121,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onCancel() {
                 // App code
                 Log.d("FB", "CANCEL");
-                Toast.makeText(LoginActivity.this, "Login Cancel", Toast.LENGTH_LONG).show();
+                mSnackbar.setText("登入取消").show();
             }
 
             //登入失敗
@@ -144,7 +152,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onClickUpload(View view) {
         if (input_ac.getText().toString().isEmpty() || input_wd.getText().toString().isEmpty())
-            Toast.makeText(LoginActivity.this, "please fill all", Toast.LENGTH_LONG).show();
+            mSnackbar.setText("還有空格沒填喔").show();
         else {
             final String p;
             p = MD5.getMD5(input_wd.getText().toString());
@@ -174,9 +182,8 @@ public class LoginActivity extends AppCompatActivity {
                                     nickname = json.getString("nickname");
                                     userID = json.getString("_id");
                                 }
-                                if (users.toString().equals("")) {
-                                    Toast.makeText(LoginActivity.this, "wrong account or password", Toast.LENGTH_LONG).show();
-                                }
+                                if (users.toString().equals(""))
+                                    mSnackbar.setText("帳號或密碼輸入錯誤").show();
                                 if (checkEmails.toString().equals("OK,")) {
                                     Toast.makeText(LoginActivity.this, "登入成功", Toast.LENGTH_LONG).show();
                                     Intent intent = new Intent();
@@ -195,7 +202,7 @@ public class LoginActivity extends AppCompatActivity {
                                     finish();
                                 }
                                 if (users.toString().length() > 2 && checkEmails.toString().equals("NO,")) {
-                                    Toast.makeText(LoginActivity.this, "要認證信箱唷", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(LoginActivity.this, "要去認證信箱唷", Toast.LENGTH_LONG).show();
                                 }
                             } catch (Exception e) {
                                 Log.d("error:", e.getMessage());

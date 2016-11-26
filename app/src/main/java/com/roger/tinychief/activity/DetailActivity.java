@@ -164,7 +164,7 @@ public class DetailActivity extends AppCompatActivity {
 
     public void onClickAddCalendar(View view) {
         if (MainActivity.USER_NAME == null) {
-            Toast.makeText(this, "請先登入", Toast.LENGTH_SHORT).show();
+            mSnackbar.setText("請先登入").show();
             return;
         }
         Intent intent = new Intent(this, DatepickerDialogActivity.class);

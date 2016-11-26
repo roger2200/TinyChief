@@ -81,7 +81,7 @@ public class DatepickerDialogActivity extends AppCompatActivity {
     public void addCalendar(View view) {
         mProgressDialog.show();
 
-        StringRequest request = new StringRequest(Request.Method.POST, "https://tinny-chief.herokuapp.com/calendar/upload",
+        StringRequest request = new StringRequest(Request.Method.POST, "https://tiny-chief.herokuapp.com/calendar/upload",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String string) {

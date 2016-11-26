@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/background_rect_radius_dialog"
     android:orientation="vertical"
-    android:padding="40dp"
+    android:padding="20dp"
     tools:context="com.roger.tinychief.activity.IiDetailDialogActivity">
 
     <TextView
@@ -19,8 +19,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="10dp">
+        android:layout_height="match_parent">
 
         <TextView
             android:layout_width="wrap_content"
@@ -45,19 +44,19 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="6dp"
+                android:layout_margin="2dp"
                 android:background="@color/white"
                 android:onClick="onClickBuy"
-                android:padding="10dp"
+                android:padding="6dp"
                 android:text="立刻買" />
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="6dp"
+                android:layout_margin="2dp"
                 android:background="@color/white"
                 android:onClick="onClickEnd"
-                android:padding="10dp"
+                android:padding="6dp"
                 android:text="返回" />
 
         </LinearLayout>

@@ -3,6 +3,7 @@ package com.roger.tinychief.activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -79,10 +80,6 @@ public class CalendarActivity extends AppCompatActivity {
             public void onSelectedDayChange(@NonNull CalendarView calendarView, int year, int month, int dayOfMonth) {
                 mTextView.setText(year + "." + (month + 1) + "." + dayOfMonth);
 
-                mLinearLayoutMorning.removeAllViews();
-                mLinearLayoutNoon.removeAllViews();
-                mLinearLayoutNight.removeAllViews();
-
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(Calendar.YEAR, year);
                 calendar.set(Calendar.MONTH, month);
@@ -103,12 +100,13 @@ public class CalendarActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        getData();
         mNavigationView = mNavigationViewSetup.setNavigationView();
         mNavigationView.getMenu().getItem(2).setChecked(true);
     }
 
     private void getData() {
-        StringRequest request = new StringRequest(Request.Method.POST, "https://tinny-chief.herokuapp.com/calendar/get",
+        StringRequest request = new StringRequest(Request.Method.POST, "https://tiny-chief.herokuapp.com/calendar/get",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String string) {
@@ -140,6 +138,9 @@ public class CalendarActivity extends AppCompatActivity {
     private void checkDate() {
         SimpleDateFormat simpleDf = new SimpleDateFormat("yyyy-MM-dd", Locale.TAIWAN);
         String strDate = simpleDf.format(mDateCurrentSelect);
+        mLinearLayoutMorning.removeAllViews();
+        mLinearLayoutNoon.removeAllViews();
+        mLinearLayoutNight.removeAllViews();
         boolean haveMorning = false, haveNoon = false, haveNight = false;
         try {
             if (mJSONArray != null)
@@ -173,6 +174,7 @@ public class CalendarActivity extends AppCompatActivity {
                                 if (!haveMorning) {
                                     TextView txtviewT = new TextView(CalendarActivity.this);
                                     txtviewT.setText("早餐");
+                                    txtviewT.setTypeface(null, Typeface.BOLD);
                                     View view = new View(CalendarActivity.this);
                                     view.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1));
                                     view.setBackgroundColor(Color.BLACK);
@@ -186,6 +188,7 @@ public class CalendarActivity extends AppCompatActivity {
                                 if (!haveNoon) {
                                     TextView txtviewT = new TextView(CalendarActivity.this);
                                     txtviewT.setText("中餐");
+                                    txtviewT.setTypeface(null, Typeface.BOLD);
                                     View view = new View(CalendarActivity.this);
                                     view.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1));
                                     view.setBackgroundColor(Color.BLACK);
@@ -199,6 +202,7 @@ public class CalendarActivity extends AppCompatActivity {
                                 if (!haveNight) {
                                     TextView txtviewT = new TextView(CalendarActivity.this);
                                     txtviewT.setText("晚餐");
+                                    txtviewT.setTypeface(null, Typeface.BOLD);
                                     View view = new View(CalendarActivity.this);
                                     view.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1));
                                     view.setBackgroundColor(Color.BLACK);
@@ -211,6 +215,12 @@ public class CalendarActivity extends AppCompatActivity {
                         }
                     }
                 }
+            if(mLinearLayoutMorning.getChildCount()>0)
+                mLinearLayoutMorning.addView(new TextView(this));
+            if(mLinearLayoutNoon.getChildCount()>0)
+                mLinearLayoutNoon.addView(new TextView(this));
+            if(mLinearLayoutNight.getChildCount()>0)
+                mLinearLayoutNight.addView(new TextView(this));
         } catch (Exception e) {
             e.printStackTrace();
         }

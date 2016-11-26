@@ -53,6 +53,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:textSize="@dimen/mid_textsize"
                             android:text="食材" />
 
                         <View
@@ -72,6 +73,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="20dp"
+                            android:textSize="@dimen/mid_textsize"
                             android:text="步驟"/>
 
                         <View

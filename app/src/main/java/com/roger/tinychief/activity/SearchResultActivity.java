@@ -48,12 +48,17 @@ public class SearchResultActivity extends AppCompatActivity {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mNavigationViewSetup = new NavigationViewSetup(this, mDrawerLayout, mToolbar);
         mNavigationView = mNavigationViewSetup.setNavigationView();
-        mNavigationView.getMenu().getItem(0).setChecked(true);
         mRecyclerView = (PullLoadMoreRecyclerView) findViewById(R.id.recyview_searchResult);
         mRecyclerView.setLinearLayout();
         mRecyclerView.setPullRefreshEnable(false);
         mRecyclerView.animate();
         handleIntent(getIntent());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mNavigationView = mNavigationViewSetup.setNavigationView();
     }
 
     @Override

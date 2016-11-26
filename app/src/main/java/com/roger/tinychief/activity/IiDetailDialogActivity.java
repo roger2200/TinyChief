@@ -50,7 +50,7 @@ public class IiDetailDialogActivity extends AppCompatActivity {
         getPrice();
     }
 
-    protected void onClickBuy(View view) {
+    public void onClickBuy(View view) {
         Bundle bundle = this.getIntent().getExtras();
         String strName = bundle.getString("NAME");
 
@@ -59,7 +59,7 @@ public class IiDetailDialogActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    protected void onClickEnd(View view) {
+    public void onClickEnd(View view) {
         finish();
     }
 

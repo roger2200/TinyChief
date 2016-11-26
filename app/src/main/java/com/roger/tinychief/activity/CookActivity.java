@@ -36,11 +36,11 @@ public class CookActivity extends AppCompatActivity implements OnInitListener {
     private Intent mIntentSR;
     private String[] mStrArrayStep;
     private String[][] mStrArrayCheck = new String[3][];
-    private String[] mStrRepeat = new String[]{"重", "再","正","辯", "在", "站", "戰", "蟲", "寵", "崇", "衝", "暫", "從", "叢", "3", "三", "片", "變", "成", "充", "沖", "船"};
+    private String[] mStrRepeat = new String[]{"重", "再", "正", "辯", "在", "站", "戰", "蟲", "寵", "崇", "衝", "暫", "從", "叢", "3", "三", "片", "變", "成", "充", "沖", "船"};
     private String[] mStrPrevious = new String[]{"前", "錢", "潛", "乾", "上", "尚", "賽", "散", "帥", "千", "全"};
-    private String[] mStrNext = new String[]{"下", "嚇", "夏", "廈", "霞", "向", "項", "像", "巷", "相", "少", "小", "算","塞"};
+    private String[] mStrNext = new String[]{"下", "嚇", "夏", "廈", "霞", "向", "項", "像", "巷", "相", "少", "小", "算", "塞"};
     private int pointerStep = 0;
-    private boolean isCreate = false;
+    private boolean isCreate = false, isFirst = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,12 +73,12 @@ public class CookActivity extends AppCompatActivity implements OnInitListener {
 
     @Override
     protected void onResume() {
-        if (isCreate) {
+        if (!isCreate && !isFirst) {
+            isCreate = true;
             mTts = new TextToSpeech(this, this);
             recognizer = SpeechRecognizer.createSpeechRecognizer(this);
             recognizer.setRecognitionListener(new MyRecognizerListener());
-        } else
-            isCreate = true;
+        }
         super.onResume();
     }
 
@@ -124,7 +124,11 @@ public class CookActivity extends AppCompatActivity implements OnInitListener {
         if (requestCode == REQ_TTS_STATUS_CHECK)
             switch (resultCode) {
                 case TextToSpeech.Engine.CHECK_VOICE_DATA_PASS:                  //這個返回結果表明TTS Engine可以用
-                    mTts = new TextToSpeech(this, this);
+                    if (!isCreate && isFirst) {
+                        isFirst = false;
+                        isCreate = true;
+                        mTts = new TextToSpeech(this, this);
+                    }
                     Log.v(TAG, "TTS Engine is installed!");
                     break;
                 case TextToSpeech.Engine.CHECK_VOICE_DATA_FAIL:                    //檢查失敗

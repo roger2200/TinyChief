@@ -270,14 +270,45 @@ public class CreateActivity extends AppCompatActivity {
     }
 
     public void uploadCookBook(View v) {
+        if (mTitleEditText.getText().toString().equals("")) {
+            Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "請輸入食譜的名稱", Snackbar.LENGTH_LONG);
+            MyHelper.setSnackbarMessageTextColor(snackbar, android.graphics.Color.WHITE);
+            snackbar.show();
+            return;
+        }
         for (TableRow tablerow : mIiTableRowList) {
             if (((Spinner) tablerow.getVirtualChildAt(1)).getSelectedItemPosition() == 0) {
-                Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "請選擇材料種類", Snackbar.LENGTH_LONG);
+                Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "請選擇材料的種類", Snackbar.LENGTH_LONG);
+                MyHelper.setSnackbarMessageTextColor(snackbar, android.graphics.Color.WHITE);
+                snackbar.show();
+                return;
+            }
+            if (((EditText) tablerow.getVirtualChildAt(0)).getText().toString().equals("")) {
+                Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "請輸入材料的名稱", Snackbar.LENGTH_LONG);
+                MyHelper.setSnackbarMessageTextColor(snackbar, android.graphics.Color.WHITE);
+                snackbar.show();
+                return;
+            }
+            if (((EditText) tablerow.getVirtualChildAt(2)).getText().toString().equals("")) {
+                Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "請輸入材料的數量", Snackbar.LENGTH_LONG);
+                MyHelper.setSnackbarMessageTextColor(snackbar, android.graphics.Color.WHITE);
+                snackbar.show();
+                return;
+            }
+            if (((EditText) tablerow.getVirtualChildAt(3)).getText().toString().equals("")) {
+                Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "請輸入材料的單位", Snackbar.LENGTH_LONG);
                 MyHelper.setSnackbarMessageTextColor(snackbar, android.graphics.Color.WHITE);
                 snackbar.show();
                 return;
             }
         }
+        for (EditText edittext : mStepEditTextList)
+            if (edittext.getText().toString().equals("")) {
+                Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "請輸入步驟", Snackbar.LENGTH_LONG);
+                MyHelper.setSnackbarMessageTextColor(snackbar, android.graphics.Color.WHITE);
+                snackbar.show();
+                return;
+            }
         if (mImgBitmap != null) {
             mProgressDialog.show();
             try {

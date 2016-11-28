@@ -140,10 +140,14 @@ public class ImgprocessActivity extends AppCompatActivity {
                         if (motionEvent.getX() < mRect.x) {
                             mRect.width *= -1;
                             mRect.x = (int) motionEvent.getX();
+                            if (mRect.x < 0)
+                                mRect.x = 0;
                         }
                         if (motionEvent.getY() < mRect.y) {
                             mRect.height *= -1;
                             mRect.y = (int) motionEvent.getY();
+                            if (mRect.y < 0)
+                                mRect.y = 0;
                         }
                         Log.d("Current Rect", "" + mRect);
                         return true;
@@ -201,8 +205,7 @@ public class ImgprocessActivity extends AppCompatActivity {
             mSnackbar.show();
             return;
         }
-        if(mRect==null)
-        {
+        if (mRect == null) {
             mSnackbar.setText("請選取圖片中要保留的部分");
             mSnackbar.show();
             return;

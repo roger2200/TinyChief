@@ -68,7 +68,7 @@ public class LoginActivity extends AppCompatActivity {
         mNavigationView = mNavigationViewSetup.setNavigationView();
 
         callbackManager = CallbackManager.Factory.create();
-
+        //FB登入的按鈕
         LoginButton loginFbBtn = (LoginButton) findViewById(R.id.login_button_fb);
         loginFbBtn.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             //登入成功
@@ -126,10 +126,11 @@ public class LoginActivity extends AppCompatActivity {
         });
         input_ac = (EditText) findViewById(R.id.edittxt_account_login);
         input_wd = (EditText) findViewById(R.id.edittxt_password_login);
-
+        //按下註冊鈕
         mRegisterButton = (Button) findViewById(R.id.btn_register_login);
         mRegisterButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
+                //跳轉到RegisterActivity
                 Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
                 startActivity(intent);
             }
@@ -144,13 +145,15 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onClickUpload(View view) {
         if (input_ac.getText().toString().isEmpty() || input_wd.getText().toString().isEmpty())
-            Toast.makeText(LoginActivity.this, "please fill all", Toast.LENGTH_LONG).show();
+            Toast.makeText(LoginActivity.this, "請輸入完整", Toast.LENGTH_LONG).show();
         else {
             final String p;
+            //MD5非對稱加密
             p = MD5.getMD5(input_wd.getText().toString());
             //下面這行是volley的語法,根據第一個參數,決定要執行甚麼工作,這裡是執行POST
             StringRequest request = new StringRequest(Request.Method.POST, "https://tiny-chief.herokuapp.com/login",
                     new Response.Listener<String>() {
+                        //處理傳回來的JSON字串
                         @Override
                         public void onResponse(String string) {
                             try {
@@ -160,6 +163,7 @@ public class LoginActivity extends AppCompatActivity {
                                 StringBuilder checkEmails = new StringBuilder();
                                 String nickname = "";
                                 String userID = "";
+                                //將資料一一拆解並放入變數裡
                                 for (int i = 0; i < ary.length(); i++) {
                                     JSONObject json = ary.getJSONObject(i);
                                     String user = json.getString("user");
@@ -174,15 +178,18 @@ public class LoginActivity extends AppCompatActivity {
                                     nickname = json.getString("nickname");
                                     userID = json.getString("_id");
                                 }
+                                //若為空代表server找不到資料
                                 if (users.toString().equals("")) {
-                                    Toast.makeText(LoginActivity.this, "wrong account or password", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(LoginActivity.this, "帳號或密碼輸入錯誤", Toast.LENGTH_LONG).show();
                                 }
                                 if (checkEmails.toString().equals("OK,")) {
                                     Toast.makeText(LoginActivity.this, "登入成功", Toast.LENGTH_LONG).show();
+                                    //跳轉頁面
                                     Intent intent = new Intent();
                                     intent.setClass(LoginActivity.this, MainActivity.class);
                                     Log.d("name", nickname);
                                     Log.d("ID", userID);
+                                    //將使用者資料放在static變數以便日後存取
                                     MainActivity.USER_ID = userID;
                                     MainActivity.USER_NAME = nickname;
                                     insertFBInfo();
@@ -194,6 +201,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                     finish();
                                 }
+                                //還沒認證信箱
                                 if (users.toString().length() > 2 && checkEmails.toString().equals("NO,")) {
                                     Toast.makeText(LoginActivity.this, "要認證信箱唷", Toast.LENGTH_LONG).show();
                                 }
@@ -208,6 +216,7 @@ public class LoginActivity extends AppCompatActivity {
                             Log.e("Error", String.valueOf(volleyError));
                         }
                     }) {
+                //將欲傳送之資料放入MyData
                 @Override
                 public Map<String, String> getParams() {
                     Map<String, String> MyData = new HashMap<>();
@@ -224,14 +233,14 @@ public class LoginActivity extends AppCompatActivity {
     public void onClickCancel(View view) {
         finish();
     }
-
+    //插入臉書資料
     private void insertFBInfo() {
+
         StringRequest request3 = new StringRequest(Request.Method.POST, "https://tiny-chief.herokuapp.com/inserFBInfo",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String string) {
                         try {
-
                         } catch (Exception e) {
                             Log.d("error:", e.getMessage());
                         }

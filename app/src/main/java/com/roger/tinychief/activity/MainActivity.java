@@ -105,11 +105,11 @@ public class MainActivity extends AppCompatActivity {
 
         MenuItem menuSearchItem = menu.findItem(R.id.my_search);
 
-        // Get the SearchView and set the searchable configuration
+        // 取得SearchView and set the searchable configuration
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         mSearchView = (android.support.v7.widget.SearchView) menuSearchItem.getActionView();
 
-        // Assumes current activity is the searchable activity
+        // 假設現在在searchable activity
         mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
         // 這邊讓icon可以還原到搜尋的icon
@@ -123,8 +123,10 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
         else {
-            mSearchView.onActionViewCollapsed();  //collapse your ActionView
-            mSearchView.setQuery("",false);       //clears your query without submit
+            //退出 ActionView
+            mSearchView.onActionViewCollapsed();
+            //清空搜尋字串
+            mSearchView.setQuery("",false);
             mSnackbar.show();
         }
     }

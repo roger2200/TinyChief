@@ -12,15 +12,12 @@ package com.roger.tinychief.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,20 +26,15 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
-import android.widget.Toast;
 
 import com.roger.tinychief.ar.ArControl;
 import com.roger.tinychief.ar.ArException;
 import com.roger.tinychief.ar.ArRenderer;
 import com.roger.tinychief.ar.ArSession;
-import com.roger.tinychief.ar.menu.ArMenu;
-import com.roger.tinychief.ar.menu.ArMenuGroup;
-import com.roger.tinychief.ar.menu.ArMenuInterface;
 import com.roger.tinychief.ar.utils.LoadingDialogHandler;
 import com.roger.tinychief.ar.utils.ArGLView;
 import com.roger.tinychief.ar.utils.Texture;
@@ -61,13 +53,12 @@ import com.roger.tinychief.R;
 import java.util.ArrayList;
 import java.util.Vector;
 
-public class ArActivity extends Activity implements ArControl, ArMenuInterface {
+//此程式碼由vuforia官網之sample code 修改而成的
+public class ArActivity extends Activity implements ArControl {
     private static final String LOGTAG = "ImageTargets";
 
 
     private int mCurrentDatasetSelectionIndex = 0;
-    private int mStartDatasetsIndex = 0;
-    private int mDatasetsNumber = 0;
     private ArSession vuforiaAppSession;
     private DataSet mCurrentDataset;
     private ArrayList<String> mDatasetStrings = new ArrayList<String>();
@@ -261,7 +252,7 @@ public class ArActivity extends Activity implements ArControl, ArMenuInterface {
 
     }
 
-    //讀取畫面
+    //進入Ar畫面時的讀取畫面
     private void startLoadingAnimation() {
         mUILayout = (RelativeLayout) View.inflate(this, R.layout.camera_overlay, null);
 
@@ -459,6 +450,7 @@ public class ArActivity extends Activity implements ArControl, ArMenuInterface {
         return result;
     }
 
+    //監視手指動作,讓使用者可以透過手指去讓圖片放大縮小
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getActionMasked()) {
@@ -488,121 +480,7 @@ public class ArActivity extends Activity implements ArControl, ArMenuInterface {
         return mExtendedTracking;
     }
 
-    final public static int CMD_EXTENDED_TRACKING = 1;
-    final public static int CMD_AUTOFOCUS = 2;
-    final public static int CMD_FLASH = 3;
-    final public static int CMD_CAMERA_FRONT = 4;
-    final public static int CMD_CAMERA_REAR = 5;
-    final public static int CMD_DATASET_START_INDEX = 6;
-
-    @Override
-    public boolean menuProcess(int command) {
-
-        boolean result = true;
-
-        switch (command) {
-            case CMD_FLASH:
-                result = CameraDevice.getInstance().setFlashTorchMode(!mFlash);
-
-                if (result) {
-                    mFlash = !mFlash;
-                } else {
-                    showToast(getString(mFlash ? R.string.menu_flash_error_off : R.string.menu_flash_error_on));
-                    Log.e(LOGTAG,
-                            getString(mFlash ? R.string.menu_flash_error_off : R.string.menu_flash_error_on));
-                }
-                break;
-
-            case CMD_AUTOFOCUS:
-
-                if (mContAutofocus) {
-                    result = CameraDevice.getInstance().setFocusMode(CameraDevice.FOCUS_MODE.FOCUS_MODE_NORMAL);
-
-                    if (result) {
-                        mContAutofocus = false;
-                    } else {
-                        showToast(getString(R.string.menu_contAutofocus_error_off));
-                        Log.e(LOGTAG, getString(R.string.menu_contAutofocus_error_off));
-                    }
-                } else {
-                    result = CameraDevice.getInstance().setFocusMode(CameraDevice.FOCUS_MODE.FOCUS_MODE_CONTINUOUSAUTO);
-
-                    if (result) {
-                        mContAutofocus = true;
-                    } else {
-                        showToast(getString(R.string.menu_contAutofocus_error_on));
-                        Log.e(LOGTAG, getString(R.string.menu_contAutofocus_error_on));
-                    }
-                }
-
-                break;
-
-            case CMD_CAMERA_FRONT:
-            case CMD_CAMERA_REAR:
-
-                // Turn off the flash
-                if (mFlashOptionView != null && mFlash) {
-                    // OnCheckedChangeListener is called upon changing the checked state
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
-                        ((Switch) mFlashOptionView).setChecked(false);
-                    else
-                        ((CheckBox) mFlashOptionView).setChecked(false);
-
-                }
-
-                vuforiaAppSession.stopCamera();
-
-                try {
-                    vuforiaAppSession.startAR(command == CMD_CAMERA_FRONT ? CameraDevice.CAMERA_DIRECTION.CAMERA_DIRECTION_FRONT : CameraDevice.CAMERA_DIRECTION.CAMERA_DIRECTION_BACK);
-                } catch (ArException e) {
-                    showToast(e.getString());
-                    Log.e(LOGTAG, e.getString());
-                    result = false;
-                }
-                doStartTrackers();
-                break;
-
-            case CMD_EXTENDED_TRACKING:
-                for (int tIdx = 0; tIdx < mCurrentDataset.getNumTrackables(); tIdx++) {
-                    Trackable trackable = mCurrentDataset.getTrackable(tIdx);
-
-                    if (!mExtendedTracking) {
-                        if (!trackable.startExtendedTracking()) {
-                            Log.e(LOGTAG, "Failed to start extended tracking target");
-                            result = false;
-                        } else {
-                            Log.d(LOGTAG, "Successfully started extended tracking target");
-                        }
-                    } else {
-                        if (!trackable.stopExtendedTracking()) {
-                            Log.e(LOGTAG, "Failed to stop extended tracking target");
-                            result = false;
-                        } else {
-                            Log.d(LOGTAG, "Successfully started extended tracking target");
-                        }
-                    }
-                }
-
-                if (result)
-                    mExtendedTracking = !mExtendedTracking;
-
-                break;
-
-            default:
-                if (command >= mStartDatasetsIndex && command < mStartDatasetsIndex + mDatasetsNumber) {
-                    mSwitchDatasetAsap = true;
-                    mCurrentDatasetSelectionIndex = command - mStartDatasetsIndex;
-                }
-                break;
-        }
-
-        return result;
-    }
-
-    private void showToast(String text) {
-        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
-    }
-
+    //開關閃光燈
     private void setButtons() {
         CheckBox cbFlash = new CheckBox(this);
         cbFlash.setText("閃光燈");
@@ -613,7 +491,6 @@ public class ArActivity extends Activity implements ArControl, ArMenuInterface {
                     mFlash = !mFlash;
                 else
                     Log.e(LOGTAG, getString(mFlash ? R.string.menu_flash_error_off : R.string.menu_flash_error_on));
-
             }
         });
         addContentView(cbFlash, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));

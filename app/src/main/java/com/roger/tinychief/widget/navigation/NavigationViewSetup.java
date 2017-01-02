@@ -20,11 +20,9 @@ import com.roger.tinychief.activity.CreateActivity;
 import com.roger.tinychief.activity.LoginActivity;
 import com.roger.tinychief.activity.MainActivity;
 
-/**
- * Created by Roger on 7/27/2016.
- */
-public class NavigationViewSetup {
 
+/**初始化navigationview因為有很多畫面都有,所以我把它獨立出來,可以重複使用*/
+public class NavigationViewSetup {
     private AppCompatActivity mActivity;
     private NavigationView mNavigationView;
     private DrawerLayout mDrawerLayout;

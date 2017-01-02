@@ -36,14 +36,4 @@ public class NetworkManager {
         }
     }
 
-    public void stop() {
-        mQueue.stop();
-    }
-    public void check(){
-        System.out.println("create get in network");
-    }
-    public void checkRes(){
-        System.out.println("onResume get in network");
-    }
-
 }

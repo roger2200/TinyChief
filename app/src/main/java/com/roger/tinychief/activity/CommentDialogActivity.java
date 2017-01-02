@@ -25,6 +25,7 @@ import com.roger.tinychief.util.NetworkManager;
 import java.util.HashMap;
 import java.util.Map;
 
+/**懸浮視窗-評論*/
 public class CommentDialogActivity extends AppCompatActivity {
     private TextView mTextView;
     private EditText mEditText;
@@ -52,6 +53,7 @@ public class CommentDialogActivity extends AppCompatActivity {
         drawRate();
     }
 
+    /**監視手指點到哪顆星星,改變星星數量*/
     private View.OnTouchListener getOnTouchListener() {
         return new View.OnTouchListener() {
             @Override

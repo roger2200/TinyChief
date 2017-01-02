@@ -207,6 +207,7 @@ public class MainActivity extends AppCompatActivity {
         setRecycleView();
     }
 
+    //更新畫面
     private void reInit() {
         mDataset.clear();
         skipCount = 0;

@@ -22,7 +22,7 @@ import com.roger.tinychief.widget.navigation.NavigationViewSetup;
 
 import java.util.List;
 import java.util.Locale;
-
+/*語音辨識及輸出**/
 public class CookActivity extends AppCompatActivity implements OnInitListener {
     private static final int REQ_TTS_STATUS_CHECK = 0;
     private static final String TAG = "TTS Demo";
@@ -35,11 +35,12 @@ public class CookActivity extends AppCompatActivity implements OnInitListener {
     private SpeechRecognizer recognizer;
     private Intent mIntentSR;
     private String[] mStrArrayStep;
+    //為避免語音辨識錯誤,把念法很像的字都先記起來
     private String[][] mStrArrayCheck = new String[3][];
     private String[] mStrRepeat = new String[]{"重", "再", "正", "辯", "在", "站", "戰", "蟲", "寵", "崇", "衝", "暫", "從", "叢", "3", "三", "片", "變", "成", "充", "沖", "船"};
     private String[] mStrPrevious = new String[]{"前", "錢", "潛", "乾", "上", "尚", "賽", "散", "帥", "千", "全"};
     private String[] mStrNext = new String[]{"下", "嚇", "夏", "廈", "霞", "向", "項", "像", "巷", "相", "少", "小", "算", "塞"};
-    private int pointerStep = 0;
+    private int pointerStep = 0;    //指現在唸到哪一個步驟
     private boolean isCreate = false, isFirst = true;
 
     @Override
@@ -243,6 +244,7 @@ public class CookActivity extends AppCompatActivity implements OnInitListener {
         startRecognizer();
     }
 
+    //分析使用者說的話有沒有對應到我要的字
     private int analyzeSpeech(List<String> resList) {
         for (String strList : resList)
             for (int i = 0; i < mStrArrayCheck.length; i++)

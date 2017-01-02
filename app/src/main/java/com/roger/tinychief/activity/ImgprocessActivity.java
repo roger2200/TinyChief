@@ -43,7 +43,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-
+/**相片去背*/
 public class ImgprocessActivity extends AppCompatActivity {
     final String TAG = "ImgprocessActivity";
     private Toolbar mToolbar;
@@ -52,7 +52,7 @@ public class ImgprocessActivity extends AppCompatActivity {
     private NavigationViewSetup mNavigationViewSetup;
     private ImageView mImageView;
     private Bitmap mBitmap = null;
-    private Rect mRect;
+    private Rect mRect;     //記使用者畫的正方形的長寬
     private Snackbar mSnackbar;
     private CoordinatorLayout mCoordinatorLayout;
     private BaseLoaderCallback mLoaderCallback;
@@ -123,7 +123,7 @@ public class ImgprocessActivity extends AppCompatActivity {
             }
         };
     }
-
+    //讓使用者可以在圖片上畫正方形
     private View.OnTouchListener getOnTouchListener() {
         return new View.OnTouchListener() {
             @Override
@@ -246,7 +246,7 @@ public class ImgprocessActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
+    //去背
     private Bitmap removeBackground(Bitmap bitmap) {
         Mat matImage = new Mat();
         Mat matMask = new Mat();

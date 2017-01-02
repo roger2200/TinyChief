@@ -12,7 +12,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.roger.tinychief.R;
-
+/**在程式裡開瀏覽器*/
 public class WebviewActivity extends AppCompatActivity {
     private WebView mWebView;
     private Toolbar mToolbar;

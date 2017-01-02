@@ -3,9 +3,7 @@ package com.roger.tinychief.widget.recycler;
 import android.graphics.Bitmap;
 import android.widget.ImageView;
 
-/**
- * Created by Roger on 7/25/2016.
- */
+/**cardview用的adapter*/
 public class ItemMain {
     private String mId,mAuthor, mTitle,mUrl;
 

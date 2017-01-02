@@ -121,7 +121,6 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="1dp"
                         android:background="@drawable/background_rect_radius_btn"
-                        android:enabled="false"
                         android:onClick="onClickOpenAR"
                         android:padding="4dp"
                         android:text="AR預覽" />

@@ -23,7 +23,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.Calendar;
-
+/**懸浮視窗-食材價格*/
 public class IiDetailDialogActivity extends AppCompatActivity {
     private final String TAG = "IiDetailDialogActivity";
 

@@ -1,7 +1,7 @@
 package com.roger.tinychief.widget.recycler;
 
 import android.content.Context;
-
+/**cardview用的adapter*/
 public class ItemComment {
     private String mId, mName, mComment;
     private int mRate;

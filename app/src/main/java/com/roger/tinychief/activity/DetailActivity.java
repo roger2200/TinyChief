@@ -62,6 +62,7 @@ public class DetailActivity extends AppCompatActivity {
     private String mStrID, mStrTitle;
     private Snackbar mSnackbar;
     private ArrayList<ItemComment> mDataset = new ArrayList<>();
+    private boolean hasArPic = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,13 +154,15 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     public void onClickOpenAR(View view) {
-        if (mArBitmap == null) {
+        if (hasArPic) {
+            Intent intent = new Intent(view.getContext(), ArActivity.class);
+            intent.putExtra("IMAGE", MyHelper.convertBitmap2Bytes(mArBitmap));
+            startActivity(intent);
+        }
+        else{
             mSnackbar.setText("這個食譜沒有Ar的相片");
             mSnackbar.show();
         }
-        Intent intent = new Intent(view.getContext(), ArActivity.class);
-        intent.putExtra("IMAGE", MyHelper.convertBitmap2Bytes(mArBitmap));
-        startActivity(intent);
     }
 
     public void onClickAddCalendar(View view) {
@@ -185,11 +188,11 @@ public class DetailActivity extends AppCompatActivity {
 
                             //讀圖片
                             if (!json.getString("image_ar").equals("")) {
-                                findViewById(R.id.btn_openar_detail).setEnabled(true);
                                 new AsyncTask<Integer, Integer, Integer>() {
                                     @Override
                                     protected Integer doInBackground(Integer... parm) {
                                         try {
+                                            hasArPic=true;
                                             mArBitmap = Glide.with(DetailActivity.this).load(json.getString("image_ar")).asBitmap().into(-1, -1).get();
                                         } catch (Exception e) {
                                             e.printStackTrace();
@@ -267,7 +270,6 @@ public class DetailActivity extends AppCompatActivity {
 
     private void addIi(final String name, double amount, String unit, final int intClass) {
         Drawable drawable;
-        TextView textViewPrice = new TextView(DetailActivity.this);
         TextView textViewAmount = new TextView(DetailActivity.this);
         TextView textViewName = new TextView(DetailActivity.this);
         TableRow tablerow = new TableRow(DetailActivity.this);

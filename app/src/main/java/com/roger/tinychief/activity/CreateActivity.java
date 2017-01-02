@@ -59,7 +59,7 @@ import java.util.Map;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
-
+/**創建食譜*/
 public class CreateActivity extends AppCompatActivity {
     private final String LOGTAG = "CreateActivity";
     private final int REQUEST_PIC = 0, REQUEST_AR_PIC = 1;

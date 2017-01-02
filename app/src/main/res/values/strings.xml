@@ -24,4 +24,5 @@
     <string name="menu_contAutofocus_error_on">Unable to activate Continuous Auto-Focus</string>
     <string name="menu_contAutofocus_error_off">Unable to deactivate Continuous Auto-Focus</string>
     <string name="search_title">SearchTitle</string>
+    <string name="搜尋關鍵字">搜尋關鍵字</string>
 </resources>

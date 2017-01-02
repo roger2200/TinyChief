@@ -69,12 +69,14 @@ public class SearchResultActivity extends AppCompatActivity {
     private void handleIntent(Intent intent) {
         setRecycleView();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            //接收傳過來的字串
             final String query = intent.getStringExtra(SearchManager.QUERY);
             StringRequest request = new StringRequest(Request.Method.POST, "https://tiny-chief.herokuapp.com/search/result",
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String string) {
                             try {
+                                //解讀傳來的JSON ARRAY
                                 JSONArray array = new JSONArray(string);
                                 for (int i = 0; i < array.length(); i++) {
                                     JSONObject json = array.getJSONObject(i);

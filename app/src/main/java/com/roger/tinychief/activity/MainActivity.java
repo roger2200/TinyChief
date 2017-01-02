@@ -63,8 +63,10 @@ public class MainActivity extends AppCompatActivity {
     private PullLoadMoreRecyclerView mRecyclerView;
     private AdapterMain mAdapter;
     private NavigationViewSetup mNavigationViewSetup;
+    private android.support.v7.widget.SearchView mSearchView;
     private Snackbar mSnackbar;
     private int skipCount = 1;
+    private int backCount = 0;
     ArrayList<ItemMain> mDataset = new ArrayList<>();
 
     @Override
@@ -93,6 +95,8 @@ public class MainActivity extends AppCompatActivity {
         mNavigationView.getMenu().getItem(0).setChecked(true);
         if (NEED_REINIT)
             reInit();
+        if(backCount==0){
+        }
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -101,24 +105,30 @@ public class MainActivity extends AppCompatActivity {
 
         MenuItem menuSearchItem = menu.findItem(R.id.my_search);
 
-        // Get the SearchView and set the searchable configuration
+        // 取得SearchView and set the searchable configuration
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        android.support.v7.widget.SearchView searchView = (android.support.v7.widget.SearchView) menuSearchItem.getActionView();
+        mSearchView = (android.support.v7.widget.SearchView) menuSearchItem.getActionView();
 
-        // Assumes current activity is the searchable activity
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        // 假設現在在searchable activity
+        mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
         // 這邊讓icon可以還原到搜尋的icon
-        searchView.setIconifiedByDefault(true);
+        mSearchView.setIconifiedByDefault(true);
         return true;
     }
 
     @Override
     public void onBackPressed() {
-        if (mSnackbar.isShown())
+        if (mSnackbar.isShown()) {
             finish();
-        else
+        }
+        else {
+            //退出 ActionView
+            mSearchView.onActionViewCollapsed();
+            //清空搜尋字串
+            mSearchView.setQuery("",false);
             mSnackbar.show();
+        }
     }
 
     public void getDataFromSever() {
